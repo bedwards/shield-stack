@@ -1,0 +1,186 @@
+name: Feature / Enhancement
+description: A new feature or enhancement for a Shield Stack product. Separates blocking requirements from nice-to-haves so workers know exactly what must ship.
+title: "[PRODUCT_SLUG] Short description"
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Instructions for the planner
+        - Every `[MUST]` item is a **blocking requirement** -- the PR cannot merge without it.
+        - Every `[SHOULD]` item is a **nice-to-have** -- if skipped, the worker creates a follow-up issue.
+        - Include exact bash commands in "Acceptance Test Commands" so a reviewer can verify compliance mechanically.
+        - List every dependency that needs to be installed (package name + version).
+
+  - type: dropdown
+    id: product
+    attributes:
+      label: Product
+      description: Which product does this issue belong to?
+      options:
+        - ghostboard
+        - cliffcheck
+        - scorerebound
+        - hoashield
+        - recallradar
+        - billwatch
+        - repairfair
+        - clearfile
+        - zonealert
+        - lemonlens
+        - speedproof
+        - netcheck
+        - receiptguard
+        - smallclaimsai
+        - tenantshield
+        - movercheck
+        - skimpwatch
+        - settlescan
+        - fafsacopilot
+        - cellscore
+        - parkfight
+        - afterloss
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: |
+        P0 = blocking other work, fix immediately
+        P1 = high impact, do this sprint
+        P2 = medium impact, do soon
+        P3 = low impact, backlog
+      options:
+        - P0-blocking
+        - P1-high
+        - P2-medium
+        - P3-low
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context & Motivation
+      description: Why does this feature matter? Link to research, user pain, or business rationale.
+      placeholder: |
+        Explain the user pain this solves and why it matters now.
+        Link to research docs, BUSINESS_OPPORTUNITIES.md sections, or prior issues.
+    validations:
+      required: true
+
+  - type: textarea
+    id: must_requirements
+    attributes:
+      label: "Blocking Requirements [MUST]"
+      description: |
+        Every item here is a hard gate. The PR CANNOT merge unless ALL of these are done.
+        Use checkbox format. Each line must start with `- [ ] [MUST]`.
+      placeholder: |
+        - [ ] [MUST] Create `product-slug/package.json` with name, version 0.1.0, and scripts (dev, build, test, lint)
+        - [ ] [MUST] Install dependencies: next@14, react@18, typescript@5, @supabase/supabase-js@2
+        - [ ] [MUST] Create `product-slug/src/lib/supabase.ts` with client initialization using NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY
+        - [ ] [MUST] Create `product-slug/src/app/page.tsx` with landing page containing data-testid="hero-heading"
+        - [ ] [MUST] `bun run build` exits 0
+        - [ ] [MUST] `bun run test` exits 0 (at least 1 test file)
+        - [ ] [MUST] `bun run lint` exits 0
+      value: |
+        - [ ] [MUST]
+    validations:
+      required: true
+
+  - type: textarea
+    id: should_requirements
+    attributes:
+      label: "Nice-to-Have Requirements [SHOULD]"
+      description: |
+        These improve the feature but are NOT blocking. If a worker skips any of these,
+        they MUST create a follow-up GitHub issue for each skipped item.
+        Use checkbox format. Each line must start with `- [ ] [SHOULD]`.
+      placeholder: |
+        - [ ] [SHOULD] Add Open Graph meta tags for social sharing
+        - [ ] [SHOULD] Add structured data (JSON-LD) for SEO
+        - [ ] [SHOULD] Create Playwright e2e test in `product-slug/e2e/`
+        - [ ] [SHOULD] Add loading skeleton components
+      value: |
+        - [ ] [SHOULD]
+    validations:
+      required: false
+
+  - type: textarea
+    id: dependencies_to_install
+    attributes:
+      label: Dependencies to Install
+      description: |
+        Exact packages the worker must install. Include version constraints.
+        The worker must also create initialization/setup code for each dependency (not just add it to package.json).
+      placeholder: |
+        ```bash
+        # Production dependencies
+        bun add next@14 react@18 react-dom@18 @supabase/supabase-js@2
+
+        # Dev dependencies
+        bun add -d typescript@5 @types/react@18 vitest@1 eslint@8
+        ```
+    validations:
+      required: false
+
+  - type: textarea
+    id: blocked_by
+    attributes:
+      label: Dependencies (blocked-by)
+      description: |
+        List issue numbers that must be completed before this issue can start.
+        If none, leave blank.
+      placeholder: |
+        - Blocked by #12 (database schema must exist first)
+        - Blocked by #15 (auth must be set up first)
+    validations:
+      required: false
+
+  - type: textarea
+    id: acceptance_tests
+    attributes:
+      label: Acceptance Test Commands
+      description: |
+        Exact bash commands a reviewer runs to verify this issue is done.
+        Every command must exit 0 for the PR to merge. No prose -- just commands and expected outcomes.
+      placeholder: |
+        ```bash
+        # Build succeeds
+        cd product-slug && bun install && bun run build
+
+        # Tests pass
+        cd product-slug && bun run test
+
+        # Lint is clean
+        cd product-slug && bun run lint
+
+        # Landing page has required elements
+        cd product-slug && grep -r 'data-testid="hero-heading"' src/
+
+        # Supabase client is initialized (not just in package.json)
+        test -f product-slug/src/lib/supabase.ts
+
+        # No scope creep -- only product files changed
+        git diff --name-only main...HEAD | grep -v '^product-slug/' && echo "FAIL: scope creep" && exit 1 || echo "PASS"
+
+        # Validation script passes
+        bash scripts/validate-pr.sh product-slug
+        ```
+    validations:
+      required: true
+
+  - type: textarea
+    id: technical_notes
+    attributes:
+      label: Technical Notes
+      description: Architecture decisions, design constraints, or references the worker needs.
+      placeholder: |
+        - Use App Router (not Pages Router)
+        - Follow the pattern in hoashield/ for directory structure
+        - See docs/architecture.md for data model
+    validations:
+      required: false

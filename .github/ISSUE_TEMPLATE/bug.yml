@@ -1,0 +1,180 @@
+name: Bug Report
+description: Something is broken in a Shield Stack product. Include exact reproduction steps and verification commands.
+title: "[PRODUCT_SLUG] Bug: short description"
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Bug report guidelines
+        - Include exact reproduction steps (commands, not prose).
+        - Include exact verification commands so the reviewer can confirm the fix.
+        - Every `[MUST]` item is blocking -- the fix PR cannot merge without it.
+
+  - type: dropdown
+    id: product
+    attributes:
+      label: Product
+      description: Which product has the bug?
+      options:
+        - ghostboard
+        - cliffcheck
+        - scorerebound
+        - hoashield
+        - recallradar
+        - billwatch
+        - repairfair
+        - clearfile
+        - zonealert
+        - lemonlens
+        - speedproof
+        - netcheck
+        - receiptguard
+        - smallclaimsai
+        - tenantshield
+        - movercheck
+        - skimpwatch
+        - settlescan
+        - fafsacopilot
+        - cellscore
+        - parkfight
+        - afterloss
+        - infrastructure
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: |
+        P0 = production down or data loss, fix immediately
+        P1 = major feature broken, fix this sprint
+        P2 = minor feature broken, fix soon
+        P3 = cosmetic or edge case, backlog
+      options:
+        - P0-blocking
+        - P1-high
+        - P2-medium
+        - P3-low
+    validations:
+      required: true
+
+  - type: textarea
+    id: current_behavior
+    attributes:
+      label: Current Behavior
+      description: What happens now? Include exact error messages, stack traces, or screenshots.
+      placeholder: |
+        Running `cd ghostboard && bun run build` fails with:
+        ```
+        Error: Cannot find module '@supabase/supabase-js'
+        ```
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected_behavior
+    attributes:
+      label: Expected Behavior
+      description: What should happen instead?
+      placeholder: |
+        `bun run build` should exit 0 with no errors.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction_steps
+    attributes:
+      label: Reproduction Steps
+      description: |
+        Exact bash commands to reproduce the bug. A worker must be able to copy-paste these
+        and see the failure. No vague instructions like "open the app and click around."
+      placeholder: |
+        ```bash
+        cd ghostboard
+        bun install
+        bun run build
+        # Observe: exit code 1, error about missing module
+        ```
+    validations:
+      required: true
+
+  - type: textarea
+    id: must_requirements
+    attributes:
+      label: "Fix Requirements [MUST]"
+      description: |
+        Blocking requirements for the fix. The PR cannot merge unless ALL are done.
+        Use checkbox format. Each line must start with `- [ ] [MUST]`.
+      placeholder: |
+        - [ ] [MUST] `bun run build` exits 0
+        - [ ] [MUST] `bun run test` exits 0
+        - [ ] [MUST] Bug does not reproduce after fix (re-run reproduction steps)
+        - [ ] [MUST] No regressions -- existing tests still pass
+      value: |
+        - [ ] [MUST] Bug does not reproduce after fix
+        - [ ] [MUST] `bun run build` exits 0
+        - [ ] [MUST] `bun run test` exits 0
+        - [ ] [MUST] `bun run lint` exits 0
+        - [ ] [MUST] No regressions -- existing tests still pass
+    validations:
+      required: true
+
+  - type: textarea
+    id: should_requirements
+    attributes:
+      label: "Improvements [SHOULD]"
+      description: |
+        Nice-to-have improvements alongside the fix. If skipped, create a follow-up issue.
+      placeholder: |
+        - [ ] [SHOULD] Add regression test covering this bug
+        - [ ] [SHOULD] Add error boundary to prevent crash from reaching user
+    validations:
+      required: false
+
+  - type: textarea
+    id: acceptance_tests
+    attributes:
+      label: Acceptance Test Commands
+      description: |
+        Exact bash commands to verify the fix works. Every command must exit 0.
+      placeholder: |
+        ```bash
+        # Reproduction steps no longer fail
+        cd ghostboard && bun install && bun run build
+
+        # Tests pass
+        cd ghostboard && bun run test
+
+        # Validation script passes
+        bash scripts/validate-pr.sh ghostboard
+
+        # No scope creep
+        git diff --name-only main...HEAD | grep -v '^ghostboard/' && echo "FAIL: scope creep" && exit 1 || echo "PASS"
+        ```
+    validations:
+      required: true
+
+  - type: textarea
+    id: blocked_by
+    attributes:
+      label: Dependencies (blocked-by)
+      description: List issue numbers that must be completed before this fix can start.
+      placeholder: |
+        - Blocked by #42 (need schema migration first)
+    validations:
+      required: false
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Runtime, OS, versions, or config relevant to the bug.
+      placeholder: |
+        - Bun 1.1.x
+        - macOS 15.x
+        - Node 22.x
+        - Next.js 14.x
+    validations:
+      required: false
