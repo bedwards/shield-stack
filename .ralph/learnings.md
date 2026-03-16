@@ -53,3 +53,11 @@ Never write custom migration runners or schema diff tools.
 ## 2026-03-16 | multiple | Missing Supabase client initialization
 **What happened:** Workers add Supabase to package.json but don't create the client initialization file (src/lib/supabase.ts). The reviewer catches "dependencies added but not used."
 **Rule:** If you add a dependency, you must also add the initialization/setup code that uses it. A dependency in package.json without corresponding code is incomplete work.
+
+## 2026-03-16 | all | Run validate-pr.sh before pushing
+**What happened:** Workers would push, get rejected by Gemini, fix, push again, get rejected again. Some PRs needed 3+ rounds. 64% of PRs were rejected at least once.
+**Rule:** Before pushing, run `bash scripts/validate-pr.sh {product-slug}`. It checks for scope creep, missing NEXT_PUBLIC_ prefix, tsconfig e2e exclusion, build/lint/test, and other common failures. Fix all errors before pushing.
+
+## 2026-03-16 | all | Learnings adoption improves over batches
+**What happened:** Batch 1: 0% worktree usage, 2 contaminated PRs. Batch 2: 67% worktree usage, 2 contaminated. Batch 3: 100% worktree usage, 0 contaminated. Simple concrete rules (bun run test, NEXT_PUBLIC_) adopted immediately. Vague rules (read issue carefully) adopted slowly.
+**Rule:** When adding a learning, make it as concrete and mechanical as possible. "Run this script" beats "be more careful." Provide exact commands, not principles.

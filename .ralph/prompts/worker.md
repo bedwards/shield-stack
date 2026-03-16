@@ -37,18 +37,24 @@ These files contain hard-won lessons from previous workers. Read them FIRST:
    - Run the product's build command
    - Run the product's test command
    - Run the product's lint command
-8. Commit with a descriptive message referencing the issue:
+8. **ACCEPTANCE CRITERIA CHECK (MANDATORY before committing):**
+   - Re-read the GitHub issue body. Find every `- [ ]` checkbox item.
+   - For EACH item, verify you implemented it. If you skipped something, implement it now.
+   - Common items workers miss: specific dependencies (barcode scanners, PWA, Supabase client init), health check endpoints, prettier config, directory .gitkeep files.
+   - Run the validation script: `bash scripts/validate-pr.sh {product_slug}`
+   - If the script reports errors, fix them before continuing.
+9. Commit with a descriptive message referencing the issue:
    - `git add {product_slug}/` (and any shared files if needed)
    - `git commit -m "feat({product_slug}): description (closes #{issue_number})"`
-9. Bump the subsystem version if meaningful changes:
-   - Update version in package.json/Cargo.toml/pyproject.toml
-   - `git tag {product_slug}-v{new_version}`
-10. Push and create a PR:
+10. Bump the subsystem version if meaningful changes:
+    - Update version in package.json/Cargo.toml/pyproject.toml
+    - `git tag {product_slug}-v{new_version}`
+11. Push and create a PR:
     - `git push -u origin {branch_name}`
     - Create PR with `gh pr create` targeting main
     - Reference the issue in the PR body
     - Add label for the product slug
-11. Output JSON to stdout:
+12. Output JSON to stdout:
 
 ```json
 {
