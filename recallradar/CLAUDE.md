@@ -1,6 +1,6 @@
 # RecallRadar — Product Recall Barcode Scanner for Parents
 
-## Status: Planning Complete
+## Status: Scaffold Complete
 
 ## Product Overview
 RecallRadar lets parents and caregivers scan any product barcode to instantly check if it has been recalled by the CPSC. Users build a product inventory and receive push alerts when future recalls affect items they own. The app targets 85M+ US households with children who need peace of mind about product safety.
@@ -37,32 +37,43 @@ RecallRadar lets parents and caregivers scan any product barcode to instantly ch
 
 ## Build / Test / Deploy
 ```bash
-# Install dependencies
-bun install
+cd recallradar
+bun install              # Install dependencies
+bun run dev              # Start dev server (localhost:3008)
+bun run test             # Run Vitest unit/integration tests (NOT bun test!)
+bun run test:e2e         # Run Playwright E2E tests
+bun run build            # Production build
+bun run lint             # ESLint check
+bun run typecheck        # TypeScript type checking
+bun run db:migrate       # Run Supabase migrations (future)
+bun run db:seed          # Seed database with sample data (future)
+bun run db:types         # Generate TypeScript types from Supabase schema (future)
+```
 
-# Development server
-bun dev
+**IMPORTANT**: Always use `bun run test` (which runs vitest via package.json script), NOT `bun test` (which invokes Bun's native test runner and will pick up Playwright files incorrectly).
 
-# Build for production
-bun run build
-
-# Run unit tests
-bun test
-
-# Run E2E tests
-bunx playwright test
-
-# Lint
-bun run lint
-
-# Type check
-bun run typecheck
-
-# Database migrations
-bunx supabase db push
-
-# Generate Supabase types
-bunx supabase gen types typescript --local > src/lib/database.types.ts
+## Project Structure
+```
+recallradar/
+  src/
+    app/              # Next.js App Router pages and layouts
+      layout.tsx      # Root layout with header/footer shell
+      page.tsx        # Landing page with hero, stats, features
+      page.test.tsx   # Unit tests for landing page
+      globals.css     # Tailwind imports and CSS custom properties
+    components/       # Reusable React components
+    lib/              # Utility functions and helpers
+      env.ts          # Environment variable accessors
+      env.test.ts     # Tests for env helpers
+      test-setup.ts   # Vitest setup file
+      scanner/        # Barcode scanning pipeline (QuaggaJS/ZXing)
+      recall/         # CPSC recall lookup logic
+    types/            # TypeScript type definitions
+      index.ts        # Shared types (Product, Recall, ScanResult, etc.)
+  e2e/                # Playwright E2E tests
+    smoke.spec.ts     # Basic smoke tests for landing page
+  public/             # Static assets
+  docs/               # Architecture and design documents
 ```
 
 ## Architecture Decisions
@@ -127,8 +138,60 @@ Incremental Static Regeneration generates "Is [product] recalled" pages that rev
 | Premium | $2.99/mo | Product inventory (500 items), push alerts, full history, no ads |
 | Facility | $9.99/mo | Unlimited inventory, team accounts, compliance reports |
 
+## LLM-Testable Design
+All interactive elements include `data-testid` attributes for Playwright testing.
+- `data-testid="header"` -- Page header
+- `data-testid="nav"` -- Navigation bar
+- `data-testid="logo-link"` -- Logo/home link
+- `data-testid="nav-scan"` -- Scan nav link
+- `data-testid="nav-inventory"` -- My Products nav link
+- `data-testid="nav-login"` -- Sign in button
+- `data-testid="main-content"` -- Main content area
+- `data-testid="footer"` -- Page footer
+- `data-testid="footer-privacy"` -- Privacy footer link
+- `data-testid="footer-terms"` -- Terms footer link
+- `data-testid="footer-contact"` -- Contact footer link
+- `data-testid="hero-section"` -- Hero section
+- `data-testid="hero-title"` -- Hero heading
+- `data-testid="hero-subtitle"` -- Hero subheading
+- `data-testid="hero-cta"` -- Hero CTA button group
+- `data-testid="cta-scan-button"` -- Scan barcode CTA button
+- `data-testid="cta-browse-button"` -- Browse recalls CTA button
+- `data-testid="stats-section"` -- Statistics section
+- `data-testid="stat-products-scanned"` -- Products scanned counter
+- `data-testid="stat-recalls-tracked"` -- Recalls tracked counter
+- `data-testid="stat-families-protected"` -- Families protected counter
+- `data-testid="how-it-works-section"` -- How it works section
+- `data-testid="step-scan"` -- Step 1: Scan
+- `data-testid="step-check"` -- Step 2: Check
+- `data-testid="step-protect"` -- Step 3: Protect
+- `data-testid="features-section"` -- Features section
+- `data-testid="feature-scanner"` -- Barcode scanning feature
+- `data-testid="feature-cpsc"` -- CPSC data feature
+- `data-testid="feature-inventory"` -- Product inventory feature
+- `data-testid="feature-alerts"` -- Push alerts feature
+- `data-testid="feature-history"` -- Scan history feature
+- `data-testid="feature-search"` -- Manual search feature
+- `data-testid="cta-section"` -- Bottom CTA section
+- `data-testid="cta-start-button"` -- Get started button
+
+Convention: All new interactive elements MUST include a `data-testid` attribute.
+
+## Environment Variables
+See `.env.example` for required variables:
+- `NEXT_PUBLIC_SUPABASE_URL` -- Supabase project URL (client-side accessible)
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` -- Supabase anonymous key (client-side accessible)
+- `STRIPE_SECRET_KEY` -- Stripe secret API key (server-only)
+- `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` -- Stripe publishable key (client-side accessible)
+- `NEXT_PUBLIC_VAPID_PUBLIC_KEY` -- VAPID public key for web push (client-side accessible)
+- `VAPID_PRIVATE_KEY` -- VAPID private key for web push (server-only)
+- `TEST_MODE` -- Enable test mode (bypasses rate limits, enables test accounts)
+- `NEXT_PUBLIC_APP_URL` -- Public app URL (client-side accessible)
+
+**IMPORTANT**: Any environment variable accessed in client components or browser code MUST be prefixed with `NEXT_PUBLIC_`. Server-only secrets (like `STRIPE_SECRET_KEY`) do NOT get the prefix.
+
 ## Model & Effort
 Always use Claude Opus 4.6 with max effort.
 
 ## Version
-0.0.0
+0.1.0
