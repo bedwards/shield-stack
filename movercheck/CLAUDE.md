@@ -1,6 +1,6 @@
 # MoverCheck — Moving Company Scam Protection
 
-## Status: Planning Complete
+## Status: Scaffold Complete
 
 ## Product Overview
 
@@ -45,32 +45,23 @@ MoverCheck lets anyone enter a moving company name or USDOT number and instantly
 ## Build / Test / Deploy
 
 ```bash
-# Install dependencies
-cd movercheck && bun install
+cd movercheck
+bun install              # Install dependencies
+bun run dev              # Start dev server (localhost:3000)
+bun run build            # Production build
+bun run lint             # ESLint
+bun run test             # Run Vitest unit/integration tests (NEVER use `bun test`)
+bun run test:e2e         # Run Playwright E2E tests
+bun run test:e2e:ui      # Playwright E2E with UI mode
+```
 
-# Development
-bun dev                    # Next.js dev server on :3000
+**IMPORTANT:** Always use `bun run test` (NOT `bun test`). `bun test` invokes Bun's native test runner which picks up Playwright e2e files and doesn't use the Vitest config.
 
-# Build
-bun run build              # Production build
-
-# Test
-bun test                   # Unit tests (Vitest)
-bun run test:e2e           # Playwright E2E tests
-
-# Lint
-bun run lint               # ESLint + Prettier
-
-# Database
-bunx supabase db push      # Apply migrations
-bunx supabase db reset     # Reset local DB
-
-# Type checking
-bun run typecheck          # tsc --noEmit
-
-# Deploy
-# Automatic via Vercel on push to main
-# Preview deploys on PRs
+### Future commands (not yet wired up)
+```bash
+bun run db:migrate       # Run Supabase migrations
+bun run db:seed          # Seed FMCSA company data
+bun run db:types         # Generate TypeScript types from Supabase schema
 ```
 
 ## Architecture
@@ -140,15 +131,60 @@ Color mapping: Green (70-100), Yellow (40-69), Red (0-39)
 - Webhook handler for payment lifecycle events
 - AdSense on free-tier pages (company summary, guides)
 
-## Version
-0.1.0
+## Project Structure
+```
+movercheck/
+  src/
+    app/              # Next.js App Router pages and layouts
+      layout.tsx      # Root layout with header/footer shell
+      page.tsx        # Landing page with hero, search, stats, CTA
+      globals.css     # Tailwind imports and CSS custom properties
+    components/       # Reusable React components
+    lib/              # Utility functions and helpers
+      env.ts          # Environment variable accessors
+      env.test.ts     # Tests for env helpers
+      test-setup.ts   # Vitest setup file
+    types/            # TypeScript type definitions
+      index.ts        # Shared types (Company, TrustScore, FmcsaData, etc.)
+  e2e/                # Playwright E2E tests
+    smoke.spec.ts     # Basic smoke tests for landing page
+  public/             # Static assets
+  docs/               # Architecture and design documents
+```
 
 ## Model & Effort
 Always use Claude Opus 4.6 with max effort.
 
-## LLM-Testability
-- All interactive elements have `data-testid` attributes
-- `TEST_MODE=true` env var enables test accounts, mock FMCSA data, and bypasses rate limits
-- Test seed data includes known companies with various trust score levels
-- No CAPTCHAs in test/preview environments
-- E2E tests in `e2e/` directory using Playwright
+## LLM-Testable Design
+All interactive elements include `data-testid` attributes for Playwright testing.
+- `data-testid="header"` -- Page header
+- `data-testid="nav"` -- Navigation bar
+- `data-testid="logo-link"` -- Logo/home link
+- `data-testid="nav-search"` -- Search movers nav link
+- `data-testid="nav-guides"` -- Guides nav link
+- `data-testid="nav-login"` -- Sign in button
+- `data-testid="main-content"` -- Main content area
+- `data-testid="footer"` -- Page footer
+- `data-testid="hero-section"` -- Hero section
+- `data-testid="hero-title"` -- Hero heading
+- `data-testid="hero-subtitle"` -- Hero subheading
+- `data-testid="search-form"` -- Search form
+- `data-testid="search-input"` -- Search input field
+- `data-testid="search-button"` -- Search submit button
+- `data-testid="stats-section"` -- Statistics section
+- `data-testid="how-it-works-section"` -- How it works section
+- `data-testid="cta-section"` -- Bottom CTA section
+- `data-testid="cta-search-button"` -- Bottom CTA button
+
+Convention: All new interactive elements MUST include a `data-testid` attribute.
+
+## Environment Variables
+See `.env.example` for required variables:
+- `NEXT_PUBLIC_SUPABASE_URL` -- Supabase project URL (client-accessible)
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` -- Supabase anonymous key (client-accessible)
+- `NEXT_PUBLIC_APP_URL` -- Public app URL (client-accessible)
+- `STRIPE_SECRET_KEY` -- Stripe secret API key (server-only, NO NEXT_PUBLIC_ prefix)
+- `TEST_MODE` -- Enable test mode (bypasses rate limits, enables test accounts)
+
+## Version
+0.1.0
