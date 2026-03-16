@@ -11,9 +11,9 @@ This file is an artifact. Workers read it before starting work. Reviewers append
 
 ---
 
-## 2026-03-16 | ghostboard | Scope creep across products
-**What happened:** GhostBoard worker committed ScoreRebound files because both workers shared the same repo checkout without isolation.
-**Rule:** Workers MUST use git worktrees (`git worktree add`) for isolation. Never work directly on the main repo checkout when other workers may be active.
+## 2026-03-16 | ghostboard, cliffcheck, speedproof | Scope creep across products (RECURRING — 3 incidents)
+**What happened:** Multiple workers committed other products' files because they shared the repo checkout. This happened with GhostBoard (included ScoreRebound), CliffCheck (included SpeedProof), and SpeedProof (included CliffCheck). Every time parallel workers share a checkout, this happens.
+**Rule:** Workers MUST use git worktrees for isolation. Before committing, run `git diff --name-only main...HEAD` and verify EVERY file is under your product's directory. If you see another product's files, you have contamination — do NOT commit. The BillWatch worker used `git worktree add .claude/worktrees/billwatch-163` and was the only clean PR in its batch.
 
 ## 2026-03-16 | ghostboard | Deleted existing files
 **What happened:** Worker deleted `ghostboard/docs/architecture.md` that existed before the scaffold. The planner had created it.
