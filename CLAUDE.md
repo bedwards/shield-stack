@@ -122,12 +122,32 @@ Each product independently chooses its stack based on research:
 - Worker bumps minor version on each merged PR with meaningful changes
 - Major version bumps require human approval
 
+### Database & Data Rules
+- **Migrations**: Always use popular third-party tools. NEVER roll your own.
+  - Supabase: `supabase migration new` + `supabase db push`
+  - Prisma: `prisma migrate dev` + `prisma migrate deploy`
+  - Drizzle: `drizzle-kit generate` + `drizzle-kit migrate`
+- **Incremental updates only**: Every data process must be resumable
+  - Seed scripts: idempotent (upsert / ON CONFLICT DO NOTHING)
+  - Scrapers/crawlers: store last-processed cursor, resume from there
+  - Migrations: forward-only, additive. Never DROP TABLE in production.
+- **No destructive resets**: Quick check of where we left off, then continue
+
 ### Git Workflow
 - Feature branches: `{product-slug}/issue-{N}-{short-description}`
-- Worktrees: `.claude/worktrees/{branch-name}`
+- Workers MUST use git worktrees for isolation when running in parallel
 - One PR per issue, one issue per worker
 - Squash merge to main
 - Secrets in `~/.config/.env`, NEVER in repo or client-side code
+
+### Continuous Improvement — Learnings System
+Every instance works in isolation. The ONLY way to pass knowledge between context windows is through committed artifacts.
+
+- `.ralph/learnings.md` — Growing file of hard-won lessons from past cycles
+- **Workers** read it before starting. **Reviewers** append to it after every review.
+- **Researchers** mine past PR review comments for recurring patterns and add them.
+- Product `CLAUDE.md` files capture product-specific gotchas as they're discovered.
+- If a mistake happens twice, it must be documented. If it's documented, it must not happen again.
 
 ## RALPH Phase Roles
 

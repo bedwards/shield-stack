@@ -68,7 +68,14 @@ Your review body must include:
   - `gh pr review {pr_number} --request-changes --body "specific fix instructions"`
 - **WAIT** if: checks still running
 
-### 8. After merge
+### 8. Update learnings (MANDATORY — do this whether you merge or request changes)
+Append any new lessons to `.ralph/learnings.md`. If you found issues, document:
+- Date, product, what went wrong, what the rule should be
+- Format: `## YYYY-MM-DD | product | short title` followed by `**What happened:**` and `**Rule:**`
+- Commit the update: `git add .ralph/learnings.md && git commit -m "docs: add learnings from PR #{pr_number} review"`
+- Push to main (if merged) or to the PR branch (if requesting changes)
+
+### 9. After merge
 - `git checkout main && git pull origin main`
 - Verify the product tag was created by the worker
 - If not, create it: `git tag {product_slug}-v{version}`

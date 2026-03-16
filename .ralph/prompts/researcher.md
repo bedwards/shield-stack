@@ -33,7 +33,13 @@ Research the web, GitHub, Reddit/X, and the codebase to find improvements, valid
    - Test coverage gaps
    - Dependency updates needed
    - Documentation gaps
-9. Output a JSON object to stdout:
+9. Mine past PR reviews for recurring patterns:
+   - `gh pr list --repo bedwards/shield-stack --state merged --limit 10 --json number`
+   - For recent PRs, read review comments: `gh api repos/bedwards/shield-stack/pulls/{N}/reviews --jq '.[].body'`
+   - Look for repeated findings (same mistake across multiple PRs)
+   - If you find a pattern, add it to `.ralph/learnings.md` and commit
+10. Read `.ralph/learnings.md` and check if any rules are outdated or need refinement
+11. Output a JSON object to stdout:
 
 ```json
 {

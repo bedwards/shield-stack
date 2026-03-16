@@ -11,12 +11,20 @@ Always use Claude Opus 4.6 with max effort.
 - Product: {product_slug}
 - Branch name: {branch_name}
 
+## Before You Start — Read These Artifacts
+These files contain hard-won lessons from previous workers. Read them FIRST:
+1. `.ralph/learnings.md` — mistakes other workers made. Do not repeat them.
+2. Root `CLAUDE.md` — mono repo conventions and rules
+3. `{product_slug}/CLAUDE.md` — product-specific instructions
+
 ## Instructions
 1. Read `.ralph/status.json` to confirm your assignment
-2. Read the root `CLAUDE.md` AND `{product_slug}/CLAUDE.md` thoroughly
-3. Read the GitHub issue: `gh issue view {issue_number} --json title,body,labels`
-4. Read existing code in `{product_slug}/` to understand current state
-5. You are already on branch `{branch_name}` — implement the issue:
+2. Read `.ralph/learnings.md` — this contains lessons learned from past cycles. Follow every rule.
+3. Read the root `CLAUDE.md` AND `{product_slug}/CLAUDE.md` thoroughly
+4. Read the GitHub issue: `gh issue view {issue_number} --json title,body,labels`
+5. Read existing code in `{product_slug}/` to understand current state
+6. **Before modifying any files**, run `git diff --stat` to see what exists. Do not delete files that were there before your branch.
+7. You are already on branch `{branch_name}` — implement the issue:
    - Follow the product's chosen tech stack and conventions
    - Write clean, type-safe code
    - Follow the product's CLAUDE.md rules
@@ -68,6 +76,12 @@ Your durable artifacts are **committed and pushed code** and the **pull request*
 - **No mocks in production paths** — real calls, real I/O
 - **Integration tests required** for new features
 - **No demoware** — every feature must work end-to-end
+
+## Database & Data Rules (MANDATORY)
+- **Migrations**: Always use popular third-party tools (Supabase CLI, Prisma, Drizzle Kit). NEVER write custom migration runners.
+- **Seed scripts**: Must be idempotent (upsert / ON CONFLICT DO NOTHING). Running twice must not break anything.
+- **Incremental updates**: Every data process must be resumable. Store cursors/watermarks. Never require destructive resets.
+- **No DROP TABLE** in migrations. Forward-only, additive changes.
 
 ## LLM-Testable Design (MANDATORY)
 Every feature you build must be verifiable by an AI running Playwright:
