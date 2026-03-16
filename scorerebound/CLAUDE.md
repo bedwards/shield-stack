@@ -1,6 +1,6 @@
 # ScoreRebound — Student Loan Credit Score Recovery Planner
 
-## Status: Planning Complete
+## Status: Scaffolded (v0.1.0)
 
 ## Product Overview
 
@@ -34,10 +34,44 @@ The product delivers a quiz funnel (5 questions) that generates a personalized c
 | Payments | Stripe | Affiliate tracking, future premium tier |
 | Deploy | Vercel | Instant deploys, preview URLs, edge functions |
 | Package Manager | Bun | Fast installs, native TypeScript |
-| Styling | Tailwind CSS | Rapid UI development, responsive |
+| Styling | Tailwind CSS v4 | Rapid UI development, responsive |
 | Charts | Recharts | Score progress visualization |
 | Email | Resend | Transactional emails for drip campaign |
 | Analytics | Plausible/PostHog | Privacy-friendly, conversion tracking |
+| Unit Testing | Vitest + @testing-library/react | Fast, jsdom environment |
+| E2E Testing | Playwright | LLM-testable, cross-browser |
+
+## Project Structure
+
+```
+scorerebound/
+├── CLAUDE.md               # This file — product-specific instructions
+├── .env.example            # Environment variable template
+├── .gitignore              # Git ignores (node_modules, .next, etc.)
+├── package.json            # Dependencies and scripts
+├── tsconfig.json           # TypeScript strict mode config
+├── next.config.ts          # Next.js configuration
+├── postcss.config.mjs      # PostCSS with Tailwind v4
+├── eslint.config.mjs       # ESLint flat config (next/core-web-vitals)
+├── vitest.config.ts        # Vitest unit test config
+├── playwright.config.ts    # Playwright E2E config
+├── bun.lock                # Bun lockfile
+├── src/
+│   ├── app/
+│   │   ├── layout.tsx      # Root layout with header/footer shell
+│   │   ├── page.tsx        # Landing page hero
+│   │   ├── page.test.tsx   # Unit tests for landing page
+│   │   └── globals.css     # Tailwind CSS imports
+│   ├── components/         # Shared UI components
+│   ├── lib/                # Utility functions, Supabase client, etc.
+│   ├── types/              # TypeScript type definitions
+│   └── test-setup.ts       # Vitest setup (jest-dom matchers)
+├── e2e/
+│   └── smoke.spec.ts       # Playwright smoke test
+├── public/                 # Static assets
+└── docs/
+    └── architecture.md     # Architecture documentation
+```
 
 ## Build / Test / Deploy
 
@@ -46,26 +80,29 @@ The product delivers a quiz funnel (5 questions) that generates a personalized c
 bun install
 
 # Development
-bun dev                    # Next.js dev server (localhost:3000)
+bun dev                    # Next.js dev server with Turbopack (localhost:3000)
 
 # Testing
-bun test                   # Unit tests (vitest)
-bun test:e2e              # Playwright E2E tests
-bun test:e2e:ui           # Playwright with UI mode
+bun run test               # Unit tests (Vitest)
+bun run test:watch         # Unit tests in watch mode
+bun run test:e2e           # Playwright E2E tests
+bun run test:e2e:ui        # Playwright with UI mode
 
-# Build
-bun run build             # Production build
-bun start                 # Start production server
+# Build & Start
+bun run build              # Production build
+bun start                  # Start production server
 
-# Database
-bunx supabase db reset    # Reset local DB
-bunx supabase db push     # Push migrations to remote
-bunx supabase gen types   # Generate TypeScript types
+# Linting & Type Checking
+bun run lint               # ESLint
+bun run typecheck          # TypeScript strict check
 
-# Linting
-bun lint                  # ESLint
-bun typecheck             # TypeScript strict check
+# Database (when Supabase is set up)
+bunx supabase db reset     # Reset local DB
+bunx supabase db push      # Push migrations to remote
+bunx supabase gen types    # Generate TypeScript types
 ```
+
+**Important**: Use `bun run test` (not `bun test`) to invoke Vitest. `bun test` invokes Bun's built-in test runner which is different.
 
 ## Architecture Decisions
 
@@ -154,15 +191,50 @@ bun typecheck             # TypeScript strict check
 
 Always use Claude Opus 4.6 with max effort. No exceptions.
 
-## LLM-Testable Design
+## LLM-Testable Design (MANDATORY)
 
-- All buttons, inputs, and interactive elements have `data-testid` attributes
+All UI components MUST follow these conventions:
+
+### data-testid Convention
+- All buttons, inputs, links, and interactive elements MUST have `data-testid` attributes
+- Format: `{component}-{element}` (e.g., `hero-cta-primary`, `nav-cta`, `footer-link-ibr`)
+- Sections: `{section-name}-section` (e.g., `hero-section`, `stats-section`)
+- Navigation: `nav-{item}` (e.g., `nav-how-it-works`, `nav-cta`)
+- Forms: `{form-name}-{field}` (e.g., `quiz-loan-type`, `quiz-submit`)
+
+### Existing data-testid Attributes (Landing Page)
+- `header`, `main-nav`, `logo-link`, `logo-icon`
+- `nav-how-it-works`, `nav-recovery-paths`, `nav-faq`, `nav-cta`
+- `hero-section`, `hero-badge`, `hero-title`, `hero-description`
+- `hero-cta-primary`, `hero-cta-secondary`
+- `stats-section`, `stat-borrowers`, `stat-score-drop`, `stat-recovery-time`
+- `how-it-works-section`, `step-1`, `step-2`, `step-3`
+- `recovery-paths-section`, `path-ibr`, `path-ibr-link`, `path-rehabilitation`, `path-rehabilitation-link`, `path-consolidation`, `path-consolidation-link`
+- `cta-section`, `cta-start-quiz`
+- `footer`, `footer-link-ibr`, `footer-link-rehabilitation`, `footer-link-consolidation`
+- `footer-link-credit-building`, `footer-link-servicers`
+- `footer-link-privacy`, `footer-link-terms`, `footer-copyright`
+- `main-content`
+
+### Testing Requirements
 - `TEST_MODE=true` env var enables test accounts and bypasses rate limits
 - Test user accounts seeded via environment variables
 - No CAPTCHAs in test/preview environments
 - API endpoints return meaningful JSON errors
 - `e2e/` directory with Playwright tests for all critical flows
+- Unit tests in `src/**/*.test.{ts,tsx}` using Vitest + @testing-library/react
+
+## Environment Variables
+
+See `.env.example` for the full list. Key variables:
+- `NEXT_PUBLIC_SUPABASE_URL` — Supabase project URL
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` — Supabase anonymous key
+- `STRIPE_SECRET_KEY` — Stripe API secret key
+- `RESEND_API_KEY` — Resend email API key
+- `TEST_MODE` — Enable test mode (`true`/`false`)
+
+**NEVER commit secrets.** Use `.env.local` for local development, `.env.example` for templates.
 
 ## Version
 
-0.0.0
+0.1.0
