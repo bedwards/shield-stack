@@ -1,6 +1,6 @@
 # NetCheck — Pre-Procedure In-Network Verification
 
-## Status: Planning Complete
+## Status: Scaffold Complete
 
 ## Product Overview
 
@@ -44,33 +44,58 @@ Users enter their insurance plan, facility, and planned procedure. NetCheck chec
 ## Build / Test / Deploy
 
 ```bash
+cd netcheck
+
 # Install dependencies
 bun install
 
 # Development
-bun dev                    # Next.js dev server (localhost:3000)
+bun run dev                # Next.js dev server (localhost:3000)
 
-# Testing
-bun test                   # Unit tests (vitest)
-bun test:e2e              # Playwright E2E tests
-bun test:e2e:ui           # Playwright with UI mode
+# Testing — IMPORTANT: use `bun run test` NOT `bun test`
+# `bun test` invokes Bun's native runner and picks up Playwright files.
+# `bun run test` invokes vitest via package.json scripts.
+bun run test               # Unit tests (vitest)
+bun run test:e2e           # Playwright E2E tests
+bun run test:e2e:ui        # Playwright with UI mode
 
 # Build
-bun run build             # Production build
-bun start                 # Start production server
+bun run build              # Production build
+bun run start              # Start production server
 
-# Database
-bunx supabase db reset    # Reset local DB
-bunx supabase db push     # Push migrations to remote
-bunx supabase gen types   # Generate TypeScript types
+# Database (future)
+bunx supabase db reset     # Reset local DB
+bunx supabase db push      # Push migrations to remote
+bunx supabase gen types    # Generate TypeScript types
 
-# Data ingestion
-bun run ingest-npi        # Ingest NPI registry data
-bun run update-networks   # Update insurance network data
+# Data ingestion (future)
+bun run ingest-npi         # Ingest NPI registry data
+bun run update-networks    # Update insurance network data
 
 # Linting
-bun lint                  # ESLint
-bun typecheck             # TypeScript strict check
+bun run lint               # ESLint
+```
+
+## Project Structure
+
+```
+netcheck/
+  src/
+    app/              # Next.js App Router pages and layouts
+      layout.tsx      # Root layout with header/footer shell
+      page.tsx        # Landing page with hero, stats, CTA
+      globals.css     # Tailwind imports and CSS custom properties
+    components/       # Reusable React components
+    lib/              # Utility functions and helpers
+      env.ts          # Environment variable accessors
+      env.test.ts     # Unit tests for env helpers
+      test-setup.ts   # Vitest setup file
+    types/            # TypeScript type definitions
+      index.ts        # Shared types (Provider, InsurancePlan, Verification, etc.)
+  e2e/                # Playwright E2E tests
+    smoke.spec.ts     # Basic smoke tests for landing page
+  public/             # Static assets
+  docs/               # Architecture and design documents
 ```
 
 ## Architecture Decisions
@@ -182,6 +207,47 @@ Always use Claude Opus 4.6 with max effort. No exceptions.
 - `e2e/` directory with Playwright tests for all critical flows
 - Mock NPI data available for testing without live API calls
 
+### data-testid Registry
+
+- `data-testid="header"` -- Page header
+- `data-testid="nav"` -- Navigation bar
+- `data-testid="logo-link"` -- Logo/home link
+- `data-testid="nav-verify"` -- Verify Network nav link
+- `data-testid="nav-providers"` -- Find Providers nav link
+- `data-testid="nav-checklist"` -- Checklist nav link
+- `data-testid="nav-login"` -- Sign in button
+- `data-testid="main-content"` -- Main content area
+- `data-testid="footer"` -- Page footer
+- `data-testid="footer-privacy"` -- Privacy footer link
+- `data-testid="footer-terms"` -- Terms footer link
+- `data-testid="footer-contact"` -- Contact footer link
+- `data-testid="landing-page"` -- Landing page wrapper
+- `data-testid="hero-section"` -- Hero section
+- `data-testid="hero-title"` -- Hero heading
+- `data-testid="hero-subtitle"` -- Hero subheading
+- `data-testid="hero-cta-button"` -- Hero call-to-action button
+- `data-testid="stats-section"` -- Statistics section
+- `data-testid="stat-surprise-bills"` -- Surprise bills stat
+- `data-testid="stat-avg-bill"` -- Average bill stat
+- `data-testid="stat-providers"` -- Providers involved stat
+- `data-testid="how-it-works-section"` -- How it works section
+- `data-testid="step-enter"` -- Step 1: Enter details
+- `data-testid="step-check"` -- Step 2: We check providers
+- `data-testid="step-protect"` -- Step 3: Get protected
+- `data-testid="cta-section"` -- Bottom CTA section
+- `data-testid="cta-verify-button"` -- Bottom CTA verify button
+
+Convention: All new interactive elements MUST include a `data-testid` attribute.
+
+## Environment Variables
+
+See `.env.example` for required variables:
+- `NEXT_PUBLIC_SUPABASE_URL` -- Supabase project URL (client-side, needs NEXT_PUBLIC_ prefix)
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` -- Supabase anonymous key (client-side, needs NEXT_PUBLIC_ prefix)
+- `STRIPE_SECRET_KEY` -- Stripe secret API key (server-only, NO NEXT_PUBLIC_ prefix)
+- `TEST_MODE` -- Enable test mode (bypasses payments, enables test accounts)
+- `NEXT_PUBLIC_APP_URL` -- Public app URL (client-side)
+
 ## Version
 
-0.0.0
+0.1.0
