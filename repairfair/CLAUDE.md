@@ -1,6 +1,6 @@
-# RepairFair — Appliance Repair Fair Price Estimator
+# RepairFair -- Appliance Repair Fair Price Estimator
 
-## Status: Planning Complete
+## Status: Scaffold Complete
 
 ## Product Overview
 RepairFair lets consumers describe appliance symptoms in plain English, uses Claude AI to diagnose the probable issue, and provides a fair price range for the repair based on location, appliance make/model, and crowdsourced pricing data. It eliminates the information asymmetry that lets repair shops overcharge homeowners who have no idea what a repair should cost.
@@ -12,12 +12,12 @@ RepairFair lets consumers describe appliance symptoms in plain English, uses Cla
 - Property managers evaluating repair invoices
 
 ### Key Features (MVP)
-1. **Symptom Input & AI Diagnosis** — Describe what's wrong in plain English, Claude AI identifies probable cause and repair needed
-2. **Fair Price Estimate** — Location-adjusted price range (low/median/high) for the diagnosed repair
-3. **Appliance Database** — Major brands and models with common issues and typical repair costs
-4. **Repair vs Replace Calculator** — Based on appliance age, repair cost, and replacement cost, recommend repair or replace
-5. **SEO Price Pages** — "How much should [appliance] [repair] cost" programmatic pages
-6. **Crowdsourced Pricing** — Users submit what they actually paid, building real-world pricing data
+1. **Symptom Input & AI Diagnosis** -- Describe what's wrong in plain English, Claude AI identifies probable cause and repair needed
+2. **Fair Price Estimate** -- Location-adjusted price range (low/median/high) for the diagnosed repair
+3. **Appliance Database** -- Major brands and models with common issues and typical repair costs
+4. **Repair vs Replace Calculator** -- Based on appliance age, repair cost, and replacement cost, recommend repair or replace
+5. **SEO Price Pages** -- "How much should [appliance] [repair] cost" programmatic pages
+6. **Crowdsourced Pricing** -- Users submit what they actually paid, building real-world pricing data
 
 ### Revenue Model
 - **Free tier**: 3 AI diagnoses/month, basic price ranges
@@ -48,13 +48,38 @@ Always use Claude Opus 4.6 with max effort.
 cd repairfair
 bun install              # Install dependencies
 bun run dev              # Start dev server (localhost:3002)
-bun test                 # Run Vitest unit/integration tests
+bun run test             # Run Vitest unit/integration tests (NEVER use "bun test")
 bun run test:e2e         # Run Playwright E2E tests
 bun run build            # Production build
-bun run lint             # ESLint + Prettier check
-bun run db:migrate       # Run Supabase migrations
-bun run db:seed          # Seed appliance + pricing data
-bun run db:types         # Generate TypeScript types from Supabase schema
+bun run lint             # ESLint check
+bun run db:migrate       # Run Supabase migrations (future)
+bun run db:seed          # Seed appliance + pricing data (future)
+bun run db:types         # Generate TypeScript types from Supabase schema (future)
+```
+
+**IMPORTANT**: Always use `bun run test` (NOT `bun test`). `bun test` invokes Bun's native test runner which picks up Playwright e2e files and doesn't use vitest config.
+
+## Project Structure
+```
+repairfair/
+  src/
+    app/              # Next.js App Router pages and layouts
+      layout.tsx      # Root layout with header/footer shell
+      page.tsx        # Landing page with hero, symptom input, popular repairs
+      globals.css     # Tailwind imports and CSS custom properties
+    components/       # Reusable React components
+    lib/              # Utility functions and helpers
+      env.ts          # Environment variable accessors
+      env.test.ts     # Tests for env helpers
+      test-setup.ts   # Vitest setup file
+      diagnosis/      # AI diagnosis pipeline logic
+      pricing/        # Pricing calculation and data logic
+    types/            # TypeScript type definitions
+      index.ts        # Shared types (Appliance, RepairType, Diagnosis, etc.)
+  e2e/                # Playwright E2E tests
+    smoke.spec.ts     # Basic smoke tests for landing page
+  public/             # Static assets
+  docs/               # Architecture and design documents
 ```
 
 ## Architecture Decisions
@@ -83,14 +108,14 @@ bun run db:types         # Generate TypeScript types from Supabase schema
 - Target keywords: "how much does [appliance] repair cost", "[appliance] not working", "should I repair or replace [appliance]"
 
 ### Data Model Overview
-- `appliances` — Appliance catalog (brand, model, category, avg_lifespan, avg_replacement_cost)
-- `repair_types` — Canonical repair types (name, category, avg_parts_cost, avg_labor_hours)
-- `price_estimates` — Location-adjusted price ranges (repair_type, zip, low, median, high)
-- `user_submissions` — Crowdsourced repair cost reports (appliance, repair, amount, zip, date)
-- `diagnoses` — AI diagnosis results (symptoms, diagnosis, confidence, repair_type, user_id)
-- `users` — Extended user profiles
-- `subscriptions` — Stripe subscription tracking
-- `report_purchases` — One-time premium report purchases
+- `appliances` -- Appliance catalog (brand, model, category, avg_lifespan, avg_replacement_cost)
+- `repair_types` -- Canonical repair types (name, category, avg_parts_cost, avg_labor_hours)
+- `price_estimates` -- Location-adjusted price ranges (repair_type, zip, low, median, high)
+- `user_submissions` -- Crowdsourced repair cost reports (appliance, repair, amount, zip, date)
+- `diagnoses` -- AI diagnosis results (symptoms, diagnosis, confidence, repair_type, user_id)
+- `users` -- Extended user profiles
+- `subscriptions` -- Stripe subscription tracking
+- `report_purchases` -- One-time premium report purchases
 
 ### API Integrations
 - **Claude API (Anthropic)**: Core AI diagnosis engine
@@ -105,5 +130,41 @@ bun run db:types         # Generate TypeScript types from Supabase schema
 - Feature gating: free = 3 diagnoses/month + basic price range, premium = unlimited + full reports
 - Affiliate link injection on repair and replacement recommendations
 
+## LLM-Testable Design
+All interactive elements include `data-testid` attributes for Playwright testing.
+- `data-testid="header"` -- Page header
+- `data-testid="nav"` -- Navigation bar
+- `data-testid="logo-link"` -- Logo/home link
+- `data-testid="nav-diagnose"` -- Get Diagnosis nav link
+- `data-testid="nav-cost"` -- Repair Costs nav link
+- `data-testid="nav-submit"` -- Submit Price nav link
+- `data-testid="nav-login"` -- Sign in button
+- `data-testid="main-content"` -- Main content area
+- `data-testid="footer"` -- Page footer
+- `data-testid="hero-section"` -- Hero section
+- `data-testid="hero-title"` -- Hero heading
+- `data-testid="hero-subtitle"` -- Hero subheading
+- `data-testid="symptom-form"` -- Symptom input form
+- `data-testid="symptom-input"` -- Symptom text input
+- `data-testid="diagnose-button"` -- Diagnose submit button
+- `data-testid="stats-section"` -- Statistics section
+- `data-testid="how-it-works-section"` -- How it works section
+- `data-testid="popular-repairs-section"` -- Popular repairs section
+- `data-testid="cta-submit-button"` -- CTA submit price button
+- `data-testid="footer-privacy"` -- Footer privacy link
+- `data-testid="footer-terms"` -- Footer terms link
+- `data-testid="footer-contact"` -- Footer contact link
+
+Convention: All new interactive elements MUST include a `data-testid` attribute.
+
+## Environment Variables
+See `.env.example` for required variables:
+- `NEXT_PUBLIC_SUPABASE_URL` -- Supabase project URL (client-safe)
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` -- Supabase anonymous key (client-safe)
+- `NEXT_PUBLIC_APP_URL` -- Public app URL (client-safe)
+- `ANTHROPIC_API_KEY` -- Anthropic API key (server-only, NO NEXT_PUBLIC_ prefix)
+- `STRIPE_SECRET_KEY` -- Stripe secret key (server-only, NO NEXT_PUBLIC_ prefix)
+- `TEST_MODE` -- Enable test mode (bypasses rate limits, enables test accounts)
+
 ## Version
-0.0.0
+0.1.0
