@@ -1,6 +1,6 @@
 # HOAshield — Homeowner Defense Against HOA Overreach
 
-## Status: Planning Complete
+## Status: Scaffold Complete
 
 ## Product Overview
 HOAshield helps homeowners fight unfair HOA fines and violations by using AI to analyze their CC&Rs (Covenants, Conditions & Restrictions), track violations, and generate legally-grounded dispute letters. 75M+ Americans live under HOA governance, and many face arbitrary enforcement, selective prosecution, and fines for ambiguous rules. HOAshield levels the playing field.
@@ -37,6 +37,8 @@ HOAshield helps homeowners fight unfair HOA fines and violations by using AI to 
 
 ## Build / Test / Deploy
 ```bash
+cd hoashield
+
 # Install dependencies
 bun install
 
@@ -46,11 +48,12 @@ bun dev
 # Build for production
 bun run build
 
-# Run unit tests
-bun test
+# Run unit tests — IMPORTANT: use `bun run test` NOT `bun test`
+# `bun test` invokes Bun's native test runner which ignores vitest config
+bun run test
 
 # Run E2E tests
-bunx playwright test
+bun run test:e2e
 
 # Lint
 bun run lint
@@ -58,10 +61,10 @@ bun run lint
 # Type check
 bun run typecheck
 
-# Database migrations
+# Database migrations (future)
 bunx supabase db push
 
-# Generate Supabase types
+# Generate Supabase types (future)
 bunx supabase gen types typescript --local > src/lib/database.types.ts
 ```
 
@@ -129,8 +132,72 @@ CC&Rs and violation notices contain sensitive personal information. Supabase Row
 | Premium | $4.99/mo | Unlimited letters, violation tracker, document storage, letter history |
 | Pro | $14.99/mo | Everything + priority AI analysis, phone consultation scheduling |
 
+## Project Structure
+```
+hoashield/
+  src/
+    app/              # Next.js App Router pages and layouts
+      layout.tsx      # Root layout with header/footer shell
+      page.tsx        # Landing page with hero, how-it-works, CTA
+      globals.css     # Tailwind imports and CSS custom properties
+    components/       # Reusable React components
+    lib/              # Utility functions and helpers
+      env.ts          # Environment variable accessors
+      test-setup.ts   # Vitest setup file
+      legal/          # State HOA law helpers (future)
+      pdf/            # PDF parsing utilities (future)
+    types/            # TypeScript type definitions
+      index.ts        # Shared types (Property, Violation, CcrDocument, etc.)
+  e2e/                # Playwright E2E tests
+    smoke.spec.ts     # Basic smoke tests for landing page
+  public/             # Static assets
+  docs/               # Architecture and design documents
+```
+
+## LLM-Testable Design
+All interactive elements include `data-testid` attributes for Playwright testing.
+- `data-testid="header"` -- Page header
+- `data-testid="nav"` -- Navigation bar
+- `data-testid="logo-link"` -- Logo/home link
+- `data-testid="nav-upload"` -- Upload CC&Rs nav link
+- `data-testid="nav-violations"` -- My Violations nav link
+- `data-testid="nav-states"` -- State Laws nav link
+- `data-testid="nav-login"` -- Sign in button
+- `data-testid="main-content"` -- Main content area
+- `data-testid="footer"` -- Page footer
+- `data-testid="hero-section"` -- Hero section
+- `data-testid="hero-title"` -- Hero heading
+- `data-testid="hero-subtitle"` -- Hero subheading
+- `data-testid="hero-cta"` -- Hero CTA button group
+- `data-testid="cta-upload-button"` -- Upload CC&Rs CTA button
+- `data-testid="cta-states-button"` -- State Laws CTA button
+- `data-testid="stats-section"` -- Statistics section
+- `data-testid="how-it-works-section"` -- How it works section
+- `data-testid="step-upload"` -- Step 1: Upload
+- `data-testid="step-analyze"` -- Step 2: Analyze
+- `data-testid="step-dispute"` -- Step 3: Dispute
+- `data-testid="cta-section"` -- Bottom CTA section
+- `data-testid="cta-bottom-button"` -- Bottom CTA button
+- `data-testid="footer-privacy"` -- Privacy link
+- `data-testid="footer-terms"` -- Terms link
+- `data-testid="footer-contact"` -- Contact link
+
+Convention: All new interactive elements MUST include a `data-testid` attribute.
+
+## Environment Variables
+See `.env.example` for required variables:
+- `NEXT_PUBLIC_SUPABASE_URL` -- Supabase project URL (client-accessible)
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` -- Supabase anonymous key (client-accessible)
+- `NEXT_PUBLIC_APP_URL` -- Public app URL (client-accessible)
+- `STRIPE_SECRET_KEY` -- Stripe secret API key (server-only)
+- `CLAUDE_API_KEY` -- Anthropic API key for CC&R analysis (server-only)
+- `TEST_MODE` -- Enable test mode (bypasses rate limits, enables test accounts)
+
+**IMPORTANT**: Any env var accessed in client components MUST have the `NEXT_PUBLIC_` prefix.
+Server-only secrets (Stripe, Claude API) do NOT get the prefix.
+
 ## Model & Effort
 Always use Claude Opus 4.6 with max effort.
 
 ## Version
-0.0.0
+0.1.0
