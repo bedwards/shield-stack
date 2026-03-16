@@ -1,6 +1,6 @@
-# GhostBoard — Employer Ghosting Rate Database
+# GhostBoard -- Employer Ghosting Rate Database
 
-## Status: Planning Complete
+## Status: Scaffold Complete
 
 ## Product Overview
 GhostBoard is a crowdsourced employer accountability platform where job seekers search any company and instantly see its ghosting rate (% of applicants who never hear back), average response time, and interview-to-offer ratio. Users report their own application outcomes, building the largest database of employer responsiveness. Think Glassdoor, but specifically for whether companies actually respond to applicants.
@@ -11,12 +11,12 @@ GhostBoard is a crowdsourced employer accountability platform where job seekers 
 - Recruiters who want to see/improve their company's score
 
 ### Key Features (MVP)
-1. **Company Search & Profile Pages** — Search any company, see ghosting stats on a dedicated SEO-optimized page
-2. **Report Submission Form** — Users report application outcomes (applied, heard back, interview, offer, ghosted) with validation and anti-spam
-3. **Ghosting Rate Dashboard** — Aggregate stats: ghosting rate %, avg days to respond, interview-to-offer ratio, trend over time
-4. **Company Comparison** — Side-by-side comparison of employer responsiveness
-5. **SEO Landing Pages** — SSG pages for "Does [company name] ghost applicants" queries
-6. **Recruiter Portal** — Paid tier for recruiters to claim profiles, respond to reports, and improve scores
+1. **Company Search & Profile Pages** -- Search any company, see ghosting stats on a dedicated SEO-optimized page
+2. **Report Submission Form** -- Users report application outcomes (applied, heard back, interview, offer, ghosted) with validation and anti-spam
+3. **Ghosting Rate Dashboard** -- Aggregate stats: ghosting rate %, avg days to respond, interview-to-offer ratio, trend over time
+4. **Company Comparison** -- Side-by-side comparison of employer responsiveness
+5. **SEO Landing Pages** -- SSG pages for "Does [company name] ghost applicants" queries
+6. **Recruiter Portal** -- Paid tier for recruiters to claim profiles, respond to reports, and improve scores
 
 ### Revenue Model
 - **Free tier**: Search companies, view ghosting rates, submit 3 reports/month
@@ -46,13 +46,33 @@ Always use Claude Opus 4.6 with max effort.
 cd ghostboard
 bun install              # Install dependencies
 bun run dev              # Start dev server (localhost:3000)
-bun test                 # Run Vitest unit/integration tests
+bun run test             # Run Vitest unit/integration tests
 bun run test:e2e         # Run Playwright E2E tests
 bun run build            # Production build
 bun run lint             # ESLint + Prettier check
-bun run db:migrate       # Run Supabase migrations
-bun run db:seed          # Seed database with sample data
-bun run db:types         # Generate TypeScript types from Supabase schema
+bun run db:migrate       # Run Supabase migrations (future)
+bun run db:seed          # Seed database with sample data (future)
+bun run db:types         # Generate TypeScript types from Supabase schema (future)
+```
+
+## Project Structure
+```
+ghostboard/
+  src/
+    app/              # Next.js App Router pages and layouts
+      layout.tsx      # Root layout with header/footer shell
+      page.tsx        # Landing page with hero, search, stats
+      globals.css     # Tailwind imports and CSS custom properties
+    components/       # Reusable React components
+    lib/              # Utility functions and helpers
+      env.ts          # Environment variable accessors
+      test-setup.ts   # Vitest setup file
+    types/            # TypeScript type definitions
+      index.ts        # Shared types (Company, Report, ApplicationStatus)
+  e2e/                # Playwright E2E tests
+    smoke.spec.ts     # Basic smoke tests for landing page
+  public/             # Static assets
+  docs/               # Architecture and design documents
 ```
 
 ## Architecture Decisions
@@ -73,12 +93,12 @@ bun run db:types         # Generate TypeScript types from Supabase schema
 - Target keywords: "does [company] ghost applicants", "[company] hiring process", "[company] application response time"
 
 ### Data Model Overview
-- `companies` — Company profiles (name, domain, industry, size, location)
-- `reports` — User-submitted application outcomes (status, dates, role level)
-- `company_stats` — Materialized aggregate stats (ghosting rate, avg response time)
-- `users` — Extended user profiles (job seeker vs recruiter)
-- `subscriptions` — Stripe subscription tracking
-- `company_claims` — Recruiter company profile claims
+- `companies` -- Company profiles (name, domain, industry, size, location)
+- `reports` -- User-submitted application outcomes (status, dates, role level)
+- `company_stats` -- Materialized aggregate stats (ghosting rate, avg response time)
+- `users` -- Extended user profiles (job seeker vs recruiter)
+- `subscriptions` -- Stripe subscription tracking
+- `company_claims` -- Recruiter company profile claims
 
 ### API Integrations
 - **Clearbit/PDL (future)**: Company data enrichment (logo, industry, size)
@@ -91,5 +111,34 @@ bun run db:types         # Generate TypeScript types from Supabase schema
 - Feature gating middleware based on subscription tier
 - Recruiter portal behind paywall with Stripe Connect consideration for future marketplace features
 
+## LLM-Testable Design
+All interactive elements include `data-testid` attributes for Playwright testing.
+- `data-testid="header"` -- Page header
+- `data-testid="nav"` -- Navigation bar
+- `data-testid="logo-link"` -- Logo/home link
+- `data-testid="nav-search"` -- Search nav link
+- `data-testid="nav-report"` -- Report nav link
+- `data-testid="nav-login"` -- Sign in button
+- `data-testid="main-content"` -- Main content area
+- `data-testid="footer"` -- Page footer
+- `data-testid="hero-section"` -- Hero section
+- `data-testid="hero-title"` -- Hero heading
+- `data-testid="hero-subtitle"` -- Hero subheading
+- `data-testid="search-form"` -- Search form
+- `data-testid="search-input"` -- Search input field
+- `data-testid="search-button"` -- Search submit button
+- `data-testid="stats-section"` -- Statistics section
+- `data-testid="cta-report-button"` -- Call-to-action report button
+
+Convention: All new interactive elements MUST include a `data-testid` attribute.
+
+## Environment Variables
+See `.env.example` for required variables:
+- `SUPABASE_URL` -- Supabase project URL
+- `SUPABASE_ANON_KEY` -- Supabase anonymous key
+- `STRIPE_SECRET_KEY` -- Stripe secret API key
+- `TEST_MODE` -- Enable test mode (bypasses rate limits, enables test accounts)
+- `NEXT_PUBLIC_APP_URL` -- Public app URL
+
 ## Version
-0.0.0
+0.1.0
