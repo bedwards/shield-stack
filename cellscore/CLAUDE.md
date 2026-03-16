@@ -1,6 +1,6 @@
 # CellScore — Unified Cell Plan Finder with Real Coverage at Your Address
 
-## Status: Planning Complete
+## Status: Scaffold Complete
 
 ## Product Overview
 CellScore combines real signal strength data (FCC Broadband Data Collection + crowdsourced reports) with a comprehensive carrier/MVNO plan database to recommend the best cell phone plans for any specific address. Unlike carrier coverage maps that show vague blobs, CellScore uses actual measured data to tell you which carriers actually work well at your address, then recommends the cheapest plans that meet your needs.
@@ -48,34 +48,17 @@ Always use Claude Opus 4.6 with max effort.
 
 ## Build / Test / Deploy
 ```bash
-# Install dependencies
-bun install
-
-# Development
-bun dev                    # Next.js dev server on :3000
-
-# Testing
-bun test                   # Unit tests (vitest)
-bun test:e2e               # Playwright E2E tests
-
-# Linting & Formatting
-bun lint                   # ESLint
-bun format                 # Prettier
-
-# Database
-bun db:migrate             # Run Supabase migrations
-bun db:seed                # Seed carrier/plan data + FCC coverage data
-bun db:reset               # Reset local Supabase
-
-# Data Pipeline
-bun run import:fcc         # Import FCC BDC coverage data
-bun run import:plans       # Import/update carrier plan database
-bun run aggregate:coverage # Compute coverage aggregates per area
-
-# Build & Deploy
-bun build                  # Production build
-vercel --prod              # Deploy to production
+cd cellscore
+bun install              # Install dependencies
+bun run dev              # Start dev server (localhost:3000)
+bun run build            # Production build
+bun run lint             # ESLint
+bun run test             # Run Vitest unit/integration tests (NEVER use `bun test`)
+bun run test:e2e         # Run Playwright E2E tests
+bun run test:e2e:ui      # Playwright E2E with UI mode
 ```
+
+**IMPORTANT:** Always use `bun run test` (NOT `bun test`). `bun test` invokes Bun's native test runner which picks up Playwright e2e files and doesn't use the Vitest config.
 
 ## Architecture
 
