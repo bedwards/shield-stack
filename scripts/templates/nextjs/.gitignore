@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+
+# Build
+.next/
+out/
+
+# Environment (secrets in ~/.config/.env)
+.env
+.env.local
+.env.production
+!.env.example
+
+# Testing
+coverage/
+playwright-report/
+test-results/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+
+# Misc
+*.log
+*.tsbuildinfo
+next-env.d.ts
