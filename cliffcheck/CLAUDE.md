@@ -48,30 +48,74 @@ No existing tool shows the COMBINED cliff across all programs in a single view. 
 bun install
 
 # Development
-bun dev                    # Next.js dev server (localhost:3000)
+bun dev                    # Next.js dev server with Turbopack (localhost:3000)
 
-# Testing
-bun test                   # Unit tests (vitest) -- critical for calculation engine
-bun test:e2e              # Playwright E2E tests
-bun test:e2e:ui           # Playwright with UI mode
-bun test:calc             # Benefits calculation engine unit tests only
+# Testing — IMPORTANT: use "bun run test", NOT "bun test"
+# "bun test" invokes Bun's native test runner, which does NOT use vitest config
+bun run test               # Unit tests (vitest) -- critical for calculation engine
+bun run test:e2e           # Playwright E2E tests
+bun run test:e2e:ui        # Playwright with UI mode
 
 # Build
-bun run build             # Production build
-bun start                 # Start production server
+bun run build              # Production build
+bun start                  # Start production server
 
 # Database
-bunx supabase db reset    # Reset local DB
-bunx supabase db push     # Push migrations to remote
-bunx supabase gen types   # Generate TypeScript types
+bunx supabase db reset     # Reset local DB
+bunx supabase db push      # Push migrations to remote
+bunx supabase gen types    # Generate TypeScript types
 
 # Linting
-bun lint                  # ESLint
-bun typecheck             # TypeScript strict check
+bun run lint               # ESLint
+bun run typecheck          # TypeScript strict check
 
 # Benefits data
-bun run update-thresholds # Update benefits thresholds from source data
+bun run update-thresholds  # Update benefits thresholds from source data
 ```
+
+## IMPORTANT — `bun run test` vs `bun test`
+
+**Always use `bun run test`** (which runs the `test` script from package.json, invoking vitest).
+**Never use `bun test`** (which invokes Bun's native test runner, picks up Playwright files, and does not use vitest config).
+
+## Directory Structure
+
+```
+cliffcheck/
+├── src/
+│   ├── app/                # Next.js App Router pages
+│   │   ├── layout.tsx      # Root layout with Header/Footer
+│   │   ├── page.tsx        # Landing page with hero
+│   │   ├── calculator/     # Calculator page
+│   │   └── globals.css     # Tailwind CSS imports
+│   ├── components/         # Shared React components
+│   │   ├── Header.tsx      # Site header with navigation
+│   │   └── Footer.tsx      # Site footer with links
+│   ├── lib/                # Shared utilities
+│   │   ├── supabase.ts     # Supabase client
+│   │   └── calc/           # Benefits calculation engine modules
+│   └── test/               # Test setup
+│       └── setup.ts        # Vitest setup with testing-library
+├── e2e/                    # Playwright E2E tests (excluded from tsconfig)
+├── data/                   # Benefits rules source data (JSON)
+├── docs/                   # Architecture and design documents
+├── public/                 # Static assets
+└── CLAUDE.md               # This file
+```
+
+## Environment Variables
+
+Client-side vars (browser-accessible) MUST have the `NEXT_PUBLIC_` prefix:
+- `NEXT_PUBLIC_SUPABASE_URL` — Supabase project URL
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` — Supabase anonymous key
+- `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` — Analytics domain
+
+Server-only vars (NEVER exposed to client):
+- `SUPABASE_SERVICE_ROLE_KEY` — Supabase service role key
+- `STRIPE_SECRET_KEY` — Stripe secret key
+
+Special vars:
+- `TEST_MODE=true` — Enables test accounts, bypasses rate limits
 
 ## Architecture Decisions
 
