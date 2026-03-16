@@ -1,6 +1,6 @@
 # TenantShield — Habitability Documentation & Legal Notice Generator
 
-## Status: Planning Complete
+## Status: Scaffold Complete
 
 ## Product Overview
 TenantShield empowers renters to document habitability issues (mold, broken heating, pest infestations, water damage) with timestamped, GPS-tagged photos/videos, then generates state-specific legal demand letters using AI. It tracks landlord response deadlines per state law and provides escalation paths to code enforcement, health departments, and tenant legal aid. Every renter becomes their own advocate with legally sound documentation.
@@ -47,15 +47,34 @@ Always use Claude Opus 4.6 with max effort.
 ## Build / Test / Deploy
 ```bash
 cd tenantshield
-bun install              # Install dependencies
-bun run dev              # Start dev server (localhost:3003)
-bun test                 # Run Vitest unit/integration tests
-bun run test:e2e         # Run Playwright E2E tests
-bun run build            # Production build
-bun run lint             # ESLint + Prettier check
-bun run db:migrate       # Run Supabase migrations
-bun run db:seed          # Seed state law database
-bun run db:types         # Generate TypeScript types from Supabase schema
+
+# Install dependencies
+bun install
+
+# Development server
+bun run dev
+
+# Build for production
+bun run build
+
+# Run unit tests — IMPORTANT: use `bun run test` NOT `bun test`
+# `bun test` invokes Bun's native test runner which ignores vitest config
+bun run test
+
+# Run E2E tests
+bun run test:e2e
+
+# Lint
+bun run lint
+
+# Type check
+bun run typecheck
+
+# Database migrations (future)
+bunx supabase db push
+
+# Generate Supabase types (future)
+bunx supabase gen types typescript --local > src/lib/database.types.ts
 ```
 
 ## Architecture Decisions
@@ -115,5 +134,74 @@ bun run db:types         # Generate TypeScript types from Supabase schema
 - One-time purchase flow: after first free letter, pay $1.99 per additional letter
 - Affiliate integration for renter's insurance recommendations
 
+## Project Structure
+```
+tenantshield/
+  src/
+    app/              # Next.js App Router pages and layouts
+      layout.tsx      # Root layout with header/footer shell
+      page.tsx        # Landing page with hero, how-it-works, CTA
+      page.test.tsx   # Unit tests for landing page
+      globals.css     # Tailwind imports and CSS custom properties
+    components/       # Reusable React components
+    lib/              # Utility functions and helpers
+      env.ts          # Environment variable accessors
+      env.test.ts     # Unit tests for env helpers
+      test-setup.ts   # Vitest setup file
+      evidence/       # EXIF extraction and evidence management (future)
+      legal/          # State law helpers and letter generation (future)
+    types/            # TypeScript type definitions
+      index.ts        # Shared types (Property, HabitabilityIssue, Evidence, etc.)
+  e2e/                # Playwright E2E tests
+    smoke.spec.ts     # Basic smoke tests for landing page
+  public/             # Static assets
+  docs/               # Architecture and design documents
+```
+
+## LLM-Testable Design
+All interactive elements include `data-testid` attributes for Playwright testing.
+- `data-testid="header"` -- Page header
+- `data-testid="nav"` -- Navigation bar
+- `data-testid="logo-link"` -- Logo/home link
+- `data-testid="nav-document"` -- Document Issue nav link
+- `data-testid="nav-issues"` -- My Issues nav link
+- `data-testid="nav-states"` -- State Laws nav link
+- `data-testid="nav-login"` -- Sign in button
+- `data-testid="main-content"` -- Main content area
+- `data-testid="footer"` -- Page footer
+- `data-testid="hero-section"` -- Hero section
+- `data-testid="hero-title"` -- Hero heading
+- `data-testid="hero-subtitle"` -- Hero subheading
+- `data-testid="hero-cta"` -- Hero CTA button group
+- `data-testid="cta-document-button"` -- Document Issue CTA button
+- `data-testid="cta-states-button"` -- State Laws CTA button
+- `data-testid="stats-section"` -- Statistics section
+- `data-testid="stat-renters"` -- Stat: renter households
+- `data-testid="stat-complaints"` -- Stat: maintenance complaints
+- `data-testid="stat-letters"` -- Stat: letters generated
+- `data-testid="how-it-works-section"` -- How it works section
+- `data-testid="step-document"` -- Step 1: Document
+- `data-testid="step-generate"` -- Step 2: Generate Letter
+- `data-testid="step-track"` -- Step 3: Track & Escalate
+- `data-testid="cta-section"` -- Bottom CTA section
+- `data-testid="cta-bottom-button"` -- Bottom CTA button
+- `data-testid="footer-privacy"` -- Privacy link
+- `data-testid="footer-terms"` -- Terms link
+- `data-testid="footer-contact"` -- Contact link
+
+Convention: All new interactive elements MUST include a `data-testid` attribute.
+
+## Environment Variables
+See `.env.example` for required variables:
+- `NEXT_PUBLIC_SUPABASE_URL` -- Supabase project URL (client-accessible)
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` -- Supabase anonymous key (client-accessible)
+- `NEXT_PUBLIC_APP_URL` -- Public app URL (client-accessible)
+- `STRIPE_SECRET_KEY` -- Stripe secret API key (server-only)
+- `CLAUDE_API_KEY` -- Anthropic API key for letter generation (server-only)
+- `TEST_MODE` -- Enable test mode (bypasses rate limits, enables test accounts)
+
+**IMPORTANT**: Any env var accessed in client components MUST have the `NEXT_PUBLIC_` prefix.
+Server-only secrets (Stripe, Claude API) do NOT get the prefix.
+
 ## Version
-0.0.0
+0.1.0
