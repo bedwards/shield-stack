@@ -44,8 +44,8 @@
       "stack": "next.js",
       "deploy": "vercel",
       "db": "supabase",
-      "version": "0.0.0",
-      "status": "planning"
+      "version": "0.1.0",
+      "status": "scaffold"
     },
     {
       "id": 4,

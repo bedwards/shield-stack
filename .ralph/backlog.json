@@ -1,5 +1,237 @@
 {
-  "issues": [],
-  "priority_order": [],
-  "last_groomed_at": null
+  "issues": [
+    {
+      "number": 2,
+      "product": "scorerebound",
+      "title": "[ScoreRebound] Project scaffold \u2014 Next.js 15 + Bun + Tailwind + Supabase",
+      "priority": "P0",
+      "blocked_by": [],
+      "status": "ready"
+    },
+    {
+      "number": 1,
+      "product": "ghostboard",
+      "title": "[ghostboard] Set up Next.js 15 project scaffold",
+      "priority": "P1",
+      "blocked_by": [],
+      "status": "ready"
+    },
+    {
+      "number": 5,
+      "product": "hoashield",
+      "title": "[hoashield] Set up Next.js 15 project scaffold",
+      "priority": "P2",
+      "blocked_by": [],
+      "status": "ready"
+    },
+    {
+      "number": 4,
+      "product": "scorerebound",
+      "title": "[ScoreRebound] Database schema \u2014 Supabase tables, RLS, migrations, types",
+      "priority": "P0",
+      "blocked_by": [
+        2
+      ],
+      "status": "blocked"
+    },
+    {
+      "number": 7,
+      "product": "clearfile",
+      "title": "[clearfile] Set up Next.js 15 project scaffold",
+      "priority": "P3",
+      "blocked_by": [],
+      "status": "ready"
+    },
+    {
+      "number": 3,
+      "product": "ghostboard",
+      "title": "[ghostboard] Create Supabase database schema and migrations",
+      "priority": "P1",
+      "blocked_by": [
+        1
+      ],
+      "status": "blocked"
+    },
+    {
+      "number": 9,
+      "product": "ghostboard",
+      "title": "[ghostboard] Build SEO-optimized landing page",
+      "priority": "P1",
+      "blocked_by": [
+        1
+      ],
+      "status": "blocked"
+    },
+    {
+      "number": 14,
+      "product": "scorerebound",
+      "title": "[ScoreRebound] Core feature \u2014 5-question quiz engine + personalized recovery plan generator",
+      "priority": "P0",
+      "blocked_by": [
+        2,
+        4
+      ],
+      "status": "blocked"
+    },
+    {
+      "number": 8,
+      "product": "hoashield",
+      "title": "[hoashield] Create Supabase database schema and migrations",
+      "priority": "P2",
+      "blocked_by": [
+        5
+      ],
+      "status": "blocked"
+    },
+    {
+      "number": 6,
+      "product": "ghostboard",
+      "title": "[ghostboard] Implement core crowdsourced ghosting rate database",
+      "priority": "P1",
+      "blocked_by": [
+        1,
+        3
+      ],
+      "status": "blocked"
+    },
+    {
+      "number": 13,
+      "product": "ghostboard",
+      "title": "[ghostboard] Create CI/CD pipeline",
+      "priority": "P2",
+      "blocked_by": [
+        1
+      ],
+      "status": "blocked"
+    },
+    {
+      "number": 12,
+      "product": "ghostboard",
+      "title": "[ghostboard] Set up Stripe payment integration",
+      "priority": "P2",
+      "blocked_by": [
+        1
+      ],
+      "status": "blocked"
+    },
+    {
+      "number": 16,
+      "product": "hoashield",
+      "title": "[hoashield] Build SEO-optimized landing page",
+      "priority": "P2",
+      "blocked_by": [
+        5
+      ],
+      "status": "blocked"
+    },
+    {
+      "number": 11,
+      "product": "hoashield",
+      "title": "[hoashield] Implement CC&R upload, AI analysis, and dispute letter generation",
+      "priority": "P2",
+      "blocked_by": [
+        5,
+        8
+      ],
+      "status": "blocked"
+    },
+    {
+      "number": 10,
+      "product": "clearfile",
+      "title": "[clearfile] Create Supabase database schema and migrations",
+      "priority": "P3",
+      "blocked_by": [
+        7
+      ],
+      "status": "blocked"
+    },
+    {
+      "number": 17,
+      "product": "clearfile",
+      "title": "[clearfile] Build SEO-optimized landing page",
+      "priority": "P3",
+      "blocked_by": [
+        7
+      ],
+      "status": "blocked"
+    },
+    {
+      "number": 15,
+      "product": "clearfile",
+      "title": "[clearfile] Implement FCRA dispute letter generator and CRA directory",
+      "priority": "P3",
+      "blocked_by": [
+        7,
+        10
+      ],
+      "status": "blocked"
+    },
+    {
+      "number": 18,
+      "product": "ghostboard",
+      "title": "[ghostboard] Write Playwright E2E test suite",
+      "priority": "P2",
+      "blocked_by": [
+        1,
+        6,
+        9
+      ],
+      "status": "blocked"
+    }
+  ],
+  "priority_order": [
+    2,
+    4,
+    56,
+    119,
+    131,
+    163,
+    176,
+    179,
+    183,
+    14,
+    19,
+    28,
+    64,
+    128,
+    135,
+    168,
+    177,
+    182,
+    186,
+    33,
+    41,
+    48,
+    74,
+    82,
+    139,
+    146,
+    1,
+    5,
+    24,
+    47,
+    71,
+    104,
+    132,
+    160,
+    83,
+    88,
+    94,
+    122,
+    130,
+    133,
+    140,
+    144,
+    158,
+    162,
+    171,
+    172,
+    178,
+    180,
+    185,
+    7,
+    27,
+    49
+  ],
+  "last_groomed_at": "2026-03-16T20:40:49.768569+00:00"
 }

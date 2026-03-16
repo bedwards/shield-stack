@@ -49,9 +49,9 @@ bun install
 bun dev                    # Next.js dev server (localhost:3000)
 
 # Testing
-bun test                   # Unit tests (vitest)
-bun test:e2e              # Playwright E2E tests
-bun test:e2e:ui           # Playwright with UI mode
+bun run test               # Unit tests (vitest) — note: `bun test` runs bun's native runner
+bun run test:e2e           # Playwright E2E tests
+bun run test:e2e:ui        # Playwright with UI mode
 
 # Build
 bun run build             # Production build
@@ -165,4 +165,4 @@ Always use Claude Opus 4.6 with max effort. No exceptions.
 
 ## Version
 
-0.0.0
+0.1.0
