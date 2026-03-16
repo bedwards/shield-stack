@@ -1,0 +1,20 @@
+{
+  "total_loops": 1,
+  "total_issues_created": 0,
+  "total_prs_created": 0,
+  "total_prs_merged": 0,
+  "total_errors": 2,
+  "consecutive_errors": 0,
+  "last_rate_limit_at": null,
+  "backoff_until": null,
+  "phases_completed": {
+    "research": 0,
+    "plan": 0,
+    "orchestrate": 1,
+    "work": 0,
+    "review": 0,
+    "verify": 0,
+    "monitor": 0
+  },
+  "per_product": {}
+}
