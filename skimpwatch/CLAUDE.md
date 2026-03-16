@@ -1,6 +1,6 @@
 # SkimpWatch — Ingredient & Quality Change Tracker
 
-## Status: Planning Complete
+## Status: Scaffold Complete
 
 ## Product Overview
 
@@ -46,32 +46,23 @@ SkimpWatch lets consumers scan a product barcode and instantly see whether the m
 ## Build / Test / Deploy
 
 ```bash
-# Install dependencies
-cd skimpwatch && bun install
+cd skimpwatch
+bun install              # Install dependencies
+bun run dev              # Start dev server (localhost:3000)
+bun run build            # Production build
+bun run lint             # ESLint
+bun run test             # Run Vitest unit/integration tests (NEVER use `bun test`)
+bun run test:e2e         # Run Playwright E2E tests
+bun run test:e2e:ui      # Playwright E2E with UI mode
+```
 
-# Development
-bun dev                    # Next.js dev server on :3000
+**IMPORTANT:** Always use `bun run test` (NOT `bun test`). `bun test` invokes Bun's native test runner which picks up Playwright e2e files and doesn't use the Vitest config.
 
-# Build
-bun run build              # Production build
-
-# Test
-bun test                   # Unit tests (Vitest)
-bun run test:e2e           # Playwright E2E tests
-
-# Lint
-bun run lint               # ESLint + Prettier
-
-# Database
-bunx supabase db push      # Apply migrations
-bunx supabase db reset     # Reset local DB
-
-# Type checking
-bun run typecheck          # tsc --noEmit
-
-# Deploy
-# Automatic via Vercel on push to main
-# Preview deploys on PRs
+### Future commands (not yet wired up)
+```bash
+bun run db:migrate       # Run Supabase migrations
+bun run db:seed          # Seed product data from Open Food Facts
+bun run db:types         # Generate TypeScript types from Supabase schema
 ```
 
 ## Architecture
@@ -127,15 +118,41 @@ bun run typecheck          # tsc --noEmit
 - Webhook handler for subscription lifecycle events
 - AdSense integration on free-tier pages
 
-## Version
-0.1.0
+## Project Structure
+```
+skimpwatch/
+  src/
+    app/              # Next.js App Router pages and layouts
+      layout.tsx      # Root layout with header/footer shell
+      page.tsx        # Landing page with hero, stats, how-it-works, CTA
+      globals.css     # Tailwind imports and CSS custom properties
+    components/       # Reusable React components
+    lib/              # Utility functions and helpers
+      env.ts          # Environment variable accessors
+      env.test.ts     # Tests for env helpers
+      test-setup.ts   # Vitest setup file
+    types/            # TypeScript type definitions
+      index.ts        # Shared types (Product, IngredientSnapshot, etc.)
+  e2e/                # Playwright E2E tests
+    smoke.spec.ts     # Basic smoke tests for landing page
+  public/             # Static assets
+  docs/               # Architecture and design documents
+```
 
 ## Model & Effort
 Always use Claude Opus 4.6 with max effort.
 
-## LLM-Testability
-- All interactive elements have `data-testid` attributes
-- `TEST_MODE=true` env var enables test accounts and bypasses rate limits
-- Test seed data includes known products with ingredient change history
-- No CAPTCHAs in test/preview environments
-- E2E tests in `e2e/` directory using Playwright
+## LLM-Testable Design
+All interactive elements include `data-testid` attributes for Playwright testing.
+Convention: All new interactive elements MUST include a `data-testid` attribute.
+
+## Environment Variables
+See `.env.example` for required variables:
+- `NEXT_PUBLIC_SUPABASE_URL` -- Supabase project URL (client-accessible)
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` -- Supabase anonymous key (client-accessible)
+- `NEXT_PUBLIC_APP_URL` -- Public app URL (client-accessible)
+- `STRIPE_SECRET_KEY` -- Stripe secret API key (server-only, NO NEXT_PUBLIC_ prefix)
+- `TEST_MODE` -- Enable test mode (bypasses rate limits, enables test accounts)
+
+## Version
+0.1.0
