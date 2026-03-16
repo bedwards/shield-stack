@@ -1,5 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { isTestMode, getSupabaseUrl, getSupabaseAnonKey, getGeminiApiKey, getStripeSecretKey } from "./env";
+import {
+  isTestMode,
+  getSupabaseUrl,
+  getSupabaseAnonKey,
+  getGeminiApiKey,
+  getStripeSecretKey,
+} from "./env";
 
 describe("env helpers", () => {
   beforeEach(() => {
@@ -31,7 +37,9 @@ describe("env helpers", () => {
 
     it("throws when not set", () => {
       vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "");
-      expect(() => getSupabaseUrl()).toThrow("NEXT_PUBLIC_SUPABASE_URL is not set");
+      expect(() => getSupabaseUrl()).toThrow(
+        "NEXT_PUBLIC_SUPABASE_URL is not set",
+      );
     });
   });
 
@@ -43,7 +51,9 @@ describe("env helpers", () => {
 
     it("throws when not set", () => {
       vi.stubEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY", "");
-      expect(() => getSupabaseAnonKey()).toThrow("NEXT_PUBLIC_SUPABASE_ANON_KEY is not set");
+      expect(() => getSupabaseAnonKey()).toThrow(
+        "NEXT_PUBLIC_SUPABASE_ANON_KEY is not set",
+      );
     });
   });
 
@@ -67,7 +77,9 @@ describe("env helpers", () => {
 
     it("throws when not set", () => {
       vi.stubEnv("STRIPE_SECRET_KEY", "");
-      expect(() => getStripeSecretKey()).toThrow("STRIPE_SECRET_KEY is not set");
+      expect(() => getStripeSecretKey()).toThrow(
+        "STRIPE_SECRET_KEY is not set",
+      );
     });
   });
 });

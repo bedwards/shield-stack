@@ -20,8 +20,8 @@ export default function Home() {
           className="mt-6 text-lg sm:text-xl text-[var(--muted)] max-w-2xl mx-auto"
         >
           Upload photos of any used car and our AI instantly detects paint
-          repairs, panel gaps, overspray, and structural damage that sellers
-          try to hide. Decode VINs and check recalls in seconds.
+          repairs, panel gaps, overspray, and structural damage that sellers try
+          to hide. Decode VINs and check recalls in seconds.
         </p>
 
         {/* CTA Buttons */}
@@ -52,9 +52,7 @@ export default function Home() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
             <div data-testid="stat-cars-scanned">
               <p className="text-3xl font-bold text-[var(--primary)]">0</p>
-              <p className="mt-2 text-sm text-[var(--muted)]">
-                Cars Scanned
-              </p>
+              <p className="mt-2 text-sm text-[var(--muted)]">Cars Scanned</p>
             </div>
             <div data-testid="stat-damage-found">
               <p className="text-3xl font-bold text-[var(--danger)]">0</p>
@@ -87,8 +85,8 @@ export default function Home() {
                 Upload Photos
               </h3>
               <p className="mt-2 text-sm text-[var(--muted)]">
-                Upload up to 20 photos of the car or paste a listing URL.
-                We grab every angle automatically.
+                Upload up to 20 photos of the car or paste a listing URL. We
+                grab every angle automatically.
               </p>
             </div>
             <div data-testid="step-analyze" className="text-center">
@@ -111,8 +109,8 @@ export default function Home() {
                 Get Your Report
               </h3>
               <p className="mt-2 text-sm text-[var(--muted)]">
-                Receive a detailed damage report with confidence scores,
-                VIN recalls, and a shareable link for your mechanic.
+                Receive a detailed damage report with confidence scores, VIN
+                recalls, and a shareable link for your mechanic.
               </p>
             </div>
           </div>
@@ -129,7 +127,10 @@ export default function Home() {
             Everything You Need Before Buying
           </h2>
           <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div data-testid="feature-ai-vision" className="rounded-lg bg-[var(--background)] p-6 border border-[var(--border)]">
+            <div
+              data-testid="feature-ai-vision"
+              className="rounded-lg bg-[var(--background)] p-6 border border-[var(--border)]"
+            >
               <h3 className="text-lg font-semibold text-[var(--foreground)]">
                 AI Damage Detection
               </h3>
@@ -138,7 +139,10 @@ export default function Home() {
                 overspray, and structural damage invisible to the naked eye.
               </p>
             </div>
-            <div data-testid="feature-vin-decode" className="rounded-lg bg-[var(--background)] p-6 border border-[var(--border)]">
+            <div
+              data-testid="feature-vin-decode"
+              className="rounded-lg bg-[var(--background)] p-6 border border-[var(--border)]"
+            >
               <h3 className="text-lg font-semibold text-[var(--foreground)]">
                 VIN Decoder
               </h3>
@@ -147,25 +151,34 @@ export default function Home() {
                 safety ratings from the official NHTSA database.
               </p>
             </div>
-            <div data-testid="feature-recall-check" className="rounded-lg bg-[var(--background)] p-6 border border-[var(--border)]">
+            <div
+              data-testid="feature-recall-check"
+              className="rounded-lg bg-[var(--background)] p-6 border border-[var(--border)]"
+            >
               <h3 className="text-lg font-semibold text-[var(--foreground)]">
                 Recall Alerts
               </h3>
               <p className="mt-2 text-sm text-[var(--muted)]">
-                Instantly check for open recalls on the specific vehicle
-                before you buy. Never inherit someone else&#39;s safety risk.
+                Instantly check for open recalls on the specific vehicle before
+                you buy. Never inherit someone else&#39;s safety risk.
               </p>
             </div>
-            <div data-testid="feature-listing-import" className="rounded-lg bg-[var(--background)] p-6 border border-[var(--border)]">
+            <div
+              data-testid="feature-listing-import"
+              className="rounded-lg bg-[var(--background)] p-6 border border-[var(--border)]"
+            >
               <h3 className="text-lg font-semibold text-[var(--foreground)]">
                 Listing URL Import
               </h3>
               <p className="mt-2 text-sm text-[var(--muted)]">
-                Paste a link from Facebook Marketplace, Craigslist, or
-                Cars.com and we auto-grab all photos and the VIN.
+                Paste a link from Facebook Marketplace, Craigslist, or Cars.com
+                and we auto-grab all photos and the VIN.
               </p>
             </div>
-            <div data-testid="feature-shareable-reports" className="rounded-lg bg-[var(--background)] p-6 border border-[var(--border)]">
+            <div
+              data-testid="feature-shareable-reports"
+              className="rounded-lg bg-[var(--background)] p-6 border border-[var(--border)]"
+            >
               <h3 className="text-lg font-semibold text-[var(--foreground)]">
                 Shareable Reports
               </h3>
@@ -174,13 +187,16 @@ export default function Home() {
                 mechanic, friend, or family member for a second opinion.
               </p>
             </div>
-            <div data-testid="feature-scan-history" className="rounded-lg bg-[var(--background)] p-6 border border-[var(--border)]">
+            <div
+              data-testid="feature-scan-history"
+              className="rounded-lg bg-[var(--background)] p-6 border border-[var(--border)]"
+            >
               <h3 className="text-lg font-semibold text-[var(--foreground)]">
                 Scan History
               </h3>
               <p className="mt-2 text-sm text-[var(--muted)]">
-                Save and compare past scans. Add notes, asking prices, and
-                your decision to build a car shopping journal.
+                Save and compare past scans. Add notes, asking prices, and your
+                decision to build a car shopping journal.
               </p>
             </div>
           </div>
@@ -188,10 +204,7 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section
-        data-testid="cta-section"
-        className="py-16"
-      >
+      <section data-testid="cta-section" className="py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold text-[var(--foreground)]">
             Don&#39;t Buy a Lemon
@@ -199,8 +212,8 @@ export default function Home() {
           <p className="mt-4 text-lg text-[var(--muted)] max-w-2xl mx-auto">
             40 million used cars are sold in the US each year. Many have
             undisclosed damage from accidents, floods, or poor repairs.
-            LemonLens gives you an AI-powered pre-inspection before you
-            even visit the lot.
+            LemonLens gives you an AI-powered pre-inspection before you even
+            visit the lot.
           </p>
           <Link
             href="/scan"

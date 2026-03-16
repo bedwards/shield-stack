@@ -46,6 +46,8 @@ bun run test             # Run Vitest unit/integration tests (NOT bun test!)
 bun run test:e2e         # Run Playwright E2E tests
 bun run build            # Production build
 bun run lint             # ESLint check
+bun run format           # Format code with Prettier
+bun run format:check     # Check formatting without writing
 bun run typecheck        # TypeScript strict type check
 bun run db:migrate       # Run Supabase migrations (future)
 bun run db:seed          # Seed database with sample data (future)
@@ -107,6 +109,7 @@ Each analysis generates a unique shareable URL (e.g., `/reports/[uuid]`). This s
 ## APIs
 
 ### Internal API Routes
+- `GET /api/health` — Health check endpoint (returns `{ status: "ok" }`)
 - `POST /api/scans` — Create new scan session
 - `POST /api/scans/[id]/photos` — Upload photos to scan
 - `POST /api/scans/[id]/analyze` — Trigger Gemini Vision analysis
@@ -140,8 +143,11 @@ Each analysis generates a unique shareable URL (e.g., `/reports/[uuid]`). This s
 | Premium | $14.99/mo | Unlimited scans, listing URL import, priority analysis, scan history |
 | Dealer | $49.99/mo | API access, bulk VIN checks, white-label reports |
 
-## LLM-Testable Design
-All interactive elements include `data-testid` attributes for Playwright testing.
+## LLM-Testable Design (MANDATORY)
+All interactive elements MUST include `data-testid` attributes for Playwright testing.
+This convention is enforced via ESLint (`eslint-plugin-jsx-a11y` for accessibility) and code review.
+Every `<a>`, `<button>`, `<input>`, `<select>`, `<textarea>`, and `<Link>` MUST have a `data-testid`.
+PRs missing `data-testid` on interactive elements will be rejected by reviewers.
 - `data-testid="header"` -- Page header
 - `data-testid="nav"` -- Navigation bar
 - `data-testid="logo-link"` -- Logo/home link

@@ -15,7 +15,12 @@ export type DamageType =
   | "structural_repair";
 
 /** Status of a scan session */
-export type ScanStatus = "created" | "uploading" | "analyzing" | "complete" | "failed";
+export type ScanStatus =
+  | "created"
+  | "uploading"
+  | "analyzing"
+  | "complete"
+  | "failed";
 
 /** A single damage finding from AI analysis */
 export interface DamageFinding {
