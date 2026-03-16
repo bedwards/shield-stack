@@ -1,6 +1,6 @@
 # AfterLoss — Free After-Death Estate Settlement Process Guide
 
-## Status: Planning Complete
+## Status: Scaffold Complete
 
 ## Product Overview
 AfterLoss is a completely FREE step-by-step guide that walks people through everything they need to do after someone dies. It covers the overwhelming checklist: getting death certificates, notifying Social Security, contacting employers about benefits, closing bank accounts, cancelling subscriptions, filing insurance claims, navigating probate, and handling taxes. It generates every letter and form needed, tracks deadlines, and provides state-specific guidance. Revenue comes exclusively from tasteful affiliate partnerships (estate attorneys, probate services, grief counseling, life insurance).
@@ -53,29 +53,17 @@ Always use Claude Opus 4.6 with max effort.
 
 ## Build / Test / Deploy
 ```bash
-# Install dependencies
-bun install
-
-# Development
-bun dev                    # Next.js dev server on :3000
-
-# Testing
-bun test                   # Unit tests (vitest)
-bun test:e2e               # Playwright E2E tests
-
-# Linting & Formatting
-bun lint                   # ESLint
-bun format                 # Prettier
-
-# Database
-bun db:migrate             # Run Supabase migrations
-bun db:seed                # Seed state probate data + checklist templates
-bun db:reset               # Reset local Supabase
-
-# Build & Deploy
-bun build                  # Production build
-vercel --prod              # Deploy to production
+cd afterloss
+bun install              # Install dependencies
+bun run dev              # Start dev server (localhost:3000)
+bun run build            # Production build
+bun run lint             # ESLint
+bun run test             # Run Vitest unit/integration tests (NEVER use `bun test`)
+bun run test:e2e         # Run Playwright E2E tests
+bun run test:e2e:ui      # Playwright E2E with UI mode
 ```
+
+**IMPORTANT:** Always use `bun run test` (NOT `bun test`). `bun test` invokes Bun's native test runner which picks up Playwright e2e files and doesn't use the Vitest config.
 
 ## Architecture
 
