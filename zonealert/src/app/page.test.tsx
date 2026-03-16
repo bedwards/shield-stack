@@ -1,0 +1,52 @@
+import { describe, it, expect } from "vitest";
+import { render, screen } from "@testing-library/react";
+import Home from "./page";
+
+describe("Home Page", () => {
+  it("renders the hero title", () => {
+    render(<Home />);
+    expect(screen.getByTestId("hero-title")).toBeInTheDocument();
+  });
+
+  it("renders the hero subtitle", () => {
+    render(<Home />);
+    expect(screen.getByTestId("hero-subtitle")).toBeInTheDocument();
+  });
+
+  it("renders CTA buttons", () => {
+    render(<Home />);
+    expect(screen.getByTestId("cta-monitor-button")).toBeInTheDocument();
+    expect(screen.getByTestId("cta-demo-button")).toBeInTheDocument();
+  });
+
+  it("renders the stats section", () => {
+    render(<Home />);
+    expect(screen.getByTestId("stats-section")).toBeInTheDocument();
+    expect(screen.getByTestId("stat-addresses-monitored")).toBeInTheDocument();
+    expect(screen.getByTestId("stat-alerts-sent")).toBeInTheDocument();
+    expect(screen.getByTestId("stat-cities-covered")).toBeInTheDocument();
+  });
+
+  it("renders the how-it-works section", () => {
+    render(<Home />);
+    expect(screen.getByTestId("how-it-works-section")).toBeInTheDocument();
+    expect(screen.getByTestId("step-register")).toBeInTheDocument();
+    expect(screen.getByTestId("step-monitor")).toBeInTheDocument();
+    expect(screen.getByTestId("step-alert")).toBeInTheDocument();
+  });
+
+  it("renders the features section", () => {
+    render(<Home />);
+    expect(screen.getByTestId("features-section")).toBeInTheDocument();
+    expect(screen.getByTestId("feature-radius")).toBeInTheDocument();
+    expect(screen.getByTestId("feature-map")).toBeInTheDocument();
+    expect(screen.getByTestId("feature-hearings")).toBeInTheDocument();
+    expect(screen.getByTestId("feature-push")).toBeInTheDocument();
+  });
+
+  it("renders the CTA section with start button", () => {
+    render(<Home />);
+    expect(screen.getByTestId("cta-section")).toBeInTheDocument();
+    expect(screen.getByTestId("cta-start-button")).toBeInTheDocument();
+  });
+});
