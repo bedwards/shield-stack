@@ -1,6 +1,6 @@
 # FAFSAcopilot — Real-Time FAFSA Error Catcher & Aid Negotiator
 
-## Status: Planning Complete
+## Status: Scaffold Complete
 
 ## Product Overview
 
@@ -44,32 +44,23 @@ FAFSAcopilot is a two-phase product that helps families maximize financial aid. 
 ## Build / Test / Deploy
 
 ```bash
-# Install dependencies
-cd fafsacopilot && bun install
+cd fafsacopilot
+bun install              # Install dependencies
+bun run dev              # Start dev server (localhost:3000)
+bun run build            # Production build
+bun run lint             # ESLint
+bun run test             # Run Vitest unit/integration tests (NEVER use `bun test`)
+bun run test:e2e         # Run Playwright E2E tests
+bun run test:e2e:ui      # Playwright E2E with UI mode
+```
 
-# Development
-bun dev                    # Next.js dev server on :3000
+**IMPORTANT:** Always use `bun run test` (NOT `bun test`). `bun test` invokes Bun's native test runner which picks up Playwright e2e files and doesn't use the Vitest config.
 
-# Build
-bun run build              # Production build
-
-# Test
-bun test                   # Unit tests (Vitest)
-bun run test:e2e           # Playwright E2E tests
-
-# Lint
-bun run lint               # ESLint + Prettier
-
-# Database
-bunx supabase db push      # Apply migrations
-bunx supabase db reset     # Reset local DB
-
-# Type checking
-bun run typecheck          # tsc --noEmit
-
-# Deploy
-# Automatic via Vercel on push to main
-# Preview deploys on PRs
+### Future commands (not yet wired up)
+```bash
+bun run db:migrate       # Run Supabase migrations
+bun run db:seed          # Seed FAFSA rules data
+bun run db:types         # Generate TypeScript types from Supabase schema
 ```
 
 ## Architecture
