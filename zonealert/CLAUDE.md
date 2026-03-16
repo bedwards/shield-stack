@@ -1,6 +1,6 @@
 # ZoneAlert — Neighborhood Zoning & Development Decision Alerts
 
-## Status: Planning Complete
+## Status: Scaffold Complete
 
 ## Product Overview
 ZoneAlert monitors municipal public agendas, zoning applications, and development proposals near a user's address, then sends push alerts when changes are detected. 130M+ US households could be affected by nearby zoning changes, from cell towers to apartment complexes to liquor stores, yet most people only find out after it is too late. ZoneAlert gives residents advance notice and a voice.
@@ -39,32 +39,41 @@ ZoneAlert monitors municipal public agendas, zoning applications, and developmen
 
 ## Build / Test / Deploy
 ```bash
-# Install dependencies
-bun install
+cd zonealert
+bun install              # Install dependencies
+bun run dev              # Start dev server (localhost:3009)
+bun run test             # Run Vitest unit/integration tests (NOT bun test!)
+bun run test:e2e         # Run Playwright E2E tests
+bun run build            # Production build
+bun run lint             # ESLint check
+bun run typecheck        # TypeScript type check
+bun run db:migrate       # Run Supabase migrations (future)
+bun run db:types         # Generate TypeScript types from Supabase schema (future)
+```
 
-# Development server
-bun dev
+**IMPORTANT**: Always use `bun run test` (which runs vitest via package.json script), NOT `bun test` (which invokes Bun's native test runner and will pick up Playwright files incorrectly).
 
-# Build for production
-bun run build
-
-# Run unit tests
-bun test
-
-# Run E2E tests
-bunx playwright test
-
-# Lint
-bun run lint
-
-# Type check
-bun run typecheck
-
-# Database migrations (includes PostGIS extension)
-bunx supabase db push
-
-# Generate Supabase types
-bunx supabase gen types typescript --local > src/lib/database.types.ts
+## Project Structure
+```
+zonealert/
+  src/
+    app/              # Next.js App Router pages and layouts
+      layout.tsx      # Root layout with header/footer shell
+      page.tsx        # Landing page with hero, stats, features
+      globals.css     # Tailwind imports and CSS custom properties
+      api/
+        health/
+          route.ts    # Health check API endpoint
+    components/       # Reusable React components
+    lib/              # Utility functions and helpers
+      env.ts          # Environment variable accessors
+      test-setup.ts   # Vitest setup file
+    types/            # TypeScript type definitions
+      index.ts        # Shared types (MonitoredAddress, ZoningApplication, etc.)
+  e2e/                # Playwright E2E tests
+    smoke.spec.ts     # Basic smoke tests for landing page
+  public/             # Static assets
+  docs/               # Architecture and design documents
 ```
 
 ## Architecture Decisions
@@ -139,8 +148,48 @@ CREATE EXTENSION IF NOT EXISTS postgis;
 | Premium | $3.99/mo | 5-mile radius, 3 addresses, email digest, full history, map view |
 | Pro | $9.99/mo | Unlimited addresses, 25-mile radius, API access, export data |
 
+## LLM-Testable Design
+All interactive elements include `data-testid` attributes for Playwright testing.
+- `data-testid="header"` -- Page header
+- `data-testid="nav"` -- Navigation bar
+- `data-testid="logo-link"` -- Logo/home link
+- `data-testid="nav-alerts"` -- My Alerts nav link
+- `data-testid="nav-map"` -- Map View nav link
+- `data-testid="nav-login"` -- Sign in button
+- `data-testid="main-content"` -- Main content area
+- `data-testid="footer"` -- Page footer
+- `data-testid="hero-section"` -- Hero section
+- `data-testid="hero-title"` -- Hero heading
+- `data-testid="hero-subtitle"` -- Hero subheading
+- `data-testid="cta-monitor-button"` -- Monitor address CTA button
+- `data-testid="cta-demo-button"` -- Demo CTA button
+- `data-testid="stats-section"` -- Statistics section
+- `data-testid="stat-addresses-monitored"` -- Addresses monitored counter
+- `data-testid="stat-alerts-sent"` -- Alerts sent counter
+- `data-testid="stat-cities-covered"` -- Cities covered counter
+- `data-testid="how-it-works-section"` -- How it works section
+- `data-testid="step-register"` -- Step 1: Enter address
+- `data-testid="step-monitor"` -- Step 2: We scan data
+- `data-testid="step-alert"` -- Step 3: Get alerted
+- `data-testid="features-section"` -- Features section
+- `data-testid="cta-section"` -- Bottom CTA section
+- `data-testid="cta-start-button"` -- Get started button
+
+Convention: All new interactive elements MUST include a `data-testid` attribute.
+
+## Environment Variables
+See `.env.example` for required variables:
+- `NEXT_PUBLIC_SUPABASE_URL` -- Supabase project URL (client-side accessible)
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` -- Supabase anonymous key (client-side accessible)
+- `NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN` -- Mapbox token for geocoding and maps (client-side accessible)
+- `NEXT_PUBLIC_APP_URL` -- Public app URL (client-side accessible)
+- `STRIPE_SECRET_KEY` -- Stripe secret API key (server-only)
+- `TEST_MODE` -- Enable test mode (bypasses rate limits, enables test accounts)
+
+**IMPORTANT**: Any environment variable accessed in client components or browser code MUST be prefixed with `NEXT_PUBLIC_`. Server-only secrets (like `STRIPE_SECRET_KEY`) do NOT get the prefix.
+
 ## Model & Effort
 Always use Claude Opus 4.6 with max effort.
 
 ## Version
-0.0.0
+0.1.0
