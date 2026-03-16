@@ -1,6 +1,6 @@
 # SettleScan — Class Action Settlement Auto-Match & Claim Filer
 
-## Status: Planning Complete
+## Status: Scaffold Complete
 
 ## Product Overview
 SettleScan connects to a user's email (read-only Gmail OAuth), scans for class action settlement notifications and purchase receipts, cross-references against a database of active settlements, and helps users file claims for settlements they qualify for. Most people miss class action settlements worth $5-500 because they ignore emails or never check. SettleScan catches the money they are owed.
@@ -48,31 +48,23 @@ Always use Claude Opus 4.6 with max effort.
 
 ## Build / Test / Deploy
 ```bash
-# Install dependencies
-bun install
+cd settlescan
+bun install              # Install dependencies
+bun run dev              # Start dev server (localhost:3000)
+bun run build            # Production build
+bun run lint             # ESLint
+bun run test             # Run Vitest unit/integration tests (NEVER use `bun test`)
+bun run test:e2e         # Run Playwright E2E tests
+bun run test:e2e:ui      # Playwright E2E with UI mode
+```
 
-# Development
-bun dev                    # Next.js dev server on :3000
+**IMPORTANT:** Always use `bun run test` (NOT `bun test`). `bun test` invokes Bun's native test runner which picks up Playwright e2e files and doesn't use the Vitest config.
 
-# Testing
-bun test                   # Unit tests (vitest)
-bun test:e2e               # Playwright E2E tests
-
-# Linting & Formatting
-bun lint                   # ESLint
-bun format                 # Prettier
-
-# Database
-bun db:migrate             # Run Supabase migrations
-bun db:seed                # Seed settlement database
-bun db:reset               # Reset local Supabase
-
-# Settlement Scraper
-bun run scrape:settlements # Scrape latest settlements from source sites
-
-# Build & Deploy
-bun build                  # Production build
-vercel --prod              # Deploy to production
+### Future commands (not yet wired up)
+```bash
+bun run db:migrate       # Run Supabase migrations
+bun run db:seed          # Seed settlement database
+bun run db:types         # Generate TypeScript types from Supabase schema
 ```
 
 ## Architecture
