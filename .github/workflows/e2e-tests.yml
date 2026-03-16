@@ -1,0 +1,100 @@
+name: E2E Tests
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "scorerebound/**"
+      - "ghostboard/**"
+      - ".github/workflows/e2e-tests.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "scorerebound/**"
+      - "ghostboard/**"
+      - ".github/workflows/e2e-tests.yml"
+
+jobs:
+  e2e-scorerebound:
+    name: E2E - ScoreRebound
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: scorerebound
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Install Playwright browsers
+        run: bunx playwright install chromium --with-deps
+
+      - name: Run Playwright E2E tests
+        run: bunx playwright test
+        env:
+          CI: true
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: scorerebound-playwright-report
+          path: scorerebound/playwright-report/
+          retention-days: 14
+
+      - name: Upload test screenshots
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: scorerebound-screenshots
+          path: |
+            scorerebound/screenshots/
+            scorerebound/test-results/
+          retention-days: 14
+
+  e2e-ghostboard:
+    name: E2E - GhostBoard
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ghostboard
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Install Playwright browsers
+        run: bunx playwright install chromium --with-deps
+
+      - name: Run Playwright E2E tests
+        run: bunx playwright test
+        env:
+          CI: true
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ghostboard-playwright-report
+          path: ghostboard/playwright-report/
+          retention-days: 14
+
+      - name: Upload test screenshots
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ghostboard-screenshots
+          path: |
+            ghostboard/screenshots/
+            ghostboard/test-results/
+          retention-days: 14
