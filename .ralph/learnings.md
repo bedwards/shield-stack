@@ -45,3 +45,11 @@ Never write custom migration runners or schema diff tools.
 - Build processes: incremental compilation (ISR, Turbo cache)
 - Migrations: forward-only, additive. Never DROP TABLE in production.
 - Worker state: track progress so a killed worker can resume
+
+## 2026-03-16 | multiple | Workers skip issue-specific requirements
+**What happened:** Workers scaffold a generic Next.js project but skip product-specific requirements listed in the GitHub issue body (barcode scanner deps, PWA support, health check endpoints, Prettier, sidebar layout). Gemini catches these as compliance failures.
+**Rule:** Workers MUST read the FULL GitHub issue body (not just the title) and check off every acceptance criterion before pushing. Run `gh issue view {N}` and verify each `- [ ]` item is addressed. Generic scaffolds that ignore issue-specific requirements will be rejected.
+
+## 2026-03-16 | multiple | Missing Supabase client initialization
+**What happened:** Workers add Supabase to package.json but don't create the client initialization file (src/lib/supabase.ts). The reviewer catches "dependencies added but not used."
+**Rule:** If you add a dependency, you must also add the initialization/setup code that uses it. A dependency in package.json without corresponding code is incomplete work.
