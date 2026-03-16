@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { isTestMode, getAppUrl } from "./env";
+import { isTestMode, getAppUrl, getVapidPublicKey, getVapidPrivateKey } from "./env";
 
 describe("env helpers", () => {
   beforeEach(() => {
@@ -29,5 +29,25 @@ describe("env helpers", () => {
   it("getAppUrl returns env value when set", () => {
     vi.stubEnv("NEXT_PUBLIC_APP_URL", "https://recallradar.com");
     expect(getAppUrl()).toBe("https://recallradar.com");
+  });
+
+  it("getVapidPublicKey returns key when set", () => {
+    vi.stubEnv("NEXT_PUBLIC_VAPID_PUBLIC_KEY", "test-vapid-public-key");
+    expect(getVapidPublicKey()).toBe("test-vapid-public-key");
+  });
+
+  it("getVapidPublicKey throws when not set", () => {
+    vi.stubEnv("NEXT_PUBLIC_VAPID_PUBLIC_KEY", "");
+    expect(() => getVapidPublicKey()).toThrow("NEXT_PUBLIC_VAPID_PUBLIC_KEY is not set");
+  });
+
+  it("getVapidPrivateKey returns key when set", () => {
+    vi.stubEnv("VAPID_PRIVATE_KEY", "test-vapid-private-key");
+    expect(getVapidPrivateKey()).toBe("test-vapid-private-key");
+  });
+
+  it("getVapidPrivateKey throws when not set", () => {
+    vi.stubEnv("VAPID_PRIVATE_KEY", "");
+    expect(() => getVapidPrivateKey()).toThrow("VAPID_PRIVATE_KEY is not set");
   });
 });

@@ -25,6 +25,18 @@ export function getStripeSecretKey(): string {
   return key;
 }
 
+export function getVapidPublicKey(): string {
+  const key = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
+  if (!key) throw new Error("NEXT_PUBLIC_VAPID_PUBLIC_KEY is not set");
+  return key;
+}
+
+export function getVapidPrivateKey(): string {
+  const key = process.env.VAPID_PRIVATE_KEY;
+  if (!key) throw new Error("VAPID_PRIVATE_KEY is not set");
+  return key;
+}
+
 export function getAppUrl(): string {
   const url = process.env.NEXT_PUBLIC_APP_URL;
   return url || "http://localhost:3008";
