@@ -1,6 +1,6 @@
 # ClearFile — Background Check Error Dispute Tool
 
-## Status: Planning Complete
+## Status: Scaffold Complete
 
 ## Product Overview
 ClearFile helps people discover, dispute, and correct errors in their background check reports. Users enter basic identifying information, and ClearFile generates FCRA-compliant request letters to all major background check companies (consumer reporting agencies, or CRAs). When reports come back, users can flag errors and generate legally proper dispute letters. The system tracks the entire dispute lifecycle across multiple companies.
@@ -40,70 +40,81 @@ Anyone who has been denied a job, housing, or credit due to inaccurate backgroun
 | PDF Generation | @react-pdf/renderer | Server-side PDF generation for dispute letters |
 | Encryption | pgcrypto + Node crypto | Field-level encryption for SSN and other PII at rest |
 | Package Manager | bun | Fast installs, native TypeScript |
+| Testing | Vitest + Playwright | Unit/integration + E2E |
+| Styling | Tailwind CSS 4 | Utility-first, fast iteration |
 
 ## Model & Effort
 Always use Claude Opus 4.6 with max effort.
 
 ## Build / Test / Deploy
 ```bash
-# Install dependencies
-bun install
-
-# Development
-bun dev                    # Next.js dev server on :3000
-
-# Testing
-bun test                   # Unit tests (vitest)
-bun test:e2e               # Playwright E2E tests
-
-# Linting & Formatting
-bun lint                   # ESLint
-bun format                 # Prettier
-
-# Database
-bun db:migrate             # Run Supabase migrations
-bun db:seed                # Seed CRA directory data
-bun db:reset               # Reset local Supabase
-
-# Build & Deploy
-bun build                  # Production build
-vercel --prod              # Deploy to production
+cd clearfile
+bun install              # Install dependencies
+bun run dev              # Start dev server (localhost:3003)
+bun run test             # Run Vitest unit/integration tests (NOT bun test!)
+bun run test:e2e         # Run Playwright E2E tests
+bun run build            # Production build
+bun run lint             # ESLint check
+bun run db:migrate       # Run Supabase migrations (future)
+bun run db:seed          # Seed CRA directory data (future)
 ```
 
-## Architecture
+**IMPORTANT**: Always use `bun run test` (which runs vitest via package.json script), NOT `bun test` (which invokes Bun's native test runner and will pick up Playwright files incorrectly).
 
-### Core Components
-1. **Landing Page** — SEO-optimized, explains FCRA rights, CTA to start review
-2. **Request Wizard** — Multi-step form: personal info -> select CRAs -> generate letters
-3. **CRA Directory** — Browseable/searchable database of background check companies
-4. **Report Upload** — Drag-and-drop PDF/image upload with OCR extraction
-5. **Error Flagging UI** — Extracted report data vs. user truth data, checkbox flagging
-6. **Dispute Generator** — Produces FCRA-compliant dispute letters per flagged error per CRA
-7. **Tracker Dashboard** — Timeline view of all requests, responses, disputes, deadlines
-8. **Monitoring Engine** — Cron-triggered re-check reminders and status updates
-
-### Data Flow
+## Project Structure
 ```
-User enters PII → encrypted at app layer → stored encrypted in Supabase
-→ Generate request letters (PDF) → user downloads/mails to CRAs
-→ User uploads received reports → parse/extract data points
-→ User flags errors → generate dispute letters (PDF)
-→ Track 30-day FCRA deadlines → alert on approaching deadlines
-→ Monitoring: periodic reminders to re-request and verify corrections
+clearfile/
+  src/
+    app/              # Next.js App Router pages and layouts
+      layout.tsx      # Root layout with header/footer shell
+      page.tsx        # Landing page with hero, stats, features
+      globals.css     # Tailwind imports and CSS custom properties
+    components/       # Reusable React components
+    lib/              # Utility functions and helpers
+      env.ts          # Environment variable accessors
+      test-setup.ts   # Vitest setup file
+      disputes/       # FCRA dispute letter generation
+      cra/            # CRA directory and contact management
+    types/            # TypeScript type definitions
+      index.ts        # Shared types (CRACompany, DisclosureRequest, ErrorFlag, etc.)
+  e2e/                # Playwright E2E tests
+    smoke.spec.ts     # Basic smoke tests for landing page
+  public/             # Static assets
+  docs/               # Architecture and design documents
 ```
 
-## Data Model
+## Architecture Decisions
 
-### Key Tables
+### FCRA Letter Generation
+- **Disclosure requests**: FCRA Section 612 requires CRAs to provide a copy of your file upon request. Letters include name, DOB, address, SSN (last 4 only in letter body).
+- **Dispute letters**: FCRA Section 611 requires CRAs to investigate disputes within 30 days. Letters identify each error, provide correct information, and reference supporting documentation.
+- **PDF output**: Server-side PDF generation via @react-pdf/renderer. Letters formatted for standard letter paper with proper legal language.
+
+### CRA Directory
+- **Comprehensive database**: 40+ background check companies with complete contact information.
+- **Submission methods**: Each CRA has preferred submission (mail, fax, online portal, email).
+- **SEO pages**: Each CRA gets its own `/companies/{slug}` page for programmatic SEO.
+
+### Report Parsing
+- **PDF/image upload**: Users upload received background check reports to Supabase Storage.
+- **Data extraction**: Extract key data points (records, dates, identifiers) for error comparison.
+- **Manual correction**: Users can correct extraction errors before flagging inaccuracies.
+
+### Dispute Lifecycle Tracking
+- **Status tracking**: Each disclosure request and dispute letter has a status timeline.
+- **30-day deadlines**: FCRA requires CRA response within 30 days. Auto-calculated due dates with alerts.
+- **Multi-CRA coordination**: Track disputes across multiple CRAs simultaneously.
+
+## Data Model Overview
 - `users` — Supabase Auth managed
 - `user_profiles` — encrypted PII (name, DOB, SSN_encrypted, addresses)
-- `cra_companies` — background check company directory (name, address, fax, website, submission_method)
-- `disclosure_requests` — user -> CRA request tracking (status, sent_date, response_due_date, response_received_date)
+- `cra_companies` — background check company directory
+- `disclosure_requests` — user -> CRA request tracking with deadlines
 - `uploaded_reports` — storage refs to uploaded PDFs, extracted_data JSONB
-- `report_items` — individual line items extracted from reports (record_type, details, source)
+- `report_items` — individual line items extracted from reports
 - `truth_data` — user-provided correct information for comparison
 - `error_flags` — flagged discrepancies between report_items and truth_data
-- `dispute_letters` — generated dispute letters (CRA, error_flags referenced, status, sent_date)
+- `dispute_letters` — generated dispute letters with status tracking
 - `subscriptions` — Stripe subscription tracking for monitoring tier
 
 ## SECURITY — CRITICAL
@@ -115,11 +126,44 @@ User enters PII → encrypted at app layer → stored encrypted in Supabase
 - **Supabase Storage** — uploaded reports are in private buckets with RLS
 - **HTTPS only** — enforced at Vercel edge
 
-## External APIs & Services
-- **Supabase** — Database, Auth, Storage (no external background check APIs — CRAs don't have public APIs)
-- **Stripe** — Payment processing
-- **Claude API** — (Future) Intelligent report parsing and error detection
-- **Vercel** — Hosting and edge functions
+## LLM-Testable Design
+All interactive elements include `data-testid` attributes for Playwright testing.
+- `data-testid="header"` — Page header
+- `data-testid="nav"` — Navigation bar
+- `data-testid="logo-link"` — Logo/home link
+- `data-testid="nav-dashboard"` — Dashboard nav link
+- `data-testid="nav-companies"` — CRA Directory nav link
+- `data-testid="nav-login"` — Sign in button
+- `data-testid="main-content"` — Main content area
+- `data-testid="footer"` — Page footer
+- `data-testid="hero-section"` — Hero section
+- `data-testid="hero-title"` — Hero heading
+- `data-testid="hero-subtitle"` — Hero subheading
+- `data-testid="cta-start-review"` — Start review CTA button
+- `data-testid="cta-learn-rights"` — Learn rights CTA button
+- `data-testid="stats-section"` — Statistics section
+- `data-testid="stat-errors-found"` — Errors found stat
+- `data-testid="stat-disputes-filed"` — Disputes filed stat
+- `data-testid="stat-companies-covered"` — Companies covered stat
+- `data-testid="how-it-works-section"` — How it works section
+- `data-testid="step-request"` — Step 1: Request
+- `data-testid="step-flag"` — Step 2: Flag
+- `data-testid="step-dispute"` — Step 3: Dispute
+- `data-testid="features-section"` — Features section
+- `data-testid="cta-section"` — Bottom CTA section
+- `data-testid="cta-start-button"` — Get started button
+
+Convention: All new interactive elements MUST include a `data-testid` attribute.
+
+## Environment Variables
+See `.env.example` for required variables:
+- `NEXT_PUBLIC_SUPABASE_URL` — Supabase project URL (client-side accessible)
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` — Supabase anonymous key (client-side accessible)
+- `STRIPE_SECRET_KEY` — Stripe secret API key (server-only)
+- `TEST_MODE` — Enable test mode (bypasses rate limits, enables test accounts)
+- `NEXT_PUBLIC_APP_URL` — Public app URL (client-side accessible)
+
+**IMPORTANT**: Any environment variable accessed in client components or browser code MUST be prefixed with `NEXT_PUBLIC_`. Server-only secrets (like `STRIPE_SECRET_KEY`) do NOT get the prefix.
 
 ## Version
-0.0.0
+0.1.0
