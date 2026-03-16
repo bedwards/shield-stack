@@ -1,6 +1,6 @@
 # ParkFight — Trustworthy Parking Ticket Dispute Automation
 
-## Status: Planning Complete
+## Status: Scaffold Complete
 
 ## Product Overview
 
@@ -44,33 +44,17 @@ ParkFight lets users upload a photo of their parking ticket, extracts the violat
 ## Build / Test / Deploy
 
 ```bash
-# Install dependencies
-cd parkfight && bun install
-
-# Development
-bun dev                    # Next.js dev server on :3000
-
-# Build
-bun run build              # Production build
-
-# Test
-bun test                   # Unit tests (Vitest)
-bun run test:e2e           # Playwright E2E tests
-
-# Lint
-bun run lint               # ESLint + Prettier
-
-# Database
-bunx supabase db push      # Apply migrations
-bunx supabase db reset     # Reset local DB
-
-# Type checking
-bun run typecheck          # tsc --noEmit
-
-# Deploy
-# Automatic via Vercel on push to main
-# Preview deploys on PRs
+cd parkfight
+bun install              # Install dependencies
+bun run dev              # Start dev server (localhost:3000)
+bun run build            # Production build
+bun run lint             # ESLint
+bun run test             # Run Vitest unit/integration tests (NEVER use `bun test`)
+bun run test:e2e         # Run Playwright E2E tests
+bun run test:e2e:ui      # Playwright E2E with UI mode
 ```
+
+**IMPORTANT:** Always use `bun run test` (NOT `bun test`).
 
 ## Architecture
 
