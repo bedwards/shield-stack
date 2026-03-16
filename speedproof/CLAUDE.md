@@ -1,6 +1,6 @@
 # SpeedProof — ISP Speed Accountability Monitor
 
-## Status: Planning Complete
+## Status: Scaffold Complete
 
 ## Product Overview
 SpeedProof runs automated internet speed tests and builds a legally defensible record proving your ISP is not delivering advertised speeds. After collecting 30 days of data, it generates professional reports, FCC complaint templates, and ISP credit request letters. The free tier offers manual tests with 7-day history; the paid tier adds automatic hourly background testing, full historical reports, and pre-filled complaint/credit templates.
@@ -48,32 +48,23 @@ Always use Claude Opus 4.6 with max effort.
 
 ## Build / Test / Deploy
 ```bash
-# Install dependencies
-bun install
+cd speedproof
+bun install              # Install dependencies
+bun run dev              # Start dev server (localhost:3000)
+bun run build            # Production build
+bun run lint             # ESLint
+bun run test             # Run Vitest unit/integration tests (NEVER use `bun test`)
+bun run test:e2e         # Run Playwright E2E tests
+bun run test:e2e:ui      # Playwright E2E with UI mode
+```
 
-# Development
-bun dev                    # Next.js dev server on :3000
+**IMPORTANT:** Always use `bun run test` (NOT `bun test`). `bun test` invokes Bun's native test runner which picks up Playwright e2e files and doesn't use the Vitest config.
 
-# Testing
-bun test                   # Unit tests (vitest)
-bun test:e2e               # Playwright E2E tests
-
-# Linting & Formatting
-bun lint                   # ESLint
-bun format                 # Prettier
-
-# Database
-bun db:migrate             # Run Supabase migrations
-bun db:seed                # Seed ISP directory data
-bun db:reset               # Reset local Supabase
-
-# Speed Test Server (Cloudflare Workers)
-bun --cwd workers/speed-test dev     # Local worker dev
-bun --cwd workers/speed-test deploy  # Deploy to Cloudflare
-
-# Build & Deploy
-bun build                  # Production build
-vercel --prod              # Deploy to production
+### Future commands (not yet wired up)
+```bash
+bun run db:migrate       # Run Supabase migrations
+bun run db:seed          # Seed ISP directory data
+bun run db:types         # Generate TypeScript types from Supabase schema
 ```
 
 ## Architecture
@@ -120,5 +111,58 @@ User clicks "Test" or Service Worker triggers automatically
 - **Vercel** — App hosting
 - **IP Geolocation** — Detect user's ISP from IP address (ipinfo.io or similar)
 
+## Project Structure
+```
+speedproof/
+  src/
+    app/              # Next.js App Router pages and layouts
+      layout.tsx      # Root layout with header/footer shell
+      page.tsx        # Landing page with hero, features, CTA
+      globals.css     # Tailwind imports and CSS custom properties
+    components/       # Reusable React components
+    lib/              # Utility functions and helpers
+      env.ts          # Environment variable accessors
+      env.test.ts     # Tests for env helpers
+      test-setup.ts   # Vitest setup file
+    types/            # TypeScript type definitions
+      index.ts        # Shared types (SpeedTestResult, UserProfile, etc.)
+  e2e/                # Playwright E2E tests
+    smoke.spec.ts     # Basic smoke tests for landing page
+  public/             # Static assets
+  docs/               # Architecture and design documents
+```
+
+## LLM-Testable Design
+All interactive elements include `data-testid` attributes for Playwright testing.
+- `data-testid="header"` -- Page header
+- `data-testid="nav"` -- Navigation bar
+- `data-testid="logo-link"` -- Logo/home link
+- `data-testid="nav-dashboard"` -- Dashboard nav link
+- `data-testid="nav-reports"` -- Reports nav link
+- `data-testid="nav-login"` -- Sign in button
+- `data-testid="main-content"` -- Main content area
+- `data-testid="footer"` -- Page footer
+- `data-testid="hero-section"` -- Hero section
+- `data-testid="hero-title"` -- Hero heading
+- `data-testid="hero-subtitle"` -- Hero subheading
+- `data-testid="hero-cta"` -- Hero CTA button group
+- `data-testid="cta-test-button"` -- Run Speed Test button
+- `data-testid="cta-dashboard-button"` -- View Dashboard button
+- `data-testid="stats-section"` -- Statistics section
+- `data-testid="how-it-works-section"` -- How it works section
+- `data-testid="features-section"` -- Features grid section
+- `data-testid="cta-section"` -- Bottom CTA section
+- `data-testid="cta-start-button"` -- Bottom CTA button
+
+Convention: All new interactive elements MUST include a `data-testid` attribute.
+
+## Environment Variables
+See `.env.example` for required variables:
+- `NEXT_PUBLIC_SUPABASE_URL` -- Supabase project URL (client-accessible)
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` -- Supabase anonymous key (client-accessible)
+- `NEXT_PUBLIC_APP_URL` -- Public app URL (client-accessible)
+- `STRIPE_SECRET_KEY` -- Stripe secret API key (server-only, NO NEXT_PUBLIC_ prefix)
+- `TEST_MODE` -- Enable test mode (bypasses rate limits, enables test accounts)
+
 ## Version
-0.0.0
+0.1.0
