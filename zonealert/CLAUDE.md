@@ -46,6 +46,8 @@ bun run test             # Run Vitest unit/integration tests (NOT bun test!)
 bun run test:e2e         # Run Playwright E2E tests
 bun run build            # Production build
 bun run lint             # ESLint check
+bun run format           # Format code with Prettier
+bun run format:check     # Check formatting without writing
 bun run typecheck        # TypeScript type check
 bun run db:migrate       # Run Supabase migrations (future)
 bun run db:types         # Generate TypeScript types from Supabase schema (future)
@@ -58,7 +60,7 @@ bun run db:types         # Generate TypeScript types from Supabase schema (futur
 zonealert/
   src/
     app/              # Next.js App Router pages and layouts
-      layout.tsx      # Root layout with header/footer shell
+      layout.tsx      # Root layout with header, sidebar, and footer shell
       page.tsx        # Landing page with hero, stats, features
       globals.css     # Tailwind imports and CSS custom properties
       api/
@@ -156,6 +158,14 @@ All interactive elements include `data-testid` attributes for Playwright testing
 - `data-testid="nav-alerts"` -- My Alerts nav link
 - `data-testid="nav-map"` -- Map View nav link
 - `data-testid="nav-login"` -- Sign in button
+- `data-testid="sidebar"` -- Sidebar navigation panel (hidden on mobile)
+- `data-testid="sidebar-nav"` -- Sidebar nav container
+- `data-testid="sidebar-dashboard"` -- Sidebar: Dashboard link
+- `data-testid="sidebar-alerts"` -- Sidebar: My Alerts link
+- `data-testid="sidebar-map"` -- Sidebar: Map View link
+- `data-testid="sidebar-hearings"` -- Sidebar: Public Hearings link
+- `data-testid="sidebar-addresses"` -- Sidebar: My Addresses link
+- `data-testid="sidebar-settings"` -- Sidebar: Settings link
 - `data-testid="main-content"` -- Main content area
 - `data-testid="footer"` -- Page footer
 - `data-testid="hero-section"` -- Hero section
@@ -176,6 +186,7 @@ All interactive elements include `data-testid` attributes for Playwright testing
 - `data-testid="cta-start-button"` -- Get started button
 
 Convention: All new interactive elements MUST include a `data-testid` attribute.
+**Enforced by ESLint**: The custom `data-testid/require-data-testid` rule warns when interactive elements (`button`, `a`, `input`, `select`, `textarea`, `Link`) are missing `data-testid`.
 
 ## Environment Variables
 See `.env.example` for required variables:

@@ -69,9 +69,61 @@ export default function RootLayout({
           </nav>
         </header>
 
-        <main data-testid="main-content" className="flex-1">
-          {children}
-        </main>
+        <div className="flex flex-1">
+          <aside
+            data-testid="sidebar"
+            className="hidden md:flex w-64 flex-col border-r border-[var(--border)] bg-[var(--background)]"
+          >
+            <nav data-testid="sidebar-nav" className="flex flex-col gap-1 p-4">
+              <Link
+                href="/"
+                data-testid="sidebar-dashboard"
+                className="rounded-md px-3 py-2 text-sm font-medium text-[var(--foreground)] hover:bg-[var(--secondary)] transition-colors"
+              >
+                Dashboard
+              </Link>
+              <Link
+                href="/alerts"
+                data-testid="sidebar-alerts"
+                className="rounded-md px-3 py-2 text-sm font-medium text-[var(--muted)] hover:bg-[var(--secondary)] hover:text-[var(--foreground)] transition-colors"
+              >
+                My Alerts
+              </Link>
+              <Link
+                href="/map"
+                data-testid="sidebar-map"
+                className="rounded-md px-3 py-2 text-sm font-medium text-[var(--muted)] hover:bg-[var(--secondary)] hover:text-[var(--foreground)] transition-colors"
+              >
+                Map View
+              </Link>
+              <Link
+                href="/hearings"
+                data-testid="sidebar-hearings"
+                className="rounded-md px-3 py-2 text-sm font-medium text-[var(--muted)] hover:bg-[var(--secondary)] hover:text-[var(--foreground)] transition-colors"
+              >
+                Public Hearings
+              </Link>
+              <Link
+                href="/addresses"
+                data-testid="sidebar-addresses"
+                className="rounded-md px-3 py-2 text-sm font-medium text-[var(--muted)] hover:bg-[var(--secondary)] hover:text-[var(--foreground)] transition-colors"
+              >
+                My Addresses
+              </Link>
+              <Link
+                href="/settings"
+                data-testid="sidebar-settings"
+                className="rounded-md px-3 py-2 text-sm font-medium text-[var(--muted)] hover:bg-[var(--secondary)] hover:text-[var(--foreground)] transition-colors"
+              >
+                Settings
+              </Link>
+            </nav>
+          </aside>
+
+          <main data-testid="main-content" className="flex-1">
+            {children}
+          </main>
+        </div>
 
         <footer
           data-testid="footer"

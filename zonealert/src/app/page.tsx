@@ -58,15 +58,11 @@ export default function Home() {
             </div>
             <div data-testid="stat-alerts-sent">
               <p className="text-3xl font-bold text-[var(--alert)]">0</p>
-              <p className="mt-2 text-sm text-[var(--muted)]">
-                Alerts Sent
-              </p>
+              <p className="mt-2 text-sm text-[var(--muted)]">Alerts Sent</p>
             </div>
             <div data-testid="stat-cities-covered">
               <p className="text-3xl font-bold text-[var(--success)]">0</p>
-              <p className="mt-2 text-sm text-[var(--muted)]">
-                Cities Covered
-              </p>
+              <p className="mt-2 text-sm text-[var(--muted)]">Cities Covered</p>
             </div>
           </div>
         </div>
@@ -112,8 +108,8 @@ export default function Home() {
               </h3>
               <p className="mt-2 text-sm text-[var(--muted)]">
                 Receive push notifications and emails when new zoning activity
-                is detected near your home. Attend hearings, voice opinions, stay
-                informed.
+                is detected near your home. Attend hearings, voice opinions,
+                stay informed.
               </p>
             </div>
           </div>
@@ -130,7 +126,10 @@ export default function Home() {
             Everything You Need
           </h2>
           <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div data-testid="feature-radius" className="rounded-lg bg-[var(--background)] p-6 border border-[var(--border)]">
+            <div
+              data-testid="feature-radius"
+              className="rounded-lg bg-[var(--background)] p-6 border border-[var(--border)]"
+            >
               <h3 className="text-lg font-semibold text-[var(--foreground)]">
                 Customizable Radius
               </h3>
@@ -139,7 +138,10 @@ export default function Home() {
                 what matters to your neighborhood.
               </p>
             </div>
-            <div data-testid="feature-map" className="rounded-lg bg-[var(--background)] p-6 border border-[var(--border)]">
+            <div
+              data-testid="feature-map"
+              className="rounded-lg bg-[var(--background)] p-6 border border-[var(--border)]"
+            >
               <h3 className="text-lg font-semibold text-[var(--foreground)]">
                 Interactive Map
               </h3>
@@ -148,7 +150,10 @@ export default function Home() {
                 your monitoring zone and active proposals.
               </p>
             </div>
-            <div data-testid="feature-hearings" className="rounded-lg bg-[var(--background)] p-6 border border-[var(--border)]">
+            <div
+              data-testid="feature-hearings"
+              className="rounded-lg bg-[var(--background)] p-6 border border-[var(--border)]"
+            >
               <h3 className="text-lg font-semibold text-[var(--foreground)]">
                 Hearing Calendar
               </h3>
@@ -157,7 +162,10 @@ export default function Home() {
                 where your neighborhood is on the agenda.
               </p>
             </div>
-            <div data-testid="feature-push" className="rounded-lg bg-[var(--background)] p-6 border border-[var(--border)]">
+            <div
+              data-testid="feature-push"
+              className="rounded-lg bg-[var(--background)] p-6 border border-[var(--border)]"
+            >
               <h3 className="text-lg font-semibold text-[var(--foreground)]">
                 Push Notifications
               </h3>
@@ -166,7 +174,10 @@ export default function Home() {
                 detected. No app install required.
               </p>
             </div>
-            <div data-testid="feature-history" className="rounded-lg bg-[var(--background)] p-6 border border-[var(--border)]">
+            <div
+              data-testid="feature-history"
+              className="rounded-lg bg-[var(--background)] p-6 border border-[var(--border)]"
+            >
               <h3 className="text-lg font-semibold text-[var(--foreground)]">
                 Alert History
               </h3>
@@ -175,7 +186,10 @@ export default function Home() {
                 were approved, denied, or withdrawn.
               </p>
             </div>
-            <div data-testid="feature-multi-address" className="rounded-lg bg-[var(--background)] p-6 border border-[var(--border)]">
+            <div
+              data-testid="feature-multi-address"
+              className="rounded-lg bg-[var(--background)] p-6 border border-[var(--border)]"
+            >
               <h3 className="text-lg font-semibold text-[var(--foreground)]">
                 Multiple Addresses
               </h3>
@@ -189,10 +203,7 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section
-        data-testid="cta-section"
-        className="py-16"
-      >
+      <section data-testid="cta-section" className="py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold text-[var(--foreground)]">
             Stop Finding Out Too Late

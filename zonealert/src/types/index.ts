@@ -71,7 +71,11 @@ export interface Alert {
   userId: string;
   monitoredAddressId: string;
   zoningApplicationId: string;
-  alertType: "new_application" | "hearing_scheduled" | "decision_made" | "status_change";
+  alertType:
+    | "new_application"
+    | "hearing_scheduled"
+    | "decision_made"
+    | "status_change";
   sentAt: string;
   readAt: string | null;
   distanceMiles: number;
