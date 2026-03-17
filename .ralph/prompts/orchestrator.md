@@ -17,12 +17,14 @@ Groom the backlog across all products, prioritize issues, and select the next is
    - `gh pr list --repo bedwards/shield-stack --state open --json number,title,headRefName`
 5. Check for blocked issues (dependencies on other issues)
 6. Prioritize across all products by:
-   - **Product readiness**: Products with scaffold complete get implementation issues
+   - **Revenue proximity**: Issues that directly lead to money (affiliate integration, SEO content pages, conversion funnels) beat pure infrastructure
+   - **Shortest path to first dollar**: A product with scaffold+schema+auth but no affiliate links is further from revenue than a product with just a landing page and affiliate links
    - **Time-sensitivity**: ScoreRebound, CliffCheck, NetCheck have urgent waves
-   - **Blocking**: Foundational issues (scaffold, CI) before features
+   - **Unblocking**: Issues that unblock revenue-path issues go first
    - **Dependencies**: Issues that enable other issues go first
-   - **Portfolio balance**: Spread work across products, don't over-focus on one
+   - **Portfolio balance**: Spread work across products, but focus on products closest to revenue
    - **Size**: Prefer smaller, well-scoped issues over large ones
+   - **Anti-pattern to avoid**: Don't build 10 products' infrastructure. Get 1-2 products to revenue first, then expand.
 7. Select the highest priority unblocked issue that has no open PR
 8. If there are open PRs awaiting review, note them for the review phase
 9. **Write your selection to disk** — update `.ralph/status.json` with:
