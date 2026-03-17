@@ -207,6 +207,10 @@ Use this variable for both `use.baseURL` and `webServer.url`.
 **What happened:** `FAQSection` parent used `divide-y divide-gray-200` while each child `FAQAccordionItem` had `border-b border-gray-200`, resulting in double-thick borders between items.
 **Rule:** When using Tailwind's `divide-y` on a parent container, do NOT also add `border-b` to child items — `divide-y` already inserts borders between siblings. Pick one approach.
 
+## 2026-03-17 | scorerebound | Visual regression baselines must be generated per-platform from CI artifacts (PR #294)
+**What happened:** Worker committed darwin (macOS) visual baselines but CI runs on Ubuntu Linux. All 23 visual regression tests failed because Linux baselines didn't exist. Font rendering differences between macOS and Linux produce different page dimensions, so macOS screenshots cannot serve as Linux baselines.
+**Rule:** Visual regression baselines must exist for EVERY platform that runs tests. For cross-platform CI, download the "actual" screenshots from CI artifacts after a failed run and commit them as the `linux/` baselines alongside the `darwin/` baselines. The Playwright config must use `{platform}` in `snapshotPathTemplate`. Quick fix command: `gh run download <run-id> --name <product>-visual-snapshots --dir /tmp/linux-snapshots`, then copy the `linux/` directory into the snapshot directories and commit.
+
 ## 2026-03-17 | afterloss | @react-pdf/renderer cannot render server-side in Next.js App Router route handlers (Research)
 **What happened:** Research confirmed that @react-pdf/renderer relies on browser APIs (DOMMatrix) not available in Node.js server-side rendering. Using it in API routes or route handlers causes "DOMMatrix is not defined" errors.
 **Rule:** Use @react-pdf/renderer via CLIENT-SIDE dynamic import: `dynamic(() => import('@react-pdf/renderer'), { ssr: false })`. The Claude API generates letter TEXT server-side in an API route, then the client renders the text into a styled PDF. Add `serverExternalPackages: ['@react-pdf/renderer']` to next.config.ts as a fallback for any server-side usage that may work in future versions. Alternative for pure server-side: jsPDF.
