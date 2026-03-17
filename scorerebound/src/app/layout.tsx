@@ -202,6 +202,7 @@ export default function RootLayout({
               <p
                 data-testid="footer-copyright"
                 className="text-center text-xs text-gray-500"
+                suppressHydrationWarning
               >
                 &copy; {new Date().getFullYear()} ScoreRebound. Not financial
                 advice. Consult a qualified professional for your specific
