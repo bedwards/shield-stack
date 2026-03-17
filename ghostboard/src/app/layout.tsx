@@ -13,6 +13,13 @@ export const metadata: Metadata = {
     "does company ghost applicants",
     "hiring process transparency",
   ],
+  openGraph: {
+    title: "GhostBoard - Employer Ghosting Rate Database",
+    description:
+      "Search any company and see its ghosting rate. Find out if employers actually respond to job applicants before you apply.",
+    type: "website",
+    siteName: "GhostBoard",
+  },
 };
 
 export default function RootLayout({
@@ -78,7 +85,7 @@ export default function RootLayout({
         >
           <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-              <p className="text-sm text-[var(--muted)]">
+              <p className="text-sm text-[var(--muted)]" suppressHydrationWarning>
                 &copy; {new Date().getFullYear()} GhostBoard. All rights
                 reserved.
               </p>

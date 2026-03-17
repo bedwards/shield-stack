@@ -15,6 +15,13 @@ export const metadata: Metadata = {
     "HOA overreach",
     "HOA violation dispute",
   ],
+  openGraph: {
+    title: "HOAshield - Homeowner Defense Against HOA Overreach",
+    description:
+      "Fight unfair HOA fines with AI-powered CC&R analysis and legally-grounded dispute letters. Upload your CC&Rs, understand your rights, and defend your home.",
+    type: "website",
+    siteName: "HOAshield",
+  },
 };
 
 export default function RootLayout({
@@ -87,7 +94,7 @@ export default function RootLayout({
         >
           <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-              <p className="text-sm text-[var(--muted)]">
+              <p className="text-sm text-[var(--muted)]" suppressHydrationWarning>
                 &copy; {new Date().getFullYear()} HOAshield. All rights
                 reserved.
               </p>

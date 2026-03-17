@@ -6,6 +6,12 @@ export const metadata: Metadata = {
   title: "AfterLoss - Free After-Death Estate Settlement Process Guide",
   description: "Free step-by-step guide for settling an estate after someone dies. State-specific checklists, document templates, and compassionate guidance.",
   keywords: ["what to do when someone dies", "estate settlement checklist", "after death checklist", "probate guide", "settling an estate"],
+  openGraph: {
+    title: "AfterLoss - Free After-Death Estate Settlement Process Guide",
+    description: "Free step-by-step guide for settling an estate after someone dies. State-specific checklists, document templates, and compassionate guidance.",
+    type: "website",
+    siteName: "AfterLoss",
+  },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

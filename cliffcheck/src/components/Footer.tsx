@@ -14,7 +14,7 @@ export function Footer() {
           >
             CliffCheck
           </span>
-          <span className="text-sm text-gray-500">
+          <span className="text-sm text-gray-500" suppressHydrationWarning>
             &copy; {new Date().getFullYear()}
           </span>
         </div>

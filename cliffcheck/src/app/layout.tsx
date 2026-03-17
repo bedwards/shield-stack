@@ -15,6 +15,13 @@ export const metadata: Metadata = {
     "benefits cliff",
     "government benefits calculator",
   ],
+  openGraph: {
+    title: "CliffCheck — Benefits Cliff Calculator",
+    description:
+      "See how a raise affects ALL your government benefits at once. Free benefits cliff calculator for SNAP, Medicaid, EITC, childcare subsidies, and more.",
+    type: "website",
+    siteName: "CliffCheck",
+  },
 };
 
 export default function RootLayout({

@@ -14,6 +14,13 @@ export const metadata: Metadata = {
     "energy cost comparison",
     "high electric bill",
   ],
+  openGraph: {
+    title: "BillWatch - Utility Bill Anomaly Detection",
+    description:
+      "Upload your utility bills and instantly detect overcharges, anomalies, and rate spikes. Track your electric, gas, and water costs over time.",
+    type: "website",
+    siteName: "BillWatch",
+  },
 };
 
 export default function RootLayout({
@@ -79,7 +86,7 @@ export default function RootLayout({
         >
           <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-              <p className="text-sm text-[var(--muted)]">
+              <p className="text-sm text-[var(--muted)]" suppressHydrationWarning>
                 &copy; {new Date().getFullYear()} BillWatch. All rights
                 reserved.
               </p>
