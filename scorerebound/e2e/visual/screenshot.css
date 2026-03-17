@@ -1,0 +1,58 @@
+/**
+ * Screenshot stabilization CSS.
+ * Injected during visual regression tests to ensure consistent screenshots
+ * across environments by disabling animations, blinking cursors, and
+ * hiding dynamic content that changes between runs.
+ */
+
+/* Disable all animations and transitions */
+*,
+*::before,
+*::after {
+  animation-duration: 0s !important;
+  animation-delay: 0s !important;
+  transition-duration: 0s !important;
+  transition-delay: 0s !important;
+  caret-color: transparent !important;
+}
+
+/* Hide blinking cursors */
+input,
+textarea,
+[contenteditable] {
+  caret-color: transparent !important;
+}
+
+/* Stabilize scroll behavior */
+html {
+  scroll-behavior: auto !important;
+}
+
+/* Disable smooth scrolling on elements */
+* {
+  scroll-behavior: auto !important;
+}
+
+/* Hide loading spinners — they animate and produce flaky diffs */
+.animate-spin {
+  animation: none !important;
+  opacity: 0 !important;
+}
+
+/* Stabilize font rendering for cross-platform consistency */
+body {
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  text-rendering: geometricPrecision !important;
+}
+
+/* Force consistent image rendering */
+img {
+  image-rendering: auto !important;
+}
+
+/* Disable backdrop blur which can vary across GPUs */
+[class*="backdrop-blur"] {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}

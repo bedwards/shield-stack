@@ -1,7 +1,6 @@
 import { defineConfig, devices } from "@playwright/test";
 
-const baseURL =
-  process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3010";
+const baseURL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3010";
 
 export default defineConfig({
   testDir: "./e2e",
@@ -10,6 +9,12 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
   reporter: "html",
+  expect: {
+    toHaveScreenshot: {
+      maxDiffPixels: 100,
+      threshold: 0.2,
+    },
+  },
   use: {
     baseURL,
     trace: "on-first-retry",
