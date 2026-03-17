@@ -29,38 +29,18 @@ Check the health of the main branch, CI status, and overall project state across
 8. For each product with Playwright tests, run E2E against production:
    - `cd {product} && npx playwright test --reporter=json 2>&1 | head -50`
    - If E2E fails on main, this is a critical warning — a broken deployment slipped through
-9. Output JSON to stdout:
-
-```json
-{
-  "health": {
-    "products_with_code": ["hoashield", "billwatch"],
-    "products_building": ["hoashield"],
-    "products_failing": [],
-    "main_sha": "abc1234"
-  },
-  "ci": {
-    "latest_status": "completed",
-    "latest_conclusion": "success",
-    "reviews_working": true
-  },
-  "github": {
-    "open_prs": 2,
-    "open_issues": 45,
-    "stale_prs": [],
-    "issues_by_product": {"hoashield": 5, "billwatch": 3}
-  },
-  "warnings": [],
-  "timestamp": "ISO8601"
-}
-```
+9. **Write results to files on disk** (do NOT output JSON to stdout):
+   - If code reviews are broken → update `.ralph/status.json`: set `halted: true` and `halt_reason`
+   - If you find recurring issues → append to `.ralph/learnings.md` and `git commit` to main
+   - If main branch is broken → update `.ralph/status.json` with halt flag
 
 ## Context Loss
-Your durable artifacts are the JSON output and any `.ralph/status.json` updates (e.g., halting if main is broken). Be specific in warnings — include error messages and affected files.
+Your durable artifacts are updates to `.ralph/status.json` (halt flags) and `.ralph/learnings.md` (new learnings committed to main). Be specific — include error messages and affected files.
 
 ## Constraints
 - Do NOT modify code files
-- Do NOT create issues or PRs
-- Do NOT push
+- You MAY create GitHub issues for critical findings
+- You MAY commit updates to `.ralph/learnings.md` directly to main
+- You MAY update `.ralph/status.json` (especially the halt flag)
 - Output ONLY the JSON object
 - If code reviews are broken, HALT and explain why

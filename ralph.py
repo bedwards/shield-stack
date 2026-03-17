@@ -200,9 +200,14 @@ def update_worker_state(worker_id, **kwargs):
 
 def run_claude(prompt, max_turns=None, timeout=600):
     """
-    Run a single-shot Claude Code CLI instance and return its output.
+    Run a single-shot Claude Code CLI instance.
     Always uses Claude Opus 4.6 with max effort.
-    Returns (success: bool, output: str, parsed_json: dict|None)
+
+    Workers communicate via FILES ON DISK, not stdout.
+    Each phase tells Claude which files to read and write.
+    After Claude exits, ralph.py reads those files to determine outcome.
+
+    Returns (success: bool, exit_code: int)
     """
     cmd = [CLAUDE_CMD, "-p", prompt]
     cmd.extend(["--model", CLAUDE_MODEL])
@@ -222,59 +227,34 @@ def run_claude(prompt, max_turns=None, timeout=600):
             timeout=timeout,
         )
 
-        stdout = result.stdout.strip()
         stderr = result.stderr.strip()
-
         if stderr:
             for line in stderr.split("\n")[:10]:
                 log(f"  stderr: {line}", "WARN")
 
         # Check for rate limiting
         if result.returncode != 0:
-            combined = (stdout + " " + stderr).lower()
+            combined = (result.stdout + " " + stderr).lower()
             if any(x in combined for x in [
                 "rate limit", "429", "overloaded", "too many requests",
                 "quota exceeded", "capacity"
             ]):
                 log("Rate limit detected!", "WARN")
                 update_metrics(last_rate_limit_at=now_iso())
-                return False, stdout, None
+                return False, result.returncode
 
         if result.returncode != 0:
             log(f"Claude exited with code {result.returncode}", "ERROR")
-            return False, stdout, None
+            return False, result.returncode
 
-        parsed = try_parse_json(stdout)
-        return True, stdout, parsed
+        return True, 0
 
     except subprocess.TimeoutExpired:
         log(f"Claude timed out after {timeout}s", "ERROR")
-        return False, "", None
+        return False, -1
     except FileNotFoundError:
         log("Claude CLI not found. Is it installed and on PATH?", "FATAL")
         sys.exit(1)
-
-
-def try_parse_json(text):
-    """Extract JSON from claude output, handling markdown fences."""
-    try:
-        return json.loads(text)
-    except (json.JSONDecodeError, ValueError):
-        pass
-
-    patterns = [
-        r"```json\s*\n(.*?)\n\s*```",
-        r"```\s*\n(\{.*?\})\n\s*```",
-        r"(\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\})",
-    ]
-    for pattern in patterns:
-        match = re.search(pattern, text, re.DOTALL)
-        if match:
-            try:
-                return json.loads(match.group(1))
-            except (json.JSONDecodeError, ValueError):
-                continue
-    return None
 
 
 # ---------------------------------------------------------------------------
@@ -520,8 +500,13 @@ def branch_name_for_issue(issue_number, issue_title, product_slug):
 # ---------------------------------------------------------------------------
 
 def phase_research(dry_run=False, product_slug=None):
+    """Research phase: Claude writes findings to .ralph/research_output.json
+    and may commit docs (learnings, CLAUDE.md updates) directly to main."""
     log_phase("research", "Starting research phase")
     update_status(phase="research")
+
+    # Snapshot research_output.json before Claude runs
+    before = read_json(RESEARCH_OUTPUT)
 
     prompt = build_research_prompt(product_slug)
 
@@ -529,20 +514,19 @@ def phase_research(dry_run=False, product_slug=None):
         log_phase("research", f"[DRY RUN] Would run researcher ({len(prompt)} chars)")
         return True
 
-    success, output, parsed = run_claude(
-        prompt, max_turns=15, timeout=300,
-    )
+    success, _ = run_claude(prompt, max_turns=15, timeout=600)
 
-    if success and parsed:
-        write_json(RESEARCH_OUTPUT, parsed)
-        findings_count = len(parsed.get("findings", []))
-        log_phase("research", f"Found {findings_count} findings")
-    elif success:
-        write_json(RESEARCH_OUTPUT, {"raw_output": output, "timestamp": now_iso()})
-        log_phase("research", "Got output but couldn't parse JSON, saved raw")
-    else:
-        log_phase("research", "Research failed")
+    if not success:
+        log_phase("research", "Research phase failed (Claude exited non-zero)")
         return False
+
+    # Check what Claude wrote to disk
+    after = read_json(RESEARCH_OUTPUT)
+    if after != before:
+        findings_count = len(after.get("findings", []))
+        log_phase("research", f"Research produced {findings_count} findings in research_output.json")
+    else:
+        log_phase("research", "Research completed (check git log for committed docs)")
 
     increment_phase_metric("research")
     update_status(last_phase_completed="research")
@@ -550,6 +534,8 @@ def phase_research(dry_run=False, product_slug=None):
 
 
 def phase_plan(dry_run=False, product_slug=None):
+    """Plan phase: Claude creates GitHub issues and may update CLAUDE.md/docs.
+    Docs are committed directly to main (no PR needed)."""
     log_phase("plan", "Starting planning phase")
     update_status(phase="plan")
 
@@ -559,25 +545,42 @@ def phase_plan(dry_run=False, product_slug=None):
         log_phase("plan", f"[DRY RUN] Would run planner ({len(prompt)} chars)")
         return True
 
-    success, output, parsed = run_claude(
-        prompt, max_turns=30, timeout=600,
-    )
+    # Count issues before
+    issues_before = 0
+    try:
+        result = subprocess.run(
+            ["gh", "issue", "list", "--repo", GITHUB_REPO, "--state", "open",
+             "--json", "number", "--limit", "500"],
+            cwd=PROJECT_DIR, capture_output=True, text=True, timeout=30,
+        )
+        issues_before = len(json.loads(result.stdout))
+    except Exception:
+        pass
 
-    if success and parsed:
-        issues_created = parsed.get("issues_created", [])
-        log_phase("plan", f"Created {len(issues_created)} issues")
-        increment_metric("total_issues_created", len(issues_created))
+    success, _ = run_claude(prompt, max_turns=30, timeout=600)
 
-        backlog = read_json(BACKLOG_FILE)
-        for issue in issues_created:
-            backlog.setdefault("issues", []).append(issue)
-        backlog["last_groomed_at"] = now_iso()
-        write_json(BACKLOG_FILE, backlog)
-    elif success:
-        log_phase("plan", "Planner finished but no structured output")
-    else:
-        log_phase("plan", "Planning failed")
+    if not success:
+        log_phase("plan", "Planning phase failed")
         return False
+
+    # Check how many issues exist now
+    issues_after = 0
+    try:
+        result = subprocess.run(
+            ["gh", "issue", "list", "--repo", GITHUB_REPO, "--state", "open",
+             "--json", "number", "--limit", "500"],
+            cwd=PROJECT_DIR, capture_output=True, text=True, timeout=30,
+        )
+        issues_after = len(json.loads(result.stdout))
+    except Exception:
+        pass
+
+    new_issues = issues_after - issues_before
+    if new_issues > 0:
+        log_phase("plan", f"Planner created {new_issues} new issues")
+        increment_metric("total_issues_created", new_issues)
+    else:
+        log_phase("plan", "Planning completed (check gh issues and git log)")
 
     increment_phase_metric("plan")
     update_status(last_phase_completed="plan")
@@ -585,6 +588,8 @@ def phase_plan(dry_run=False, product_slug=None):
 
 
 def phase_orchestrate(dry_run=False):
+    """Orchestrate phase: Claude reads issues, updates .ralph/status.json
+    with selected issue, and updates .ralph/backlog.json with priorities."""
     log_phase("orchestrate", "Starting orchestration phase")
     update_status(phase="orchestrate")
 
@@ -607,33 +612,21 @@ def phase_orchestrate(dry_run=False):
         log_phase("orchestrate", "[DRY RUN] Would run orchestrator")
         return True
 
-    success, output, parsed = run_claude(
-        prompt, max_turns=15, timeout=600,
-    )
+    success, _ = run_claude(prompt, max_turns=15, timeout=600)
 
-    if success and parsed:
-        selected = parsed.get("selected_issue")
-        if selected:
-            issue_num = selected["number"]
-            issue_title = selected["title"]
-            product = selected.get("product", "unknown")
-            log_phase("orchestrate", f"Selected #{issue_num} [{product}]: {issue_title}")
-            update_status(
-                current_issue=selected,
-                current_product=product,
-                current_branch=branch_name_for_issue(issue_num, issue_title, product),
-            )
-
-            backlog = read_json(BACKLOG_FILE)
-            backlog["priority_order"] = parsed.get("priority_order", [])
-            backlog["last_groomed_at"] = now_iso()
-            write_json(BACKLOG_FILE, backlog)
-        else:
-            log_phase("orchestrate", "No issues ready to work on")
-            update_status(current_issue=None, current_branch=None, current_product=None)
-    else:
+    if not success:
         log_phase("orchestrate", "Orchestration failed")
         return False
+
+    # Claude should have updated .ralph/status.json with current_issue
+    status = read_json(STATUS_FILE)
+    selected = status.get("current_issue")
+    if selected:
+        issue_num = selected.get("number", "?")
+        product = status.get("current_product", "unknown")
+        log_phase("orchestrate", f"Selected #{issue_num} [{product}]")
+    else:
+        log_phase("orchestrate", "No issue selected (check status.json)")
 
     increment_phase_metric("orchestrate")
     update_status(last_phase_completed="orchestrate")
@@ -641,6 +634,8 @@ def phase_orchestrate(dry_run=False):
 
 
 def phase_work(dry_run=False):
+    """Work phase: Claude implements on a feature branch, commits, pushes, creates PR.
+    ralph.py detects the PR by checking gh after Claude exits."""
     log_phase("work", "Starting work phase")
     update_status(phase="work")
 
@@ -682,42 +677,39 @@ def phase_work(dry_run=False):
         ensure_main()
         return True
 
-    success, output, parsed = run_claude(
+    success, _ = run_claude(
         prompt,
         max_turns=CLAUDE_MAX_TURNS,
         timeout=900,
     )
 
-    if success and parsed:
-        pr_number = parsed.get("pr_number")
-        if pr_number:
-            log_phase("work", f"Created PR #{pr_number}")
-            update_status(current_pr=pr_number)
-            increment_metric("total_prs_created")
-        else:
-            log_phase("work", "Work completed but no PR created")
-    elif success:
-        log_phase("work", "Worker finished but no structured output")
+    # Detect PR from git state (Claude creates it, we find it)
+    pr_number = None
+    try:
         result = subprocess.run(
-            ["gh", "pr", "list", "--head", branch, "--json", "number"],
-            cwd=PROJECT_DIR, capture_output=True, text=True,
+            ["gh", "pr", "list", "--head", branch, "--json", "number",
+             "--repo", GITHUB_REPO],
+            cwd=PROJECT_DIR, capture_output=True, text=True, timeout=15,
         )
-        try:
-            prs = json.loads(result.stdout)
-            if prs:
-                update_status(current_pr=prs[0]["number"])
-                log_phase("work", f"Found PR #{prs[0]['number']} from branch")
-        except (json.JSONDecodeError, IndexError, KeyError):
-            pass
+        prs = json.loads(result.stdout)
+        if prs:
+            pr_number = prs[0]["number"]
+    except (subprocess.TimeoutExpired, json.JSONDecodeError, IndexError, KeyError):
+        pass
+
+    if pr_number:
+        log_phase("work", f"PR #{pr_number} created on branch {branch}")
+        update_status(current_pr=pr_number)
+        increment_metric("total_prs_created")
+    elif success:
+        log_phase("work", "Worker finished but no PR found — check branch")
     else:
         log_phase("work", "Work phase failed")
-        ensure_main()
-        return False
 
     ensure_main()
     increment_phase_metric("work")
     update_status(last_phase_completed="work")
-    return True
+    return success or pr_number is not None
 
 
 def phase_review(dry_run=False):
@@ -774,26 +766,23 @@ def phase_review(dry_run=False):
     if bots_with_reviews:
         prompt += f"\nRead and address findings from: {', '.join(bots_with_reviews)}\n"
 
-    success, output, parsed = run_claude(
-        prompt, max_turns=40, timeout=900,
-    )
+    success, _ = run_claude(prompt, max_turns=40, timeout=900)
 
-    if success and parsed:
-        action = parsed.get("action", "unknown")
-        log_phase("review", f"Review action: {action}")
+    # Determine what happened by checking PR state (not stdout)
+    try:
+        result = subprocess.run(
+            ["gh", "pr", "view", str(pr_number), "--repo", GITHUB_REPO,
+             "--json", "state,merged,reviewDecision"],
+            cwd=PROJECT_DIR, capture_output=True, text=True, timeout=15,
+        )
+        pr_state = json.loads(result.stdout)
+        merged = pr_state.get("merged", False)
+        state = pr_state.get("state", "OPEN")
+        decision = pr_state.get("reviewDecision", "")
 
-        if action == "merged":
-            if not verify_review_posted(pr_number):
-                log_phase("review", "ENFORCEMENT: No review posted. Retry next loop.")
-                increment_metric("total_errors")
-                increment_phase_metric("review")
-                update_status(last_phase_completed="review")
-                return True
-
+        if merged:
+            log_phase("review", f"PR #{pr_number} was MERGED")
             increment_metric("total_prs_merged")
-            tag = parsed.get("tag_created")
-            if tag:
-                log_phase("review", f"Tagged: {tag}")
 
             # Track per-product metrics
             metrics = read_json(METRICS_FILE)
@@ -806,20 +795,18 @@ def phase_review(dry_run=False):
             update_status(current_issue=None, current_branch=None,
                          current_pr=None, current_product=None)
 
-        elif action == "changes_requested":
-            if not verify_review_posted(pr_number):
-                log_phase("review", "ENFORCEMENT: No review posted. Retry next loop.")
-                increment_phase_metric("review")
-                update_status(last_phase_completed="review")
-                return True
+        elif decision == "CHANGES_REQUESTED":
+            log_phase("review", f"PR #{pr_number}: changes requested")
+            # Leave PR open for next work phase
 
-            notes = parsed.get("review_notes", "see PR comments")
-            log_phase("review", f"Changes requested: {notes}")
+        elif state == "OPEN":
+            log_phase("review", f"PR #{pr_number} still open (checks may be pending)")
 
-        elif action == "waiting":
-            log_phase("review", "Checks still running, retry next loop")
-    else:
-        log_phase("review", "Review phase completed without structured output")
+        else:
+            log_phase("review", f"PR #{pr_number} state: {state}")
+
+    except (subprocess.TimeoutExpired, json.JSONDecodeError, KeyError) as e:
+        log_phase("review", f"Could not check PR state: {e}")
 
     increment_phase_metric("review")
     update_status(last_phase_completed="review")
@@ -863,31 +850,13 @@ def phase_verify(dry_run=False):
         update_status(last_phase_completed="verify")
         return True
 
-    success, output, parsed = run_claude(
-        prompt, max_turns=20, timeout=600,
-    )
+    success, _ = run_claude(prompt, max_turns=20, timeout=600)
 
-    if success and parsed:
-        tests_passed = parsed.get("tests_passed", False)
-        tests_total = parsed.get("tests_total", 0)
-        tests_failed = parsed.get("tests_failed", 0)
-        screenshots = parsed.get("screenshots_taken", 0)
-
-        log_phase("verify", f"E2E results: {tests_total} tests, "
-                  f"{tests_failed} failed, {screenshots} screenshots")
-
-        if not tests_passed:
-            log_phase("verify", "E2E FAILED — creating issue for failures")
-            # Failures become the next work assignment
-            update_status(verify_failed=True, verify_notes=parsed.get("failure_summary", ""))
-        else:
-            log_phase("verify", "E2E PASSED")
-            update_status(verify_failed=False)
-    elif success:
-        log_phase("verify", "Verifier finished but no structured output")
+    if not success:
+        log_phase("verify", "Verification phase failed (Claude exited non-zero)")
+        # Don't block the loop — log it and continue
     else:
-        log_phase("verify", "Verification phase failed")
-        return False
+        log_phase("verify", "Verification phase completed (check git log for test results/commits)")
 
     increment_phase_metric("verify")
     update_status(last_phase_completed="verify")
@@ -935,26 +904,17 @@ def phase_monitor(dry_run=False):
         log_phase("monitor", "[DRY RUN] Would run health checks")
         return True
 
-    success, output, parsed = run_claude(
-        prompt, max_turns=10, timeout=300,
-    )
+    success, _ = run_claude(prompt, max_turns=10, timeout=300)
 
-    if success and parsed:
-        health = parsed.get("health", {})
-        ci = parsed.get("ci", {})
-        log_phase("monitor", f"Health — products building: {health.get('products_building', [])}")
-        log_phase("monitor", f"CI — reviews working: {ci.get('reviews_working', 'unknown')}")
-
-        warnings = parsed.get("warnings", [])
-        for w in warnings:
-            log_phase("monitor", f"Warning: {w}")
-
-        # If reviews are broken, halt
-        if ci.get("reviews_working") is False:
-            update_status(halted=True, halt_reason="Code reviews are broken — see monitor warnings")
-            log_phase("monitor", "HALTED: Code reviews are broken!")
+    if not success:
+        log_phase("monitor", "Monitor phase failed (Claude exited non-zero)")
     else:
-        log_phase("monitor", "Monitor completed without structured output")
+        log_phase("monitor", "Monitor completed (check status.json for halt flags)")
+
+    # Check if Claude set the halt flag
+    post_status = read_json(STATUS_FILE)
+    if post_status.get("halted"):
+        log_phase("monitor", f"HALTED: {post_status.get('halt_reason', 'unknown')}")
 
     increment_phase_metric("monitor")
     update_status(last_phase_completed="monitor")

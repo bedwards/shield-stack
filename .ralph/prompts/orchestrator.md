@@ -25,31 +25,13 @@ Groom the backlog across all products, prioritize issues, and select the next is
    - **Size**: Prefer smaller, well-scoped issues over large ones
 7. Select the highest priority unblocked issue that has no open PR
 8. If there are open PRs awaiting review, note them for the review phase
-9. Output JSON to stdout:
+9. **Write your selection to disk** — update `.ralph/status.json` with:
+   - `current_issue`: `{"number": N, "title": "...", "product": "slug"}`
+   - `current_product`: the product slug
+   - `current_branch`: `"{product}/issue-{N}-{short-description}"`
+10. **Update `.ralph/backlog.json`** with priority order and grooming timestamp
 
-```json
-{
-  "selected_issue": {
-    "number": 1,
-    "title": "...",
-    "product": "slug",
-    "labels": ["..."],
-    "reason": "why this was selected"
-  },
-  "backlog_summary": {
-    "total_open": 50,
-    "by_product": {"hoashield": 5, "billwatch": 3},
-    "blocked": 2,
-    "in_progress": 1,
-    "ready": 47
-  },
-  "open_prs": [
-    {"number": 1, "title": "...", "product": "slug", "status": "awaiting_review|checks_running|changes_requested"}
-  ],
-  "priority_order": [1, 3, 5, 2, 4],
-  "timestamp": "ISO8601"
-}
-```
+Do NOT output JSON to stdout. Write to files on disk. That is how the next phase reads your decisions.
 
 ## Context Loss
 Your durable artifacts are the updated `.ralph/backlog.json` and `.ralph/status.json`. Make your `reason` field detailed enough that the implementation worker understands the priority rationale.

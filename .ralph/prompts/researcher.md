@@ -39,7 +39,13 @@ Research the web, GitHub, Reddit/X, and the codebase to find improvements, valid
    - Look for repeated findings (same mistake across multiple PRs)
    - If you find a pattern, add it to `.ralph/learnings.md` and commit
 10. Read `.ralph/learnings.md` and check if any rules are outdated or need refinement
-11. Output a JSON object to stdout:
+11. **Write your findings to files on disk** (do NOT output JSON to stdout):
+    - Write research findings to `.ralph/research_output.json`
+    - Update `.ralph/learnings.md` if you found new patterns — commit to main
+    - Update product `CLAUDE.md` files with new knowledge — commit to main
+    - Create GitHub issues for critical discoveries: `gh issue create`
+
+The JSON structure for `.ralph/research_output.json`:
 
 ```json
 {
