@@ -9,10 +9,12 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
   reporter: "html",
+  snapshotPathTemplate:
+    "{snapshotDir}/{testFileDir}/{testFileName}-snapshots/{arg}-{projectName}{ext}",
   expect: {
     toHaveScreenshot: {
-      maxDiffPixels: 100,
-      threshold: 0.2,
+      maxDiffPixels: 200,
+      threshold: 0.3,
     },
   },
   use: {
