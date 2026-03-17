@@ -61,3 +61,128 @@ Never write custom migration runners or schema diff tools.
 ## 2026-03-16 | all | Learnings adoption improves over batches
 **What happened:** Batch 1: 0% worktree usage, 2 contaminated PRs. Batch 2: 67% worktree usage, 2 contaminated. Batch 3: 100% worktree usage, 0 contaminated. Simple concrete rules (bun run test, NEXT_PUBLIC_) adopted immediately. Vague rules (read issue carefully) adopted slowly.
 **Rule:** When adding a learning, make it as concrete and mechanical as possible. "Run this script" beats "be more careful." Provide exact commands, not principles.
+
+---
+
+## 2026-03-16 | all scaffold PRs (201–213) | Playwright tests repeat page.goto in every test (RECURRING — 10/10 PRs)
+**What happened:** Every single scaffold PR wrote E2E smoke tests with `await page.goto("/")` duplicated inside every individual test case. Reviewers flagged this in all 10 PRs reviewed (201, 202, 203, 207, 208, 209, 210, 211, 212, 213).
+**Rule:** Always use `test.beforeEach` to handle shared navigation. Put `await page.goto("/")` in a `test.beforeEach` hook inside the `test.describe` block, not inside each individual test. This is the canonical Playwright pattern.
+```typescript
+test.describe("ProductName Smoke Tests", () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto("/");
+  });
+  test("landing page loads", async ({ page }) => {
+    await expect(page.getByTestId("header")).toBeVisible();
+  });
+});
+```
+
+## 2026-03-16 | all scaffold PRs (201–213) | Vitest unit tests repeat render() in every test (RECURRING — 10/10 PRs)
+**What happened:** Every scaffold PR wrote unit tests calling `render(<Home />)` inside each individual `it()` block. Reviewers flagged this in all 10 PRs (same batch as goto duplication).
+**Rule:** Use `beforeEach(() => { render(<Home />) })` at the describe block level. Import `beforeEach` from vitest. Do not repeat render in every test body.
+```typescript
+describe("Home Page", () => {
+  beforeEach(() => {
+    render(<Home />);
+  });
+  it("renders hero title", () => {
+    expect(screen.getByTestId("hero-title")).toBeInTheDocument();
+  });
+});
+```
+
+## 2026-03-16 | all scaffold PRs | Config files and JSON minified onto single lines (RECURRING — 8+ PRs)
+**What happened:** Workers generated tsconfig.json, playwright.config.ts, vitest.config.ts, package.json, and globals.css with all content compressed onto single lines. Reviewers flagged this as HIGH priority (tsconfig) and MEDIUM (all others) across PRs 213, 212, 211, 210, 208, 207, 203, 202.
+**Rule:** All config files must be properly formatted with one property/rule per line. Specifically:
+- `tsconfig.json` — each compilerOption on its own line (HIGH: breaks readability and triggers security scanner false alarms)
+- `playwright.config.ts` — expand the `defineConfig({})` call with proper indentation
+- `vitest.config.ts` — expand `test:` and `resolve:` objects with proper indentation
+- `package.json` — one script/dependency per line
+- `globals.css` — each CSS custom property (CSS variable) on its own line, including inside `@media` blocks
+The scaffold template must produce properly formatted output, not minified output.
+
+## 2026-03-16 | all scaffold PRs | Missing /api/health route (RECURRING — 4 PRs: 201, 207, 210, 213 via Gemini)
+**What happened:** Scaffold acceptance criteria explicitly requires a `/api/health` route returning 200 OK JSON. Workers consistently omit it. Gemini flagged this as HIGH priority compliance failure in PRs for lemonlens (#201), movercheck (#207), fafsacopilot (#210), and it was called out across multiple others.
+**Rule:** Every scaffold MUST include `src/app/api/health/route.ts`. This is a standard acceptance criterion for all products. Contents:
+```typescript
+import { NextResponse } from "next/server";
+export async function GET() {
+  return NextResponse.json({ status: "ok" });
+}
+```
+Add this file every time. The validate-pr.sh script should check for it.
+
+## 2026-03-16 | all scaffold PRs | Missing Prettier configuration (RECURRING — 3+ PRs: 201, 207, 210)
+**What happened:** Scaffold acceptance criteria requires "ESLint + Prettier configured." Workers add ESLint but skip Prettier. Gemini flagged as MEDIUM compliance failure in lemonlens, movercheck, fafsacopilot.
+**Rule:** Every scaffold must include: `prettier` and `eslint-config-prettier` in devDependencies, plus a `.prettierrc` config file. Run `bun add -d prettier eslint-config-prettier` and create `.prettierrc` as part of the scaffold.
+
+## 2026-03-16 | all scaffold PRs | Missing ESLint rule enforcing data-testid (RECURRING — 3+ PRs: 201, 207, 210)
+**What happened:** Scaffold acceptance criteria requires `data-testid` to be enforced via an ESLint rule. Workers either omit it entirely or document it incorrectly (attributing it to `eslint-plugin-jsx-a11y` which does not enforce data-testid). Gemini flagged this as HIGH priority in lemonlens (twice), movercheck, fafsacopilot.
+**Rule:** Add the following to `eslint.config.mjs` under rules:
+```javascript
+"no-restricted-syntax": ["error", {
+  "selector": "JSXElement[openingElement.name.name=/^(a|button|input|select|textarea|Link)$/]:not(:has(JSXAttribute[name.name='data-testid']))",
+  "message": "Interactive elements must have a data-testid attribute."
+}]
+```
+Do NOT reference `jsx-a11y` for this enforcement. Update product CLAUDE.md to reflect the actual rule used.
+
+## 2026-03-16 | cellscore, skimpwatch, lemonlens, others | next/typescript ESLint config is deprecated (RECURRING — 4+ PRs: 208, 209, 210, 211)
+**What happened:** Workers used `compat.extends("next/core-web-vitals", "next/typescript")` in eslint.config.mjs. `next/typescript` is deprecated — `next/core-web-vitals` already includes TypeScript support when a tsconfig.json is present. Flagged as HIGH in PR 208 (skimpwatch), MEDIUM in others.
+**Rule:** ESLint config must be `compat.extends("next/core-web-vitals")` only. Remove `"next/typescript"` from all scaffold output. The scaffold template is generating this incorrectly.
+
+## 2026-03-16 | cellscore, skimpwatch | new Date().getFullYear() causes hydration mismatch (RECURRING — 2 PRs: 208, 211)
+**What happened:** Footer components used `new Date().getFullYear()` for the copyright year. In Next.js App Router, this can cause a server/client hydration mismatch if the year rolls over between render and hydration. Flagged as HIGH priority in both PRs.
+**Rule:** Do NOT use `new Date().getFullYear()` in components. Either: (a) hardcode the year and update manually, or (b) add `suppressHydrationWarning` to the element. Option (b) is preferred so it stays current:
+```tsx
+<p suppressHydrationWarning>&copy; {new Date().getFullYear()} ProductName. All rights reserved.</p>
+```
+
+## 2026-03-16 | all scaffold PRs | font-family overrides Tailwind defaults (RECURRING — 7+ PRs: 201, 202, 203, 207, 208, 209, 210)
+**What happened:** globals.css sets `font-family: Arial, Helvetica, sans-serif` on the body. This overrides Tailwind's superior default system font stack from preflight. Flagged as MEDIUM in 7+ PRs.
+**Rule:** Do NOT set a custom `font-family` on the body in globals.css. Remove this line entirely and let Tailwind's preflight provide the default system font stack. If a custom font is needed for a specific product, configure it in tailwind.config.js using the `fontFamily` extend key, not via a raw CSS declaration.
+
+## 2026-03-16 | settlescan, skimpwatch | env getter functions missing error-throwing tests (RECURRING — 2 PRs: 208, 209)
+**What happened:** env.ts helper functions (`getSupabaseUrl`, `getSupabaseAnonKey`, `getStripeSecretKey`) throw errors when env vars are missing, but tests only cover `isTestMode`. The error-throw behavior is untested. Flagged as HIGH in movercheck (#207), MEDIUM in settlescan (#209) and skimpwatch (#208).
+**Rule:** Tests for env.ts MUST cover the error-throwing behavior for every getter function. Use `vi.stubEnv` and `expect(() => getX()).toThrow("VAR_NAME is not set")` pattern. Also: `vi.stubEnv("TEST_MODE", "")` is NOT the same as unset — to test the unset case, use `vi.unstubAllEnvs()` in `beforeEach` and assert without stubbing.
+
+## 2026-03-16 | all scaffold PRs | Playwright baseURL and webServer.url hardcoded (RECURRING — 3+ PRs: 201, 208, 211)
+**What happened:** playwright.config.ts hardcodes `baseURL: "http://localhost:3000"` and `webServer.url: "http://localhost:3000"`. This breaks in CI/CD environments where the port or host differs. Flagged across lemonlens, skimpwatch, cellscore.
+**Rule:** Use `process.env.NEXT_PUBLIC_APP_URL` with a fallback:
+```typescript
+const baseURL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+```
+Use this variable for both `use.baseURL` and `webServer.url`.
+
+## 2026-03-16 | cellscore | Tailwind CSS variable syntax — prefer semantic class names (RECURRING — 2+ PRs: 210, 211)
+**What happened:** Workers used verbose `text-[var(--primary)]` arbitrary value syntax instead of semantic Tailwind class names. With Tailwind CSS 4 and CSS variables defined in globals.css, semantic class names like `text-primary`, `bg-primary`, `text-foreground` work directly.
+**Rule:** In Tailwind CSS 4, CSS variables defined in globals.css are automatically available as utility class names. Use `text-primary`, `bg-primary`, `hover:bg-primary-hover`, `text-foreground`, `text-muted`, `border-border`, etc. Do NOT use `text-[var(--primary)]` syntax.
+
+## 2026-03-16 | all scaffold PRs | e2e directory excluded from TypeScript type checking (RECURRING — flagged in PR 208)
+**What happened:** The scaffold template sets `"exclude": ["node_modules", "e2e"]` in tsconfig.json, meaning TypeScript errors in Playwright test files are silently ignored.
+**Rule:** Remove `"e2e"` from the tsconfig.json `exclude` array. Use `"exclude": ["node_modules"]` only. Type errors in E2E tests must be caught by the TypeScript compiler.
+
+## 2026-03-16 | settlescan | Date fields typed as string without format documentation (SINGLE — PR 209)
+**What happened:** Domain interfaces (Settlement, Claim, UserProfile) used `string` for date properties with no indication of expected format. This causes ambiguity and potential bugs when consumers interpret the format differently.
+**Rule:** When typing date fields as `string` in TypeScript interfaces, add a JSDoc comment specifying the expected format: `/** ISO 8601 date string */`. Consider using a branded type `type ISODateString = string` for extra clarity.
+
+## 2026-03-16 | settlescan | Large monolithic page components not split into sub-components (SINGLE — PR 209)
+**What happened:** Home page component contained all sections (hero, stats, how-it-works, features, CTA) inline as one large component. Reviewer flagged maintainability concern.
+**Rule:** Landing page sections should be extracted into named sub-components: `HeroSection`, `StatsSection`, `HowItWorksSection`, `FeaturesSection`, `CtaSection`. These live in `src/components/` and are composed in `page.tsx`. This is the correct pattern from day one.
+
+## 2026-03-16 | multiple | getStripeSecretKey used without server-only guard (SINGLE — PR 211)
+**What happened:** `getStripeSecretKey()` in env.ts accesses a server-only env var (`STRIPE_SECRET_KEY`). If accidentally imported in a client component, it will always throw. No warning or guard was present.
+**Rule:** Server-only env getter functions must be marked with a JSDoc `@remarks Server-side only` comment or named with a `Server` suffix (e.g., `getServerStripeSecretKey`). For extra safety, add `import "server-only"` at the top of any module that exports server-only getters.
+
+## 2026-03-16 | multiple | TEST_MODE=true in .env.example (SINGLE — PR 208, skimpwatch)
+**What happened:** `.env.example` shipped with `TEST_MODE=true` as default. A developer copying this file to `.env` without changing it would unknowingly run in test mode in production-like environments.
+**Rule:** `.env.example` must ship with `TEST_MODE=false` as the default. Test mode must be explicitly opted into.
+
+## 2026-03-17 | scorerebound | RLS policies missing anonymous SELECT — breaks anonymous-first UX (PR #257)
+**What happened:** Database schema had INSERT policies for `anon` role on `quiz_responses`, `recovery_plans`, and `plan_steps`, but no SELECT policies. Anonymous users could create data but never read it back. This completely breaks the "Anonymous-first: Generate recovery plan without requiring signup" architecture. All 3 bot reviewers (Gemini Code Assist, Gemini 3.1 Pro, RALPH reviewer) caught this independently.
+**Rule:** When implementing anonymous-first UX with Supabase RLS, always add matching SELECT policies for every INSERT policy granted to the `anon` role. If anon can insert, anon must be able to read. Check: for every `FOR INSERT TO anon` policy, there must be a corresponding `FOR SELECT TO anon` policy with appropriate USING clause.
+
+## 2026-03-17 | scorerebound | UPDATE policies block anonymous row claiming after signup (PR #257)
+**What happened:** UPDATE policies on `quiz_responses` and `recovery_plans` used `USING (auth.uid() = user_id)`. For anonymous rows where `user_id IS NULL`, `auth.uid() = NULL` is never true in SQL (NULL != NULL). Authenticated users could never claim their anonymous data after signing up.
+**Rule:** When tables support anonymous-then-claim flows, UPDATE policies must include `OR user_id IS NULL` in the USING clause: `USING (auth.uid() = user_id OR user_id IS NULL)`. Keep `WITH CHECK (auth.uid() = user_id)` to enforce that the updated row gets the authenticated user's ID. This is a fundamental SQL gotcha: `NULL = anything` is never true.
