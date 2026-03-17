@@ -123,14 +123,26 @@ interface LocalEstateCase {
 3. **Programmatic state pages** capturing "[topic] [state]" long-tail searches
 4. **Internal linking**: content pages → tool to drive engagement
 
-### Target Keywords (from research)
+### Target Keywords (from research, updated March 2026)
 
-- "what to do when someone dies checklist" — primary
+- "what to do when someone dies checklist" — primary head term (target: #277 guide page)
+- "what to do when someone dies checklist 2026" — year-stamped variant (Atticus, SwiftProbate ranking for this)
 - "how to close bank account after death" — high volume
 - "cancel subscriptions after death" — growing
-- "probate process [state]" — 50 state variants
+- "what to say when calling SSA about a death" — unique to AfterLoss (phone scripts #265)
+- "how to call bank about deceased account holder" — unique to AfterLoss (phone scripts #265)
+- "probate process [state]" — 50 state variants (year-stamped: "Probate Process in [State] (2026 Guide)")
 - "small estate affidavit [state]" — 50 state variants
 - "death certificate ordering [state]" — 50 state variants
+
+### Date-Stamped Content Strategy (from March 2026 research)
+
+Competitors use year-stamped titles for YMYL SEO freshness signals:
+- SwiftProbate: "(2026)" in ALL 3,200+ county page titles
+- Atticus: "2026 Checklist" article ranking well
+- Elayne: Monthly date-stamped guides ("March 2026", "February 2026")
+
+**AfterLoss must include the current year in all page titles.** Use build-time `new Date().getFullYear()` for SSG pages (no hydration mismatch). ISR revalidation auto-updates when pages regenerate.
 
 ## AI Integration
 
@@ -202,25 +214,37 @@ Research (March 2026) found corporate blue is wrong for bereavement. The palette
 - **All colors**: WCAG 2.1 AA compliant (many users are elderly 70+)
 - **Dark mode**: Important — users browse late at night while grieving
 
-## Implementation Priority
+## Implementation Priority (Updated 2026-03-17 — Research-Informed)
 
-This is the order the orchestrator should pick up issues:
+This is the order the orchestrator should pick up issues. Updated based on March 2026 research findings: CI/CD moved to #2 (automated validation before feature work), 2026 Guide content page added.
 
-1. Fix scaffold violations (#252) — P0, must be first
-2. Supabase schema + migrations (#111) — P1, data foundation
-3. State probate rules data curation (#253) — P1, highest-value data asset
-4. Onboarding flow (#259) — P1, prerequisite for checklist engine
-5. Empathetic landing page redesign (#255) — P1, first impression + SEO
-6. Interactive checklist engine (#254) — P1, core product
-7. SEO infrastructure (#261) — P1, foundation for #258
-8. Programmatic SEO state pages (#258) — P1, SEO multiplier
-9. AI document generation (#260) — P1, key differentiator
-10. Subscription cancellation database (#256) — P2, differentiator
-11. Deadline tracker (#262) — P2, completes core product
-12. CI/CD pipeline (#127) — P2, automation
-13. Affiliate integration (#124) — P3, revenue
+1. **Fix scaffold violations (#252)** — P0, must be first. 13+ mechanical fixes from `.ralph/learnings.md`.
+2. **CI/CD pipeline (#127)** — P1, must be second. Research confirmed: without CI, every subsequent PR is manually validated. ScoreRebound has CI; AfterLoss does not. Blocked by #252.
+3. **Supabase schema + migrations (#111)** — P1, data foundation. All features depend on this. Blocked by #252.
+4. **State probate rules data curation (#253)** — P1, highest-value data asset. Enables 153+ SEO pages. Primary data source: Justia 50-state survey. Blocked by #111.
+5. **Empathetic landing page redesign (#255)** — P1, first impression. Warm palette, empathetic UX. Blocked by #252.
+6. **Onboarding flow (#259)** — P1, prerequisite for checklist engine. Blocked by #252.
+7. **Interactive checklist engine (#254)** — P1, core product. Uses zustand + localStorage. Blocked by #259.
+8. **SEO infrastructure (#261)** — P1, foundation for #258. Sitemap, robots.ts, JSON-LD schemas (FAQ, HowTo, Article).
+9. **Definitive 2026 Guide content page (#277)** — P1, head-term SEO. Competes with AARP, Atticus, Fidelity for "what to do when someone dies checklist". Blocked by #255.
+10. **Programmatic SEO state pages (#258)** — P1, SEO multiplier. 153+ pages with year-stamped titles "(2026 Guide)". Blocked by #253, #111.
+11. **Phone scripts library (#265)** — P1, UNIQUE differentiator. Research confirmed: NO competitor offers this. Can be built independently.
+12. **AI document generation (#260)** — P1, key differentiator. Claude API for letter text + client-side PDF. Blocked by #254.
+13. **Subscription cancellation database (#256)** — P2, target 150+ services (expanded from 100+ per research). Blocked by #111.
+14. **Deadline tracker (#262)** — P2, completes core product. State-specific filing deadlines. Blocked by #253.
+15. **County-level SEO pages (#266)** — P2, 3,200+ pages competing with SwiftProbate. Blocked by #258.
+16. **Comparison page SEO strategy (#267)** — P3, intercept competitor-seeking traffic. `/compare/{competitor}` pages.
+17. **Affiliate integration (#124)** — P3, revenue. After core features are built.
 
 **Superseded issues:** #115 (mega-issue) replaced by #254, AI doc gen, deadline tracker. #118 (SEO landing) replaced by #255.
+
+### Critical Path
+```
+#252 → #127 → #111 → #253 → #258 (SEO pages)
+#252 → #255 → #277 (2026 guide)
+#252 → #259 → #254 → #260 (core product)
+#265, #261 (can be worked in parallel with any non-blocked issue)
+```
 
 ## Key Decisions
 
@@ -232,3 +256,5 @@ This is the order the orchestrator should pick up issues:
 | Auth | Supabase Auth (optional) | Only for cross-device sync + email reminders |
 | Checklist data | Static JSON in bundle | Offline-first, no network required for core flow |
 | State probate data | Supabase + SSG at build | Changes infrequently, ISR revalidates weekly |
+| Primary data source | Justia 50-state survey | Comprehensive, free, covers all states' small estate procedures |
+| SEO freshness | Year-stamped titles + ISR | Competitors use "(2026)" in titles; YMYL queries reward freshness |

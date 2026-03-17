@@ -185,9 +185,10 @@ The estate settlement space has exploded — 12+ competitors now exist. AfterLos
 ## Key Data Sources (No Public APIs — Must Curate)
 
 - **State probate rules**: Curate from state court websites, Justia 50-state survey, Nolo state guides
-- **Small estate thresholds**: Range from $10K (GA, VT) to $208K (CA). Change periodically.
-- **Government forms**: SSA-721, IRS forms, state-specific probate forms — link to official sources
-- **Subscription cancellation info**: Must build database of 100+ services with cancellation methods
+- **PRIMARY data source**: Justia's Small Estates Laws and Procedures 50-State Survey — comprehensive starting point for issue #253. Cross-reference with Nolo guides and individual state court websites.
+- **Small estate thresholds**: Range from $10K (GA, VT) to $208,850 (CA). Change periodically.
+- **Government forms**: SSA-721 (updated 10-2024 edition), IRS forms, state-specific probate forms — link to official sources. SSA reporting: phone (800-772-1213) or in person only. Funeral homes use EDR. USAGov guide: usa.gov/social-security-report-a-death
+- **Subscription cancellation info**: Must build database of 150+ services with cancellation methods (expanded from 100+ per March 2026 research — Everplans and funeral.com have 100-150 categories)
 
 ## External APIs & Services
 - **Claude API** (`@anthropic-ai/sdk`) — Document generation (letters, forms, notifications)

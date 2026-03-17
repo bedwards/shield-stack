@@ -1,5 +1,159 @@
 {
-  "issues": [],
-  "priority_order": [],
-  "last_groomed_at": null
+  "issues": [
+    {
+      "number": 252,
+      "title": "[afterloss] Fix scaffold learnings violations from PR #213 reviews",
+      "product": "afterloss",
+      "priority": "P0",
+      "type": "bug",
+      "blocked_by": [],
+      "status": "ready"
+    },
+    {
+      "number": 127,
+      "title": "[afterloss] Create CI/CD pipeline and E2E tests",
+      "product": "afterloss",
+      "priority": "P1",
+      "type": "ci-cd",
+      "blocked_by": [252],
+      "status": "blocked"
+    },
+    {
+      "number": 111,
+      "title": "[afterloss] Create Supabase database schema and migrations",
+      "product": "afterloss",
+      "priority": "P1",
+      "type": "scaffold",
+      "blocked_by": [252],
+      "status": "blocked"
+    },
+    {
+      "number": 253,
+      "title": "[afterloss] Curate and seed 50-state probate rules database",
+      "product": "afterloss",
+      "priority": "P1",
+      "type": "enhancement",
+      "blocked_by": [111],
+      "status": "blocked"
+    },
+    {
+      "number": 255,
+      "title": "[afterloss] Redesign landing page with empathetic bereavement UX",
+      "product": "afterloss",
+      "priority": "P1",
+      "type": "enhancement",
+      "blocked_by": [252],
+      "status": "blocked"
+    },
+    {
+      "number": 259,
+      "title": "[afterloss] Onboarding flow — state selection, relationship, estate complexity intake",
+      "product": "afterloss",
+      "priority": "P1",
+      "type": "enhancement",
+      "blocked_by": [252],
+      "status": "blocked"
+    },
+    {
+      "number": 254,
+      "title": "[afterloss] Build interactive checklist engine with localStorage-first persistence",
+      "product": "afterloss",
+      "priority": "P1",
+      "type": "enhancement",
+      "blocked_by": [259],
+      "status": "blocked"
+    },
+    {
+      "number": 261,
+      "title": "[afterloss] SEO infrastructure — sitemap.ts, robots.ts, JSON-LD structured data",
+      "product": "afterloss",
+      "priority": "P1",
+      "type": "enhancement",
+      "blocked_by": [252],
+      "status": "blocked"
+    },
+    {
+      "number": 277,
+      "title": "[afterloss] Definitive \"What to Do When Someone Dies\" 2026 guide — head-term SEO content page",
+      "product": "afterloss",
+      "priority": "P1",
+      "type": "enhancement",
+      "blocked_by": [252, 255],
+      "status": "blocked"
+    },
+    {
+      "number": 258,
+      "title": "[afterloss] Build programmatic SEO pages for 50 states (probate, small-estate, death-certificate)",
+      "product": "afterloss",
+      "priority": "P1",
+      "type": "enhancement",
+      "blocked_by": [253, 111],
+      "status": "blocked"
+    },
+    {
+      "number": 265,
+      "title": "[afterloss] Phone scripts library — pre-written call scripts for SSA, banks, insurance, subscriptions",
+      "product": "afterloss",
+      "priority": "P1",
+      "type": "enhancement",
+      "blocked_by": [252],
+      "status": "blocked"
+    },
+    {
+      "number": 260,
+      "title": "[afterloss] AI document generation — Claude API letter text + client-side PDF rendering",
+      "product": "afterloss",
+      "priority": "P1",
+      "type": "enhancement",
+      "blocked_by": [254],
+      "status": "blocked"
+    },
+    {
+      "number": 256,
+      "title": "[afterloss] Curate subscription cancellation templates (150+ services)",
+      "product": "afterloss",
+      "priority": "P2",
+      "type": "enhancement",
+      "blocked_by": [111],
+      "status": "blocked"
+    },
+    {
+      "number": 262,
+      "title": "[afterloss] Deadline tracker — state-specific filing deadlines and reminder UI",
+      "product": "afterloss",
+      "priority": "P2",
+      "type": "enhancement",
+      "blocked_by": [253],
+      "status": "blocked"
+    },
+    {
+      "number": 266,
+      "title": "[afterloss] County-level programmatic SEO pages — 3,200+ county probate court guides",
+      "product": "afterloss",
+      "priority": "P2",
+      "type": "enhancement",
+      "blocked_by": [258],
+      "status": "blocked"
+    },
+    {
+      "number": 267,
+      "title": "[afterloss] Comparison page SEO strategy — /compare/{competitor} pages",
+      "product": "afterloss",
+      "priority": "P3",
+      "type": "enhancement",
+      "blocked_by": [255],
+      "status": "blocked"
+    },
+    {
+      "number": 124,
+      "title": "[afterloss] Set up tasteful affiliate revenue integration",
+      "product": "afterloss",
+      "priority": "P3",
+      "type": "enhancement",
+      "blocked_by": [254],
+      "status": "blocked"
+    }
+  ],
+  "priority_order": [252, 127, 111, 253, 255, 259, 254, 261, 277, 258, 265, 260, 256, 262, 266, 267, 124],
+  "last_groomed_at": "2026-03-17T14:00:00Z"
 }
