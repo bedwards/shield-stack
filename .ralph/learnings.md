@@ -191,6 +191,18 @@ Use this variable for both `use.baseURL` and `webServer.url`.
 **What happened:** Gemini Code Assist flagged `{ params }: { params: Promise<{ id: string }> }` with `const { id } = await params` as a **critical** bug, claiming "params is a plain object, not a promise. Using `await params` here is incorrect." This is WRONG — in Next.js 15 App Router, route handler params ARE Promises and MUST be awaited. The code was correct.
 **Rule:** When reviewing bot feedback about Next.js route handlers, verify against Next.js 15 docs. In Next.js 15, `params` is asynchronous in route handlers, layouts, pages, and middleware. The correct pattern is `{ params }: { params: Promise<{ id: string }> }`. Do NOT downgrade to the Next.js 14 synchronous pattern based on bot suggestions.
 
+## 2026-03-17 | scorerebound | When changing footer/nav links, update ALL test files that reference data-testid attributes (PR #264)
+**What happened:** Worker replaced `footer-link-credit-building` with `footer-link-faq` and `footer-link-about` in `layout.tsx` and correctly updated `landing-page.spec.ts`, but forgot to update the `REQUIRED_TEST_IDS` array in `testability.spec.ts`. This caused CI E2E failure. The Gemini 3.1 Pro reviewer correctly identified this as HIGH severity.
+**Rule:** When modifying data-testid attributes in components, grep ALL E2E test files (`e2e/**/*.spec.ts`) for the old test IDs to ensure all references are updated. Multiple test files may reference the same test IDs (landing-page, testability, sections, navigation, etc.). Also update the `Existing data-testid Attributes` list in the product's CLAUDE.md.
+
+## 2026-03-17 | scorerebound | Header nav anchor links must use absolute paths for cross-page navigation (PR #264)
+**What happened:** Header nav in `layout.tsx` used bare anchor hrefs (`#how-it-works`, `#recovery-paths`, `#faq`) which work on the home page but do nothing on subpages (guide, servicer, FAQ, about) since those anchor targets don't exist there.
+**Rule:** In shared layout nav, use `/#section-name` (with leading slash) instead of `#section-name` so that anchor links work from any page by navigating to home first.
+
+## 2026-03-17 | scorerebound | Tailwind divide-y and border-b cause double borders (PR #264)
+**What happened:** `FAQSection` parent used `divide-y divide-gray-200` while each child `FAQAccordionItem` had `border-b border-gray-200`, resulting in double-thick borders between items.
+**Rule:** When using Tailwind's `divide-y` on a parent container, do NOT also add `border-b` to child items — `divide-y` already inserts borders between siblings. Pick one approach.
+
 ## 2026-03-17 | afterloss | @react-pdf/renderer cannot render server-side in Next.js App Router route handlers (Research)
 **What happened:** Research confirmed that @react-pdf/renderer relies on browser APIs (DOMMatrix) not available in Node.js server-side rendering. Using it in API routes or route handlers causes "DOMMatrix is not defined" errors.
 **Rule:** Use @react-pdf/renderer via CLIENT-SIDE dynamic import: `dynamic(() => import('@react-pdf/renderer'), { ssr: false })`. The Claude API generates letter TEXT server-side in an API route, then the client renders the text into a styled PDF. Add `serverExternalPackages: ['@react-pdf/renderer']` to next.config.ts as a fallback for any server-side usage that may work in future versions. Alternative for pure server-side: jsPDF.
