@@ -1,22 +1,9 @@
 import { test as setup, expect } from "@playwright/test";
 import fs from "fs";
 import path from "path";
-import { loginAsTestUser, setAuthCookies } from "./helpers/auth";
+import { loginAsTestUser, setAuthCookies, hasSupabaseSecrets } from "./helpers/auth";
 
 const AUTH_FILE = "playwright/.auth/user.json";
-
-/**
- * Check whether the Supabase secrets required for authenticated E2E tests
- * are available. When they're missing (e.g. CI hasn't configured them yet),
- * we write a minimal empty storage-state file so that the "authenticated"
- * project can still load (its tests will be skipped individually).
- */
-function hasSupabaseSecrets(): boolean {
-  return !!(
-    process.env.NEXT_PUBLIC_SUPABASE_URL &&
-    process.env.SUPABASE_SERVICE_ROLE_KEY
-  );
-}
 
 /**
  * Playwright setup project that authenticates the E2E test user

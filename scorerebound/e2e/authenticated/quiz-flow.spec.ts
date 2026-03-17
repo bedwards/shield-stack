@@ -5,10 +5,7 @@ import {
   verifyPlanSteps,
   cleanupTestUser,
 } from "../helpers/db";
-
-const hasSupabaseSecrets =
-  !!process.env.NEXT_PUBLIC_SUPABASE_URL &&
-  !!process.env.SUPABASE_SERVICE_ROLE_KEY;
+import { hasSupabaseSecrets } from "../helpers/auth";
 
 /**
  * Authenticated quiz flow E2E tests.
@@ -24,7 +21,7 @@ const hasSupabaseSecrets =
  * 5. Take screenshots at each step
  */
 test.describe("Authenticated quiz flow", () => {
-  test.skip(!hasSupabaseSecrets, "Supabase secrets not configured — skipping authenticated tests");
+  test.skip(!hasSupabaseSecrets(), "Supabase secrets not configured — skipping authenticated tests");
   // Clean up test data after all tests in this suite
   test.afterAll(async () => {
     try {
