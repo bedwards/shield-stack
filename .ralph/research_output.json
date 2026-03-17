@@ -1,134 +1,162 @@
 {
   "product": "afterloss",
+  "timestamp": "2026-03-17T10:05:00Z",
+  "cycle": 21,
   "findings": [
     {
       "category": "competitor",
       "priority": "high",
-      "title": "Competitive landscape has EXPLODED — 12+ competitors now, including 3 new threats since last research",
-      "description": "The estate settlement space is far more crowded than originally assessed. Key updates as of March 2026:\n\n**Tier 1 — Direct Threats (free or cheap, similar model):**\n1. **Sunset** (hellosunset.com) — FREE. iPhone + Android apps. Nationwide coverage: all 50 states, 3000+ counties. Finds most assets in 1 business day. FDIC-insured estate account up to $3M. SOC 2 Type II certified. Revenue from bank partner interest. MOST DANGEROUS competitor since also free and has mobile apps.\n2. **SwiftProbate** (swiftprobate.com) — $39 one-time. 3,200+ county-specific probate guides + 160+ institution guides. Already doing programmatic SEO for probate content at county level. Strong competitor on SEO front.\n3. **Atticus** (weareatticus.com) — iOS-only (no Android, no web app). Step-by-step guide, estate inventory, shareable reports. Won Fast Company World Changing Idea. Already ranks for 'what to do when loved one dies 2026 checklist'.\n\n**Tier 2 — Premium competitors:**\n4. **Empathy** (empathy.com) — $162M raised. 45M+ lives covered via B2B insurance partnerships. BMO Insurance partnership Jan 2026. LifeVault reached 2M users in 2 months. Massive but B2B-locked.\n5. **Elayne** (elayne.com) — Flat fee starting ~$250. AI + human support. Searches 50+ financial categories. Good content/SEO play.\n6. **EverSettled** (eversettled.com) — $199 per estate. State-level guidance, document organization, optional estate specialists.\n7. **EstateExec** — $199. Focus on executor accounting and tracking. Won 2026 ACQ5 Global Awards.\n8. **Alix** — 1% of estate, $9K minimum. High-end full-service.\n9. **ClearEstate** — 1.75%, $20K min. Primarily Canadian.\n\n**Tier 3 — Niche/adjacent:**\n10. **Cadence** — Software + live Certified Executor Advisors.\n11. **Caily** (caily.com) — Post-death account closure and subscription cancellation guidance. Content-focused.\n12. **Legacy Logix** — AI document sorting, task identification, deadline alerts.\n13. **SubsVault** (subsvault.com) — Digital legacy planning, subscription management after death.\n\n**NEW since last research:** SwiftProbate (county-level SEO threat), EverSettled ($199 competitor), Caily (subscription cancellation content), SubsVault (digital legacy), SwiftProbate's 3,200+ county guides.",
+      "title": "Sunset revenue model decoded — bank interest, not user fees",
+      "description": "Sunset (sunsetapp.com) is completely free to families. Revenue model: earns fees from partner banks on interest generated while estate funds sit in FDIC-insured estate account (up to $3M). New 2026 features: e-notarization, RUFADAA-compliant digital asset/crypto discovery, debt/liability identification (credit cards, mortgages, property taxes, personal loans), 1-day asset discovery. Families keep 100% of discovered assets. SOC 2 Type II certified. iPhone + Android native apps. Narrowly focused on asset discovery/transfer/consolidation, NOT the full emotional checklist experience.",
       "affected_files": ["afterloss/CLAUDE.md"],
-      "suggested_action": "Update CLAUDE.md competitive landscape section with all new competitors. AfterLoss differentiation must be razor-sharp: (1) 100% free forever (beats Atticus $15/mo, EverSettled $199, SwiftProbate $39, Elayne $250), (2) Web-first with no app download required (beats Atticus iOS-only, Sunset app-only), (3) AI-generated personalized documents via Claude API (no competitor has this), (4) Programmatic SEO at state level with interactive tool (beats SwiftProbate's static guides). Sunset is #1 threat since it's also free — but AfterLoss differentiates on AI doc gen, broader checklist scope, and empathy-first UX vs Sunset's focus on asset discovery/probate docs."
+      "suggested_action": "Update Sunset competitive intelligence in CLAUDE.md. AfterLoss differentiates on: (1) web-first no-download, (2) empathy-first full-lifecycle guidance (not just assets), (3) AI document generation, (4) phone scripts library, (5) state probate education. Sunset is strong on the financial/asset side but weak on the emotional/administrative guidance side."
     },
     {
-      "category": "seo",
+      "category": "competitor",
       "priority": "high",
-      "title": "SwiftProbate is already doing county-level programmatic SEO — AfterLoss must go state-level fast",
-      "description": "SwiftProbate (swiftprobate.com) has 3,200+ county-specific probate guides with URLs like /probate/{state}/{county}. They have comparison pages (/compare/elayne, /compare/estateexec, etc.) and blog content. Atticus already ranks for 'what to do when loved one dies 2026 checklist' at weareatticus.com/articles/what-to-do-when-loved-one-dies.\n\nCurrent SEO landscape for target keywords:\n- 'what to do when someone dies checklist' — AARP, Fidelity, Atticus, Trust & Will, Ever Loved all competing. All are static articles. No interactive tool ranks.\n- 'probate process [state]' — SwiftProbate ranking for county-level pages. Elayne has state resources pages.\n- 'how to close bank account after death' — Elayne, Everplans, generic articles.\n- 'cancel subscriptions after death' — Elayne, Caily, Everplans competing.\n\nAfterLoss strategy: Go state-level (not county) for MVP — 51 pages × 3 topics = 153 pages. Beat static articles with interactive tool. Capture 'what to do when someone dies' with comprehensive interactive checklist that outperforms static PDFs.",
-      "affected_files": ["afterloss/CLAUDE.md", "afterloss/src/app/states/"],
-      "suggested_action": "Priority: Build 153 programmatic SEO pages (51 states × probate + small-estate + death-certificate). Add JSON-LD structured data per Next.js 15 best practices. Use generateStaticParams() for SSG. Add sitemap.ts in app directory. Each state page should have unique data: probate threshold, small estate limit, filing deadline, court website, downloadable forms URL, fees. This is the highest-leverage SEO work."
+      "title": "SwiftProbate confirmed 3,200+ county-level SEO pages with 2026 updates",
+      "description": "SwiftProbate (swiftprobate.com) has county-level probate guides for nearly every US county, all updated with '(2026)' in titles. URL pattern: /probate/{state}/{county-name}. Each page includes: courthouse locations, filing fees, local rules, small estate options, step-by-step process. Also running aggressive comparison pages: /compare/elayne, /compare/eversettled, /compare/estateexec, /compare/clearestate. Probate checklist blog post: /blog/probate-checklist-step-by-step. Price: $39 one-time.",
+      "affected_files": ["afterloss/CLAUDE.md"],
+      "suggested_action": "SwiftProbate's comparison pages are intercepting competitor-seeking traffic. AfterLoss should plan its own comparison page strategy (e.g., /compare/sunset, /compare/atticus, /compare/swiftprobate) as a P3 SEO initiative. County-level pages already tracked as issue #266."
     },
     {
-      "category": "market_validation",
-      "priority": "high",
-      "title": "Wave is CONFIRMED and STRENGTHENING — CBO projects deaths > births by 2030",
-      "description": "Key demographic updates as of March 2026:\n- CBO projects deaths will exceed births by 2030 (Fortune, Jan 2026)\n- US life expectancy hit record 79 years in 2024 (US News, Jan 2026)\n- Age-adjusted death rate decreased 3.8% (2023→2024) per CDC DB548\n- But TOTAL deaths increasing due to population aging — baby boomers turning 80 in 2026\n- Deaths projected at 3.6M/yr now, rising to peak in 2055\n- Senior share: 18.7% (2025) → 23% (2050)\n- Digital estate complexity growing: subscriptions, crypto, social media, digital purchases\n\nThe market is validated and growing. The $162M raised by Empathy alone proves venture interest. AfterLoss's free model is the right play for direct-to-consumer SEO acquisition.",
+      "category": "competitor",
+      "priority": "medium",
+      "title": "Elayne confirmed free tier with account requirement + aggressive SEO content",
+      "description": "Elayne (elayne.com) free tier includes: family collaboration, document sharing, estate plan management. Paid tier: $250 for full account discovery + human support. Running date-stamped content strategy with monthly guides (e.g., 'Delete Cash App Account Permanently March 2026', 'Transfer on Death Deed Guide February 2026'). Has comparison content reviewing competitors (Alix). SOC 2 Type II + HIPAA compliant. Free tier still REQUIRES an account. AfterLoss differentiates on no-account-required.",
       "affected_files": ["afterloss/CLAUDE.md"],
-      "suggested_action": "Use demographic data in SEO content strategy. Target adult children of aging boomers (primary user persona: 45-65 years old, managing parents' affairs). Mention growing digital estate complexity as content angle."
+      "suggested_action": "Elayne's date-stamped content strategy is clever — each monthly post targets fresh keywords. AfterLoss should consider similar date-stamped guides (e.g., 'Probate Process [State] 2026') for state pages. But core differentiator remains: no account required + AI doc gen."
+    },
+    {
+      "category": "competitor",
+      "priority": "medium",
+      "title": "Atticus iOS-only with mixed App Store reviews — web gap remains wide open",
+      "description": "Atticus (weareatticus.com) is iOS-only, ~$15/month subscription. App Store reviews mixed: some users praise the step-by-step guide, others report bugs with the reports feature and unresponsive support. Trustpilot reviews (March 2026) mostly positive. Fast Company World Changing Idea winner. Has well-ranking article: 'What To Do When Someone Dies: The 2026 Checklist'. Critical gap: NO web app, NO Android app. AfterLoss's web-first approach is a major differentiator for the 50%+ of users on Android or desktop.",
+      "affected_files": ["afterloss/CLAUDE.md"],
+      "suggested_action": "Atticus's content marketing (2026 Checklist article) is ranking well. AfterLoss needs to publish its own definitive '2026 Checklist' content page optimized for this keyword. Web-first + free is a strong counter-position."
+    },
+    {
+      "category": "competitor",
+      "priority": "medium",
+      "title": "Empathy launched Leave Support with MetLife (Oct 2025) — expanding B2B scope",
+      "description": "Empathy and MetLife launched Leave Support (October 2025), a digital platform for employees navigating bereavement leave. This expands Empathy's B2B insurance carrier model. Partners now include: MetLife, New York Life, Allianz, Aflac, TIAA, MassMutual, Prudential, AT&T, Sun Life. Assigns 1:1 Care Manager. Saves families average 200 hours. Still pure B2B — not accessible to families without carrier partnership.",
+      "affected_files": ["afterloss/CLAUDE.md"],
+      "suggested_action": "Empathy's B2B lock-in means they serve only policyholders of partner companies. The vast majority of grieving families (those without MetLife/partner policies) have no access. This is AfterLoss's market — direct-to-consumer, anyone via Google."
+    },
+    {
+      "category": "competitor",
+      "priority": "low",
+      "title": "EverSettled pricing may be $199 base, not $1,499 — verify",
+      "description": "Web research shows EverSettled pricing at $199 with optional specialist support. The $1,499 figure in CLAUDE.md may be outdated or represent a premium full-service tier. SwiftProbate's comparison page lists EverSettled at $199. The EverSettled website mentions a free 2-week trial and 500+ families served. San Francisco based.",
+      "affected_files": ["afterloss/CLAUDE.md"],
+      "suggested_action": "Update EverSettled pricing in CLAUDE.md to $199 base with optional specialist support at higher tiers. The $1,499 figure may have been a temporary or premium tier."
     },
     {
       "category": "api_source",
       "priority": "high",
-      "title": "State probate thresholds have changed recently — data curation must track changes",
-      "description": "Recent changes discovered:\n- California: Small estate affidavit threshold increased to $208,850 (April 1, 2025 via AB 2016). Also new: primary residence transfer without full probate up to $750K gross value. Small Estate Set-Asides increased to $107,900.\n- Illinois: Probate Act amended August 15, 2025 — small estate limit raised from $100K to $150K. Vehicles can now be transferred regardless of other asset values.\n\nThese changes confirm that state probate rules are a LIVING dataset that must be kept current. The data must be versioned and include 'last_verified' dates.\n\nData sources for curation:\n- Justia 50-state survey: https://www.justia.com/probate/probate-administration/small-estates/small-estates-laws-and-procedures-50-state-survey/\n- Nolo state guides: https://www.nolo.com/legal-encyclopedia/estate-planning-your-state\n- SmallEstateAffidavit.com: https://smallestateaffidavit.com/small-estate-affidavit-limits/\n- SwiftProbate state pages (competitor reference): https://www.swiftprobate.com/probate/{state}\n- Elayne resources: https://www.elayne.com/resources/",
+      "title": "Michigan small estate threshold: $53,000 for 2026 (NEW — not in CLAUDE.md)",
+      "description": "Michigan's small estate threshold for deaths in 2026 is $53,000 (cost-of-living adjusted annually). Real property with mortgage/lien: can subtract up to $264,000 from property value. Michigan Legal Help (michiganlegalhelp.org) is the authoritative source. This is a NEW state data point not currently tracked in CLAUDE.md.",
       "affected_files": ["afterloss/CLAUDE.md"],
-      "suggested_action": "When building state probate rules database (issue #253), include a 'last_verified_date' column. Create a quarterly data refresh workflow. Start with the 10 most populous states: CA, TX, FL, NY, PA, IL, OH, GA, NC, MI. Include the 2025 changes for CA and IL."
+      "suggested_action": "Add Michigan to the Key State Probate Threshold Changes section in CLAUDE.md. This data point is important for issue #253 (50-state probate rules database)."
     },
     {
-      "category": "tech_stack",
+      "category": "api_source",
       "priority": "high",
-      "title": "@react-pdf/renderer has server-side limitations in Next.js App Router — need workaround",
-      "description": "Research confirms @react-pdf/renderer cannot easily render PDFs server-side in Next.js App Router route handlers due to missing browser APIs (DOMMatrix not defined). Options:\n\n1. **Client-side generation with dynamic imports** (recommended for MVP): Use dynamic(() => import('@react-pdf/renderer'), { ssr: false }). Generate PDF in browser, return as download. Simpler, works immediately.\n2. **Server-side via API route with polyfills**: Requires canvas and other Node.js polyfills. More complex but keeps PDF generation server-side.\n3. **Alternative: jsPDF** for server-side: Simpler API, works in Node.js, but less React-native.\n\nRecommendation: Use client-side generation for MVP. The architecture doc says serverExternalPackages config is needed, but the reality is client-side dynamic import is more reliable. The letter text comes from Claude API (server-side), but PDF rendering happens client-side.\n\nNext.js 15 SSG/ISR best practices for programmatic SEO:\n- Use generateStaticParams() for state pages\n- Add sitemap.ts in app directory using MetadataRoute.Sitemap\n- Add JSON-LD structured data for rich snippets\n- Use Metadata API for dynamic title/description per page\n- ISR revalidation: 7 days for state data, 30 days for templates",
-      "affected_files": ["afterloss/CLAUDE.md", "afterloss/next.config.ts"],
-      "suggested_action": "Update architecture doc to reflect client-side PDF generation as MVP approach. Configure next.config.ts with serverExternalPackages as a fallback. When implementing doc generation (issue #115), use dynamic import pattern for @react-pdf/renderer."
+      "title": "Justia 50-State Survey is THE key data source for probate rules curation",
+      "description": "Justia's Small Estates Laws and Procedures 50-State Survey (justia.com/probate/probate-administration/small-estates/small-estates-laws-and-procedures-50-state-survey/) provides comprehensive data on small estate thresholds, simplified procedures, and requirements for every state. This should be the primary starting point for issue #253 data curation, supplemented by individual state court websites for verification.",
+      "affected_files": [],
+      "suggested_action": "Reference Justia survey as the starting data source in issue #253. Cross-reference with Nolo state guides and individual state court websites."
     },
     {
-      "category": "bug",
+      "category": "api_source",
+      "priority": "medium",
+      "title": "SSA-721 form updated (10-2024 edition) — still no online filing for families",
+      "description": "Form SSA-721 has an updated edition (10-2024). Still only submittable by funeral directors or by phone. The SSA website now has a cleaner guide at ssa.gov/personal-record/when-someone-dies. USAGov also provides reporting guidance at usa.gov/social-security-report-a-death. Electronic Death Registration is available to funeral homes through state vital statistics offices.",
+      "affected_files": [],
+      "suggested_action": "Update phone scripts content to reference the current SSA-721 form edition. Include both SSA direct page and USAGov page as resources in the checklist."
+    },
+    {
+      "category": "seo",
       "priority": "high",
-      "title": "Scaffold has 9+ known learnings violations (issue #252 exists but not yet fixed)",
-      "description": "The afterloss scaffold (PR #213) was merged with violations already tracked in issue #252:\n1. ESLint config extends 'next/typescript' (deprecated) — should be 'next/core-web-vitals' only\n2. .env.example has TEST_MODE=true (should be false)\n3. E2E tests repeat page.goto('/') instead of using test.beforeEach\n4. tsconfig.json excludes e2e from type checking (should include)\n5. Playwright config hardcodes baseURL (should use env var fallback)\n6. globals.css uses corporate blue (#2563eb) instead of empathetic warm colors per architecture docs\n7. font-family override in globals.css (should let Tailwind handle)\n8. Missing /api/health route\n9. Missing Prettier configuration\n10. Missing ESLint data-testid enforcement rule\n11. env.ts getter error-throwing behavior untested",
-      "affected_files": [
-        "afterloss/eslint.config.mjs",
-        "afterloss/.env.example",
-        "afterloss/e2e/smoke.spec.ts",
-        "afterloss/tsconfig.json",
-        "afterloss/playwright.config.ts",
-        "afterloss/src/app/globals.css",
-        "afterloss/src/lib/env.test.ts",
-        "afterloss/src/app/api/health/route.ts"
-      ],
-      "suggested_action": "Issue #252 must be the FIRST implementation task. Fix all 11 violations in a single PR. This establishes a clean foundation before building features."
+      "title": "Top SERP competitors for head terms are informational articles, not interactive tools",
+      "description": "SERP analysis for 'what to do when someone dies checklist' (March 2026): AARP, Atticus Magazine, Ever Loved, Fidelity, Dignity Memorial, Kiplinger, Trust & Will, Legal Voice, Bankers Life. ALL are static articles/checklists. None are interactive tools. AfterLoss's interactive checklist with AI doc gen would be genuinely differentiated in search results. Rich snippets (FAQ schema, HowTo schema) could drive CTR above static articles.",
+      "affected_files": [],
+      "suggested_action": "SEO infrastructure (#261) should include JSON-LD structured data for FAQ, HowTo, and Article schemas. Add FAQ schema to state pages for rich snippets. Interactive tool pages should use HowTo schema."
+    },
+    {
+      "category": "seo",
+      "priority": "high",
+      "title": "Date-stamped content strategy — competitors using monthly freshness signals",
+      "description": "Both Elayne and Atticus publish date-stamped content ('February 2026 guide', '2026 Checklist'). SwiftProbate includes '(2026)' in all county page titles. Google rewards freshness for YMYL (Your Money Your Life) queries like estate planning. AfterLoss state pages should include the current year in titles and be auto-updated annually.",
+      "affected_files": [],
+      "suggested_action": "For issue #258 (programmatic state pages), include the year in page titles: 'Probate Process in [State] (2026 Guide)'. Use ISR to auto-regenerate pages with updated years. This is a key SEO freshness signal for YMYL content."
     },
     {
       "category": "improvement",
       "priority": "high",
-      "title": "AfterLoss's #1 differentiator is being web-first AND free — Atticus is iOS-only, Sunset is app-only",
-      "description": "Critical competitive insight: Atticus is currently iOS-only (working on Android). Sunset requires downloading an app (iPhone + Android). No competitor offers a full-featured web-first experience that works immediately in a browser without download or account creation.\n\nAfterLoss's web-first approach means:\n- Instant access from Google search (no app download friction)\n- Works on any device (desktop, tablet, phone)\n- No account required (localStorage-first)\n- Indexable by search engines (programmatic SEO)\n- Progressive Web App (PWA) potential for future offline access\n\nThis is the strongest positioning: 'Free, instant, works right now in your browser.' No download. No account. No subscription. Just help when you need it most.",
-      "affected_files": ["afterloss/CLAUDE.md"],
-      "suggested_action": "Emphasize web-first positioning in landing page copy and SEO content. Add PWA manifest for future offline support. The no-download, no-account, no-subscription message should be front and center."
+      "title": "Phone scripts library confirmed as unique differentiator — no competitor offers this",
+      "description": "Extensive web research confirms NO competitor offers pre-written phone scripts for calling SSA, banks, insurance companies, or subscription services after a death. Everplans has the most comprehensive written guide but no scripts. The phone call is the #1 anxiety point for grieving families. Scripts should include: what to say, what information to have ready, what to expect from the agent, what to do if denied.",
+      "affected_files": [],
+      "suggested_action": "Issue #265 (phone scripts library) is correctly prioritized as P1. This should be a prominent feature in marketing and SEO content. Target keywords: 'what to say when calling SSA about a death', 'how to call bank about deceased account holder', 'cancel subscription after death what to say'."
     },
     {
       "category": "improvement",
       "priority": "medium",
-      "title": "Subscription cancellation templates are validated as major pain point — Elayne and Caily already have content",
-      "description": "Multiple competitors are addressing post-death subscription cancellation:\n- Elayne has a detailed guide: 'How to Cancel Digital Subscriptions After Someone Dies'\n- Caily has comprehensive blog: 'Accounts and Subscriptions to Cancel After a Death'\n- Everplans has guides on closing online accounts\n- SubsVault offers digital legacy planning for subscription management\n\nCommon documentation required: death certificate, proof of executor/administrator status, photo ID, account email/phone.\n\nKey categories to cover (100+ services):\n- Streaming: Netflix, Hulu, Disney+, YouTube TV, Apple TV+, Spotify, Amazon Prime, HBO Max, Peacock, Paramount+\n- Social: Facebook (memorialization vs deletion), Instagram, X/Twitter, LinkedIn, TikTok, Reddit, Pinterest\n- Financial: Banks (varies by institution), credit cards, investment accounts, crypto exchanges, PayPal, Venmo\n- Insurance: Auto, home, health, life (claim vs cancel), dental, vision\n- Utilities: Electric, gas, water, internet, phone, cable\n- Subscriptions: Gym, magazines, meal kits, Adobe, Microsoft 365, iCloud, Google One, Amazon Prime, Costco\n- Government: SSA, DMV, voter registration, Medicare/Medicaid, VA benefits\n- Memberships: AAA, warehouse clubs, professional associations, unions\n\nAfterLoss differentiator: Generate actual cancellation LETTERS via Claude API, not just guides. Each letter personalized with deceased name, account info, executor details.",
-      "affected_files": ["afterloss/CLAUDE.md"],
-      "suggested_action": "Build subscription cancellation database as Supabase table (issue #256). Seed with 100+ services. Each entry: service_name, category, cancellation_method, contact_info, required_docs, processing_time, letter_template_prompt. This data powers both the checklist feature and SEO pages (/templates/cancel-{service}-after-death)."
+      "title": "Subscription cancellation templates — expanding to 150+ services with categorization",
+      "description": "Everplans and funeral.com have the most comprehensive lists of accounts to cancel after death (100-150 categories). Key categories: streaming (Netflix, Hulu, Disney+, etc.), social media (Facebook memorial, Instagram, Twitter/X), financial (banks, credit cards, investment accounts), utilities, insurance, memberships (gym, warehouse clubs), medical, email/cloud storage. Each has different processes: some online, some phone-only, some require death certificate.",
+      "affected_files": [],
+      "suggested_action": "Issue #256 should target 150+ services organized by category. Include for each: company name, cancellation method (online/phone/mail), required documents, expected timeline, refund policy for prepaid services."
     },
     {
       "category": "improvement",
       "priority": "medium",
-      "title": "Affiliate revenue model validated — LegalZoom 15%, Trust & Will 20%, BetterHelp $10-40/referral",
-      "description": "Validated affiliate programs for AfterLoss:\n- LegalZoom: 15% commission per sale ($125+). Estate planning bundles. Via CJ Affiliate.\n- Trust & Will: 20% commission, avg $80/sale, up to $180. Via Impact.com. Strong fit — users experiencing the process often want to create their OWN estate plan.\n- BetterHelp: $10-$40 per referral (CPA model). Grief counseling. Contextual at grief support steps.\n- VitalChek: Exclusive online partner for 450+ vital records offices. No formal affiliate program found — may need direct partnership outreach. Potential referral for death certificate ordering.\n\nNOTE: Affiliate placement must be tasteful and contextual per CLAUDE.md UX principles. Show at relevant checklist steps only. Clearly labeled. Never intrusive.",
+      "title": "Bereavement UX design principles validated by research",
+      "description": "Key validated principles: (1) One question per screen with clear next steps, (2) Soft unobtrusive progress indicator, (3) No pressure to finish — 'Take your time' messaging, (4) Progressive disclosure — don't overwhelm, (5) Cultural flexibility — avoid Western-centric assumptions, (6) Templates reduce decision fatigue, (7) Allow pause/resume — grief is nonlinear, (8) User controls who sees what (privacy), (9) Meaningful defaults. Reference article: 'Designing for Death: A UX Guide for End-of-Life Products' by Matthew Stephens on Medium.",
       "affected_files": ["afterloss/CLAUDE.md"],
-      "suggested_action": "Apply to LegalZoom (CJ Affiliate) and Trust & Will (Impact.com) affiliate programs early — approval can take 2-4 weeks. Implement affiliate integration (issue #124) after core checklist is built. Contact VitalChek about potential referral partnership for death certificate ordering."
-    },
-    {
-      "category": "improvement",
-      "priority": "medium",
-      "title": "Anonymous-first RLS pattern validated by ScoreRebound PR #257 — apply to AfterLoss Supabase schema",
-      "description": "PR #257 (ScoreRebound database schema) was the first product to implement anonymous-first UX with Supabase RLS. All 3 code reviewers found critical bugs:\n1. Anonymous INSERT without matching SELECT → users can create but not read data\n2. UPDATE policies blocking row claiming after signup (NULL = anything is never true in SQL)\n\nThese exact bugs will apply to AfterLoss's database schema since it also uses anonymous-first with optional Supabase Auth. The learnings from PR #257 are already in .ralph/learnings.md.\n\nWhen building AfterLoss's Supabase schema (issue #111), the implementer MUST:\n- Add SELECT policies for anon role matching every INSERT policy\n- Use 'auth.uid() = user_id OR user_id IS NULL' in UPDATE policies for claimable rows\n- Include session_id column for anonymous session tracking\n- Test RLS policies explicitly in the migration or seed file",
-      "affected_files": ["afterloss/CLAUDE.md"],
-      "suggested_action": "When issue #111 (Supabase schema) is assigned, the worker MUST read .ralph/learnings.md entries about anonymous RLS policies. Include RLS test assertions in the migration. This learning is already documented — just ensure it's applied."
-    },
-    {
-      "category": "test_gap",
-      "priority": "medium",
-      "title": "No CI/CD pipeline exists — issue #127 open but low priority, should be elevated",
-      "description": "AfterLoss has no CI/CD workflow (.github/workflows/ci-afterloss.yml does not exist). This means:\n- No automated build/test/lint on PRs\n- No automated deployment to Vercel preview\n- Code review bots may not trigger correctly\n\nOther products have CI workflows. AfterLoss should get one ASAP to catch regressions as features are built.",
-      "affected_files": [".github/workflows/ci-afterloss.yml"],
-      "suggested_action": "Elevate issue #127 from P3 to P2. Create CI workflow that runs: bun install → bun run lint → bun run build → bun run test. Trigger on changes to afterloss/** on PRs targeting main."
-    },
-    {
-      "category": "improvement",
-      "priority": "medium",
-      "title": "Color palette mismatch — scaffold uses corporate blue, architecture doc specifies sage green/warm tones",
-      "description": "globals.css currently uses:\n- --primary: #2563eb (corporate blue)\n- --primary-hover: #1d4ed8\n- --background: #ffffff (stark white)\n- --foreground: #171717 (near-black)\n\nArchitecture doc (docs/architecture.md lines 188-197) specifies:\n- Primary: Sage green or warm gray (calming, not clinical)\n- Accent: Soft gold (gentle warmth)\n- Background: Off-white / warm cream (not stark white)\n- Text: Dark warm gray (not pure black)\n- WCAG 2.1 AA compliant (many users are elderly 70+)\n\nCompetitor color analysis:\n- Empathy: warm tones, soft gradients\n- Atticus: blue-green palette\n- Sunset: warm amber/orange accents\n- Elayne: clean white with green accents\n\nThe landing page redesign (issue #255) should fix this.",
-      "affected_files": ["afterloss/src/app/globals.css"],
-      "suggested_action": "Issue #255 (landing page redesign) must include color palette update. Suggested palette: sage green primary (#6B8F71), soft gold accent (#C9A961), warm cream background (#FAF8F5), dark warm gray text (#3D3D3D). All must pass WCAG 2.1 AA contrast ratio checks."
+      "suggested_action": "Add bereavement UX design principles to CLAUDE.md for issue #255 (landing page redesign) and #254 (checklist engine). The 'one question per screen' pattern should guide the onboarding flow (#259)."
     },
     {
       "category": "seo",
       "priority": "medium",
-      "title": "JSON-LD structured data and sitemap.ts are required for Next.js 15 SEO — not yet implemented",
-      "description": "Next.js 15 best practices for programmatic SEO (per 2026 guides):\n1. Metadata API: dynamic title/description per page using generateMetadata()\n2. sitemap.ts in /app directory using MetadataRoute.Sitemap API\n3. JSON-LD structured data for FAQPage, HowTo, Article schema types\n4. Open Graph tags for social sharing\n5. Canonical URLs to prevent duplicate content\n6. robots.ts for crawl directives\n\nThe landing page has basic metadata but lacks structured data, sitemap, and programmatic page metadata.\n\nFor estate/probate content, relevant schema types:\n- FAQPage: state probate FAQ pages\n- HowTo: step-by-step checklist guides\n- Article: informational guides\n- BreadcrumbList: navigation hierarchy",
-      "affected_files": ["afterloss/src/app/sitemap.ts", "afterloss/src/app/robots.ts"],
-      "suggested_action": "Add sitemap.ts and robots.ts to the app directory. When building programmatic state pages, include generateMetadata() with state-specific title/description and JSON-LD structured data. This should be part of the programmatic SEO pages implementation."
+      "title": "Comparison page SEO strategy — intercept competitor-seeking traffic",
+      "description": "SwiftProbate runs comparison pages (/compare/elayne, /compare/eversettled, etc.) that intercept users searching for competitor reviews. This is a proven SaaS SEO strategy. AfterLoss could target: 'Sunset app review', 'Atticus vs AfterLoss', 'free estate settlement app'. Since AfterLoss is 100% free, comparison pages would consistently win on pricing.",
+      "affected_files": [],
+      "suggested_action": "Create a new P3 GitHub issue for comparison page SEO strategy. Build /compare/{competitor} pages for Sunset, Atticus, SwiftProbate, Elayne, EverSettled. Emphasize: free, no account required, web-first, AI doc gen."
     },
     {
-      "category": "improvement",
-      "priority": "low",
-      "title": "Consider PWA support for offline access to checklists and saved documents",
-      "description": "Since AfterLoss is web-first and uses localStorage, adding Progressive Web App (PWA) support would enable:\n- Offline access to the checklist and saved progress\n- Install to home screen (compete with Atticus and Sunset's native apps)\n- Push notifications for deadline reminders (with account)\n- Works on all platforms without app store submission\n\nThis is a future enhancement, not MVP-blocking.",
-      "affected_files": ["afterloss/next.config.ts"],
-      "suggested_action": "After core features are built, add next-pwa or @ducanh2912/next-pwa for PWA support. Add manifest.json with app icons. This makes AfterLoss installable without app store friction."
+      "category": "bug",
+      "priority": "high",
+      "title": "P0 scaffold violations (#252) still open — blocks all feature work",
+      "description": "Issue #252 documents 13 scaffold violations from PR #213 reviews. All documented in learnings.md as recurring patterns. Key fixes: suppressHydrationWarning on date, remove font-family override, expand CSS vars, beforeEach in tests, add /api/health, add Prettier, ESLint data-testid rule, env.ts error tests. This is P0 and blocks all feature development.",
+      "affected_files": [
+        "afterloss/src/app/layout.tsx",
+        "afterloss/src/app/globals.css",
+        "afterloss/e2e/smoke.spec.ts",
+        "afterloss/src/app/page.test.tsx",
+        "afterloss/src/lib/env.test.ts",
+        "afterloss/eslint.config.mjs",
+        "afterloss/tsconfig.json",
+        "afterloss/playwright.config.ts",
+        "afterloss/vitest.config.ts",
+        "afterloss/package.json"
+      ],
+      "suggested_action": "Assign issue #252 to the next implementation worker. All 13 acceptance criteria are mechanical — should be a clean single-PR fix."
     },
     {
       "category": "test_gap",
-      "priority": "low",
-      "title": "E2E tests only cover landing page — need coverage for onboarding, checklist, document generation flows",
-      "description": "Current Playwright smoke tests (e2e/smoke.spec.ts) only verify landing page elements. As features are built, E2E tests must cover:\n1. Onboarding flow: state selection → relationship → estate complexity\n2. Checklist interaction: expand items, check off tasks, see progress update\n3. localStorage persistence: complete tasks → refresh → verify persistence\n4. Document generation: fill form → generate → verify PDF download\n5. State guide pages: navigate to state, verify correct probate data\n6. Affiliate links: visible at correct checklist steps, clearly labeled\n\nEvery new feature PR should include corresponding Playwright tests.",
-      "affected_files": ["afterloss/e2e/"],
-      "suggested_action": "Include Playwright test requirements in every new feature issue's acceptance criteria. Use data-testid consistently. Create test user scenarios in TEST_MODE."
+      "priority": "medium",
+      "title": "Only 12 total tests (9 unit + 4 E2E) — critical coverage gap",
+      "description": "AfterLoss has 3 test files with 12 total tests. All are smoke tests for the landing page. No tests for onboarding, checklist, document generation, state guides, or any business logic. As features are built, test coverage must grow proportionally.",
+      "affected_files": [],
+      "suggested_action": "Each feature issue (#254, #259, #260, etc.) should require corresponding tests in acceptance criteria. E2E tests should cover the full user flow: landing → onboarding → checklist → document generation → download."
+    },
+    {
+      "category": "missing_feature",
+      "priority": "medium",
+      "title": "CI/CD pipeline not yet created — issue #127 open",
+      "description": "No CI/CD workflow exists for AfterLoss (ci-afterloss.yml). Other products like ScoreRebound have deploy workflows and E2E test workflows. AfterLoss needs at minimum: build + lint + test on PR, deploy to Vercel on merge to main, E2E smoke tests post-deploy.",
+      "affected_files": [".github/workflows/"],
+      "suggested_action": "Issue #127 covers CI/CD. Should be prioritized after #252 (scaffold fixes) and before heavy feature work, so all subsequent PRs get proper CI validation."
     }
   ],
   "stack_recommendation": {
@@ -136,81 +164,94 @@
     "database": "supabase",
     "auth": "supabase-auth",
     "deploy": "vercel",
-    "rationale": "Stack is CONFIRMED correct. Next.js 15 App Router with SSG/ISR is ideal for 153+ programmatic SEO pages. Supabase for optional user progress sync, state probate rules database, and generated document storage. Supabase Auth for optional accounts (localStorage-first by default). Vercel for fast SSG builds with ISR revalidation. Add: zustand (state management with persist middleware), @react-pdf/renderer (client-side PDF generation via dynamic import), @anthropic-ai/sdk (Claude API for document generation). NOTE: @react-pdf/renderer should use client-side rendering via dynamic import, not server-side in route handlers."
+    "rationale": "Current stack is correct. Next.js 15 App Router with SSG/ISR for SEO-critical state pages, Supabase for optional user progress sync, Vercel for fast CDN delivery. No stack changes needed. Key additions needed: zustand for localStorage persistence, @anthropic-ai/sdk for doc gen, @react-pdf/renderer for PDF output (client-side only). generateStaticParams() confirmed as the right approach for programmatic SEO pages."
   },
   "apis_discovered": [
     {
-      "name": "Justia 50-State Probate Survey",
-      "url": "https://www.justia.com/probate/probate-administration/small-estates/small-estates-laws-and-procedures-50-state-survey/",
-      "auth": "free",
-      "notes": "Comprehensive state-by-state small estate laws. Web scraping or manual data entry needed. Primary reference for seeding state_probate_rules table."
+      "name": "SSA Death Notification",
+      "url": "https://www.ssa.gov/personal-record/when-someone-dies",
+      "auth": "none",
+      "notes": "NO public API. Deaths reported by phone (800-772-1213) or in person. Funeral homes use EDR. Form SSA-721 (10-2024 edition). USAGov guide: usa.gov/social-security-report-a-death"
     },
     {
-      "name": "Nolo State Estate Planning Guides",
-      "url": "https://www.nolo.com/legal-encyclopedia/estate-planning-your-state",
-      "auth": "free",
-      "notes": "State-specific estate planning law summaries. Reference for state guide content."
-    },
-    {
-      "name": "SmallEstateAffidavit.com State Limits",
-      "url": "https://smallestateaffidavit.com/small-estate-affidavit-limits/",
-      "auth": "free",
-      "notes": "Quick reference for small estate affidavit thresholds by state. Cross-reference with state court websites."
-    },
-    {
-      "name": "SwiftProbate State/County Guides (competitor reference)",
-      "url": "https://www.swiftprobate.com/probate/{state}",
-      "auth": "free",
-      "notes": "3,200+ county-specific probate guides. Useful as reference for data accuracy but do NOT copy content. Use as a cross-reference for state probate data."
-    },
-    {
-      "name": "VitalChek Death Certificate Ordering",
+      "name": "VitalChek Death Certificates",
       "url": "https://www.vitalchek.com/v/death-certificates",
       "auth": "none",
-      "notes": "Exclusive online partner for 450+ vital records offices. No formal affiliate program found — may need direct partnership outreach. Link to from death certificate ordering step."
+      "notes": "NO public API. Consumer ordering only. Exclusive partner of 450+ governing agencies. Costs $5-$32/copy. 3-10 day processing. Uses LexisNexis for identity verification. Potential affiliate opportunity."
     },
     {
-      "name": "USAGov Death Certificate Guide",
-      "url": "https://www.usa.gov/death-certificate",
+      "name": "IRS Estate Forms",
+      "url": "https://www.irs.gov/businesses/small-businesses-self-employed/deceased-taxpayers-filing-the-final-returns-of-a-deceased-taxpayer",
       "auth": "free",
-      "notes": "Official government guide for ordering death certificates by state. Link to from state guide pages."
+      "notes": "Form 1041 (estate income, $600+ threshold, due April 15). Form 706 (estate tax, >$15M permanent threshold, due 9 months after death). Form 4768 (6-month extension). Portability: MUST file 706 even if under threshold."
     },
     {
-      "name": "SSA Form SSA-721",
-      "url": "https://www.ssa.gov/forms/ssa-721.pdf",
+      "name": "Justia 50-State Small Estate Survey",
+      "url": "https://www.justia.com/probate/probate-administration/small-estates/small-estates-laws-and-procedures-50-state-survey/",
       "auth": "free",
-      "notes": "Statement of Death by Funeral Director form. Reference for government forms guidance."
+      "notes": "PRIMARY data source for issue #253. Covers all states' small estate procedures, thresholds, and requirements."
     },
     {
-      "name": "LegalZoom Affiliate Program",
-      "url": "https://www.legalzoom.com/affiliates",
+      "name": "Nolo State Probate Guides",
+      "url": "https://www.nolo.com/legal-encyclopedia/probate",
       "auth": "free",
-      "notes": "15% commission per sale ($125+). Via CJ Affiliate. Apply early."
+      "notes": "State-by-state probate guides. Also has 15% affiliate program with 120-day cookie. Books like 'How to Probate an Estate in California' ($42.99)."
     },
     {
-      "name": "Trust & Will Affiliate Program",
+      "name": "Michigan Legal Help — Small Estate",
+      "url": "https://michiganlegalhelp.org/resources/wills-and-life-planning/overview-of-michigans-small-estate-processes",
+      "auth": "free",
+      "notes": "NEW: Michigan threshold $53,000 for 2026. Mortgage/lien deduction up to $264,000. Authoritative state source."
+    },
+    {
+      "name": "Rocket Lawyer Affiliate",
+      "url": "https://www.rocketlawyer.com/affiliate-partner.rl",
+      "auth": "key",
+      "notes": "30% commission via Yazing/VigLink. 30-day cookie. Highest legal affiliate commission. Free to join."
+    },
+    {
+      "name": "Trust & Will Affiliate",
       "url": "https://trustandwill.com/affiliate-program",
-      "auth": "free",
-      "notes": "20% commission, avg $80/sale, up to $180. Via Impact.com. Strong fit for users who want to create their own estate plan after experiencing the process."
+      "auth": "key",
+      "notes": "20% commission via Impact.com. Avg $80/sale, up to $180/transaction. 30-day cookie."
     },
     {
-      "name": "BetterHelp Affiliate/Referral Program",
-      "url": "https://www.betterhelp.com/",
-      "auth": "free",
-      "notes": "$10-$40 per qualified referral (CPA). Grief counseling specialization. Contextual at grief support checklist steps."
+      "name": "LegalZoom Affiliate",
+      "url": "https://www.legalzoom.com/affiliates",
+      "auth": "key",
+      "notes": "15% commission via CJ Affiliate. 30-day cookie. $50 min payout."
     },
     {
-      "name": "CDC Mortality Data Briefs",
-      "url": "https://www.cdc.gov/nchs/products/databriefs/db548.htm",
-      "auth": "free",
-      "notes": "Latest mortality statistics (DB548, Jan 2026). Use for content marketing and SEO content about death rates."
+      "name": "Nolo Affiliate",
+      "url": "https://www.nolo.com/affiliates/new",
+      "auth": "key",
+      "notes": "15% commission. 120-day cookie — ideal for grief users who delay purchases. Via MyAffPro/Kolimbo. $25 min payout."
     },
     {
-      "name": "CBO Population Projections",
-      "url": "https://fortune.com/2026/01/07/cbo-outlook-population-decline-more-americans-will-die-than-be-born-2030/",
-      "auth": "free",
-      "notes": "CBO projects deaths > births by 2030. Wave validation data for content strategy."
+      "name": "BetterHelp Affiliate",
+      "url": "https://www.betterhelp.com",
+      "auth": "key",
+      "notes": "$10-$150 per referral via Impact/ShareASale. Commissions scale with quality/volume. Grief counseling specialty available."
     }
   ],
-  "timestamp": "2026-03-17T04:45:00Z"
+  "priority_queue": {
+    "description": "Recommended implementation order for AfterLoss",
+    "queue": [
+      {"issue": 252, "title": "Fix scaffold violations", "priority": "P0", "rationale": "Blocks all feature work. 13 mechanical fixes."},
+      {"issue": 127, "title": "CI/CD pipeline", "priority": "P1", "rationale": "Need automated validation before heavy feature work."},
+      {"issue": 253, "title": "50-state probate rules database", "priority": "P1", "rationale": "Data foundation for state pages, checklist, and doc gen."},
+      {"issue": 255, "title": "Landing page redesign", "priority": "P1", "rationale": "First impression. Empathy-first UX. Can ship independently."},
+      {"issue": 261, "title": "SEO infrastructure", "priority": "P1", "rationale": "Sitemap, robots, JSON-LD. Foundation for all SEO pages."},
+      {"issue": 254, "title": "Interactive checklist engine", "priority": "P1", "rationale": "Core product feature. Requires zustand."},
+      {"issue": 259, "title": "Onboarding flow", "priority": "P1", "rationale": "Intake before checklist. State/relationship/complexity."},
+      {"issue": 258, "title": "Programmatic state pages", "priority": "P1", "rationale": "SEO-critical. 153+ pages. Compete with SwiftProbate."},
+      {"issue": 260, "title": "AI document generation", "priority": "P1", "rationale": "Key differentiator. Claude API for letters/forms."},
+      {"issue": 265, "title": "Phone scripts library", "priority": "P1", "rationale": "UNIQUE differentiator. No competitor has this."},
+      {"issue": 111, "title": "Supabase schema & migrations", "priority": "P1", "rationale": "Needed for optional user progress persistence."},
+      {"issue": 256, "title": "Subscription cancellation templates", "priority": "P2", "rationale": "150+ services. Major user pain point."},
+      {"issue": 262, "title": "Deadline tracker", "priority": "P2", "rationale": "State-specific filing deadlines and reminders."},
+      {"issue": 266, "title": "County-level SEO pages", "priority": "P2", "rationale": "3,200+ pages to compete with SwiftProbate at county level."},
+      {"issue": 124, "title": "Affiliate integration", "priority": "P3", "rationale": "Revenue enablement. After core features are built."}
+    ]
+  }
 }

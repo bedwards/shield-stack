@@ -110,10 +110,15 @@ User arrives (often from Google: "what to do when someone dies")
 - **No dark patterns**: Never pressure users. Affiliate recommendations are clearly labeled and contextual.
 - **Works without account**: Full functionality available without sign-up. Account only needed for progress saving and email reminders.
 - **Progressive disclosure**: Don't overwhelm. Show one section at a time, celebrate completion.
+- **One question per screen**: Grief kills attention span. Clear next steps, soft progress indicator, no pressure to finish.
+- **Pause and resume**: Grief is nonlinear. Users must be able to stop and come back at any time.
+- **Validate emotions in copy**: Use gentle prompts like "Take your time" for real comfort.
+- **Templates reduce decision fatigue**: Provide meaningful defaults so users have a place to start.
+- **Cultural flexibility**: Avoid Western-centric assumptions about death/grief practices.
 - **Accessibility**: WCAG 2.1 AA compliant. Many users will be elderly.
 - **Mobile-first**: Many users will be on their phone at a funeral home or hospital.
 
-## Competitive Landscape (Updated March 16, 2026)
+## Competitive Landscape (Updated March 17, 2026)
 
 The estate settlement space has exploded — 12+ competitors now exist. AfterLoss must differentiate sharply.
 
@@ -121,18 +126,18 @@ The estate settlement space has exploded — 12+ competitors now exist. AfterLos
 
 | Competitor | Model | Pricing | Threat Level |
 |-----------|-------|---------|--------------|
-| **Sunset** | B2C automated | **Free** (bank-partner funded) | **HIGHEST** — Also free. iPhone + Android apps. All 50 states, 3000+ counties. Finds assets in 1 day. FDIC-insured estate account up to $3M. SOC 2 Type II. |
-| **SwiftProbate** | B2C DIY | **$39 one-time** | **HIGH (SEO)** — 3,200+ county-specific probate guides. Already doing programmatic SEO at county level. 160+ institution guides. |
-| **Atticus** | B2C DIY | ~$15/mo subscription | **MEDIUM** — iOS-only (no Android, no web app). Step-by-step guide. Already ranks for "what to do when loved one dies 2026". Fast Company World Changing Idea winner. |
+| **Sunset** | B2C automated | **Free** (bank-partner funded) | **HIGHEST** — Revenue from partner bank interest while estate funds sit in FDIC-insured account (up to $3M). iPhone + Android apps. All 50 states, 3000+ counties. 1-day asset discovery. SOC 2 Type II. New: e-notarization, RUFADAA-compliant crypto/digital asset discovery, debt/liability identification. Narrowly focused on asset discovery/transfer — NOT the full emotional/checklist experience. |
+| **SwiftProbate** | B2C DIY | **$39 one-time** | **HIGH (SEO)** — 3,200+ county-specific probate guides, all updated with "(2026)" in titles. URL pattern: /probate/{state}/{county}. 160+ institution guides. Running comparison pages (/compare/elayne, /compare/eversettled, etc.) intercepting competitor traffic. Probate checklist blog post ranking well. |
+| **Atticus** | B2C DIY | ~$15/mo subscription | **MEDIUM** — iOS-only (no Android, no web app). Mixed App Store reviews: some praise step-by-step guide, others report bugs and unresponsive support. Trustpilot mostly positive (Mar 2026). Fast Company World Changing Idea winner. Has well-ranking "2026 Checklist" article. |
 
 ### Tier 2 — Premium Competitors
 
 | Competitor | Model | Pricing | Notes |
 |-----------|-------|---------|-------|
-| **Empathy** | B2B (insurance carriers) | Free via insurer, or $8.99/mo | $162M raised. 45M+ lives. BMO Insurance partnership (Jan 2026). LifeVault reached 2M users. B2B-locked, not direct-to-consumer. |
-| **Elayne** | Full-service + AI | Flat fee ~$250+ | AI + human support. Searches 50+ financial categories. Good SEO content play. |
-| **EverSettled** | B2C DIY | $199 per estate | State-level guidance, document organization, optional estate specialists. |
-| **EstateExec** | Executor software | $199 | Executor accounting focus. Won 2026 ACQ5 Global Awards. |
+| **Empathy** | B2B (insurance carriers) | Free via insurer | $160M+ raised. Partners: MetLife, New York Life, Allianz, Aflac, TIAA, MassMutual, Prudential, AT&T, Sun Life. Launched "Leave Support" with MetLife (Oct 2025) for bereavement leave management. 1:1 Care Manager, saves families avg 200 hours. Pure B2B — not accessible without carrier partnership. |
+| **Elayne** | Full-service + AI | **FREE self-guided** or $250 full discovery | **UPGRADED THREAT (Mar 2026)**: Free tier includes family collaboration, document sharing, estate plan management — but REQUIRES account. Paid $250 tier adds full account search, human support. Running aggressive date-stamped SEO content (monthly guides like "Delete Cash App Account Permanently March 2026"). SOC 2 Type II + HIPAA compliant. |
+| **EverSettled** | Full-service | **$199 base** + optional specialist support | Smart checklist based on state/assets/family. Optional estate settlement specialists at higher tiers. 500+ families served. Free 2-week trial. San Francisco based. |
+| **EstateExec** | Executor software | $199 | Executor accounting focus. 4.9/5 TrustPilot (180 reviews). Won 2026 ACQ5 Global Awards, Edison Innovation Award. Bank integration, PDF court reports. |
 | **Alix** | Full-service | 1% of estate, $9K min | Premium tier, not accessible to average families. |
 | **ClearEstate** | Full-service | 1.75%, $20K min | Primarily Canadian market, expanding to US. |
 
@@ -141,32 +146,41 @@ The estate settlement space has exploded — 12+ competitors now exist. AfterLos
 | Competitor | Focus | Notes |
 |-----------|-------|-------|
 | **Cadence** | Software + live advisors | Certified Executor Advisors. |
-| **Caily** | Subscription cancellation guides | Content-focused, blog articles. |
-| **Legacy Logix** | AI document sorting | Task identification, deadline alerts. |
+| **Legacy Logix** | AI document sorting + estate management | Smart Digital Estate Vault, VaultIQ (AI document interrogation). Free starter, $38.95/mo premium. Ongoing estate management focus, not post-death guidance. |
 | **SubsVault** | Digital legacy planning | Subscription management after death. |
 
+**Note:** Caily (caily.com) was previously listed as "subscription cancellation guides" — this was incorrect. Caily is a HIPAA-compliant messaging platform for senior living communities. It is not a competitor.
+
 ### AfterLoss Differentiation
-1. **100% free, forever** — Beats Atticus ($15/mo), EverSettled ($199), SwiftProbate ($39), Elayne ($250+)
-2. **Web-first, no download** — Works instantly in browser. Beats Atticus (iOS-only) and Sunset (app download required)
-3. **No account required** — localStorage-first. Full functionality without signup. No competitor does this.
+1. **100% free, forever** — Beats Atticus ($15/mo), EverSettled ($1,499), SwiftProbate ($39)
+2. **No account required** — localStorage-first. Full functionality without signup. No competitor does this (Elayne's free tier still requires account).
+3. **Web-first, no download** — Works instantly in browser. Beats Atticus (iOS-only) and Sunset (app download required)
 4. **AI-generated personalized documents** — Claude API writes actual letters/forms, not just templates or guides
-5. **Programmatic SEO** — 153+ state-specific pages (51 states × 3 guide types)
-6. **Empathy-first UX** — Designed for people in grief, not executors managing assets
+5. **Phone scripts library** — Pre-written scripts for calling SSA, banks, insurance, subscriptions. No competitor offers this.
+6. **Programmatic SEO** — 153+ state-specific pages (51 states × 3 guide types), expanding to county-level
+7. **Empathy-first UX** — Designed for people in grief, not executors managing assets
 
-### Competitive Threat Assessment
-- **Sunset** is #1 threat (also free + mobile apps), but focused narrowly on asset discovery/probate docs. AfterLoss differentiates on AI doc gen, broader checklist scope, empathy-first UX, and web accessibility.
-- **SwiftProbate** is #1 SEO threat with 3,200+ county-level pages. AfterLoss must launch state-level programmatic pages ASAP.
-- **Empathy** has massive scale (45M+ users) but locked behind insurance carrier B2B partnerships — not a direct SEO competitor.
-- **Atticus** is direct DIY competitor but charges $15/mo and is iOS-only — no web experience.
+### Competitive Threat Assessment (Updated March 17, 2026)
+- **Sunset** is #1 overall threat (also free + mobile apps). Revenue from bank interest on estate account funds. New features: e-notarization, crypto/digital asset discovery, debt/liability ID. BUT narrowly focused on asset discovery/transfer — lacks the full emotional/administrative guidance, phone scripts, subscription cancellation, and AI document generation that AfterLoss provides.
+- **SwiftProbate** is #1 SEO threat with 3,200+ county-level pages (all "(2026)" tagged) + 160+ institution guides + comparison pages intercepting competitor traffic. AfterLoss must launch state-level programmatic pages ASAP and plan county-level expansion. Also need comparison pages to counter SwiftProbate's strategy.
+- **Elayne** upgraded to MEDIUM-HIGH threat. Free tier includes family collaboration and document sharing but REQUIRES account creation. Running date-stamped monthly content strategy for SEO freshness. AfterLoss differentiates on: no account required, AI doc gen, phone scripts.
+- **Empathy** has massive scale ($160M+ raised) + new "Leave Support" product with MetLife (Oct 2025) but locked behind insurance carrier B2B partnerships — not accessible to most grieving families.
+- **Atticus** is direct DIY competitor but charges $15/mo, iOS-only, mixed App Store reviews (bugs, unresponsive support). Web-first + free is AfterLoss's counter-position.
 
-## Validated Affiliate Programs
+## Validated Affiliate Programs (Updated March 17, 2026)
 
-| Partner | Commission | Via | Placement Context |
-|---------|-----------|-----|-------------------|
-| **LegalZoom** | 15% per sale ($125+) | CJ Affiliate | Estate planning, attorney referral steps |
-| **Trust & Will** | 20% per sale (avg $80, up to $180) | Impact.com | Will creation, estate planning steps |
-| **BetterHelp** | $10-$40 per referral CPA | Direct | Grief counseling, emotional support steps |
-| **VitalChek** | TBD | TBD | Death certificate ordering step |
+| Partner | Commission | Via | Cookie | Placement Context |
+|---------|-----------|-----|--------|-------------------|
+| **Rocket Lawyer** | 30% per sale | Yazing/VigLink | TBD | Estate planning, attorney referral steps. Highest commission. |
+| **Trust & Will** | 20% per sale (avg $80, up to $180) | Impact.com | 30 days | Will creation, estate planning steps |
+| **LegalZoom** | 15% per sale ($125+) | CJ Affiliate | 30 days | Estate planning, attorney referral steps. $50 min payout. |
+| **Nolo** | Up to 15% | Direct | **120 days** | State probate guides, legal self-help. Long cookie ideal for grief users who delay purchase. |
+| **BetterHelp** | $10-$150 per referral | Impact | TBD | Grief counseling, emotional support steps. Higher commissions at scale. |
+| **VitalChek** | TBD | TBD | TBD | Death certificate ordering step |
+| **Ever Loved** | TBD | Direct | TBD | Funeral products, fundraising, memorial websites |
+| **Titan Casket** | TBD | Refersion | TBD | Direct-to-consumer caskets (funeral planning step) |
+
+**Note:** Avvo NO LONGER has an affiliate program. Their fee-sharing model was ruled a violation in NJ and challenged in FL. Removed from partner list.
 
 ## Key Data Sources (No Public APIs — Must Curate)
 
@@ -182,20 +196,34 @@ The estate settlement space has exploded — 12+ competitors now exist. AfterLos
 - **Vercel** — Hosting with SSG/ISR
 - **Affiliate tracking** — CJ Affiliate (LegalZoom), Impact.com (Trust & Will), direct (BetterHelp)
 
-## Wave Timing (Re-validated March 16, 2026)
+## Wave Timing (Re-validated March 17, 2026)
 - Oldest baby boomers turn 80 in 2026
 - 3.6M US deaths/year, rising through peak in 2055
 - CBO projects deaths > births by 2030 (Fortune, Jan 2026)
 - US life expectancy hit record 79 years in 2024 (CDC DB548, Jan 2026)
 - Digital estate complexity growing (subscriptions, crypto, social media, digital purchases)
-- Senior share of US population: 18.7% (2025) → 23% (2050)
-- Empathy's $162M fundraise proves venture capital validates this market
-- State probate thresholds changing: CA raised to $208,850 (Apr 2025), IL raised to $150K (Aug 2025)
+- Senior share of US population: 18.7% (2025) → 23% (2050); 56M+ aged 65+ in 2026, 72M+ by 2033
+- Empathy's $160M+ fundraise proves venture capital validates this market
+- Estate Planning Software Market: $1.5B (2024) → $4.2B (2033) at 12.3% CAGR
+- Global deathcare industry: $147B → $209.6B by 2030 (6.1% CAGR)
+- Federal estate tax exemption permanently $15M (One Big Beautiful Bill Act) — removes tax anxiety for 99%+ of families
+- State thresholds still changing: CA $208,850 (Apr 2025), IL $150K (Aug 2025), SC $45K (May 2025)
 
 ## Key State Probate Threshold Changes (Track These)
-- **California**: Small estate affidavit → $208,850 (April 1, 2025 via AB 2016). New: primary residence transfer without probate up to $750K.
+- **California**: Small estate affidavit → $208,850 (April 1, 2025 via AB 2016). Primary residence transfer without probate up to $750K. **2026:** AB 1521 expanded notice requirements (electronic DHCS notice, child support notification within 90 days). Medi-Cal asset test reinstated ($130K individual / $195K married, 30-month lookback). Crypto business licensing effective July 2026.
 - **Illinois**: Small estate limit → $150,000 (August 15, 2025). Vehicles now excluded from limit calculation.
+- **South Carolina**: Small estate threshold raised to $45,000 (May 2025, HB 3472).
+- **Michigan**: Small estate threshold → $53,000 (for deaths in 2026, cost-of-living adjusted annually). Real property with mortgage/lien: subtract up to $264,000 from property value. Source: michiganlegalhelp.org
+- **Washington**: HB 2445 — family gets 90 days (up from 40) to petition as administrator; new rules on third-party administrator compensation and eligibility.
+- **Federal**: Estate tax exemption permanently $15M individual / $30M married (One Big Beautiful Bill Act, effective Jan 1, 2026). No sunset. GST exemption $15M. Indexed for inflation starting 2027. **Portability election is NOT automatic** — must file Form 706 even if under threshold.
 - These thresholds change periodically — include `last_verified_date` in state data.
+
+## IRS Forms After Death (Quick Reference)
+- **Final Form 1040**: Decedent's final personal income tax return
+- **Form 1041**: Estate income tax (required if gross income ≥ $600). Deadline: April 15 following year.
+- **Form 706**: Estate tax return (required if estate > $15M). Deadline: 9 months after death. 6-month extension via Form 4768.
+- **Portability**: Must file Form 706 even if under $15M threshold to preserve unused exemption for surviving spouse.
+- **99%+ of families will NOT owe federal estate tax** — emphasize this to users to reduce anxiety.
 
 ## Version
 0.1.0
