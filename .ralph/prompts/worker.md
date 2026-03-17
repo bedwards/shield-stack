@@ -89,9 +89,31 @@ Your durable artifacts are **committed and pushed code** and the **pull request*
 - **Incremental updates**: Every data process must be resumable. Store cursors/watermarks. Never require destructive resets.
 - **No DROP TABLE** in migrations. Forward-only, additive changes.
 
+## Full-Stack E2E Verification (MANDATORY — #1 PRIORITY)
+Every feature you build must have authenticated E2E tests verifying UI, database state, browser state, and screenshots. No feature is done without this.
+
+### When building auth features, you MUST create:
+- `e2e/helpers/auth.ts` — login helper that authenticates via `/api/test-auth` and saves storageState
+- `e2e/helpers/db.ts` — database assertion helpers (query Supabase to verify rows after UI actions)
+- `e2e/setup/auth.setup.ts` — Playwright setup project that runs auth and persists storageState
+- `e2e/authenticated/` directory for all tests behind login
+
+### For EVERY feature behind login:
+- Create authenticated E2E tests in `e2e/authenticated/`
+- Verify database state in E2E tests (not just UI) — after a form submit, query the DB and assert the row exists with correct values
+- Take screenshots in E2E tests for visual verification: `await page.screenshot({ path: 'e2e/screenshots/feature-name.png', fullPage: true })`
+- Check browser state where relevant (localStorage, cookies, session tokens)
+
+### Run authenticated E2E locally before pushing:
+```bash
+cd {product_slug}
+TEST_MODE=true SUPABASE_SERVICE_ROLE_KEY=xxx bunx playwright test
+```
+If authenticated E2E tests fail, do NOT push. Fix them first.
+
 ## LLM-Testable Design (MANDATORY)
 Every feature you build must be verifiable by an AI running Playwright:
-- Add `data-testid` attributes on all interactive elements (buttons, inputs, forms, links)
+- Add `data-testid` attributes on ALL interactive elements (buttons, inputs, forms, links, nav items, cards) — no exceptions
 - Provide test user credentials / seed data via environment variables (`TEST_USER_EMAIL`, `TEST_USER_PASSWORD`)
 - API endpoints must return meaningful JSON error messages, not HTML error pages
 - No CAPTCHAs or anti-bot measures in test/preview environments

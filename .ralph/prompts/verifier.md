@@ -36,14 +36,44 @@ Exit conditions must be driven by EXTERNAL tool results (HTTP status codes, Play
   - Local dev: `cd {product_slug} && npm run dev` or equivalent, test against localhost
 - If no deployment exists yet, run local dev server and test against it
 
-### 3. Run Playwright E2E tests
+### 3. Run authenticated E2E tests (NOT just smoke tests)
+This is the #1 priority. Run the full authenticated test suite:
 ```bash
 cd {product_slug}
 npx playwright install --with-deps chromium
-npx playwright test --reporter=json
+TEST_MODE=true SUPABASE_SERVICE_ROLE_KEY=xxx bunx playwright test --reporter=json
+```
+This runs BOTH public and authenticated tests. The setup project authenticates via `/api/test-auth` and saves storageState. Authenticated tests then use that state.
+
+If the product has no authenticated tests, this is a CRITICAL finding — report it immediately.
+
+### 4. Verify login flow works end-to-end
+Use Playwright MCP or Chrome extension to manually verify:
+- Navigate to the login page
+- Authenticate with test credentials (via `/api/test-auth` endpoint)
+- Verify redirect to authenticated area (dashboard, etc.)
+- Verify session persists across page reloads
+- Verify logout clears session
+- Take screenshots at each step
+
+```
+# Using Playwright MCP for interactive verification:
+claude mcp add playwright npx @playwright/mcp@latest
 ```
 
-### 4. If no Playwright tests exist yet, CREATE them
+### 5. Verify database writes from UI actions
+For every feature that writes to the database:
+- Perform the UI action (fill form, click submit)
+- Query the database to verify the row was created/updated
+- Use the Supabase service role key for direct DB verification:
+```bash
+# Example: verify a row exists after form submission
+curl -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
+  -H "apikey: $SUPABASE_ANON_KEY" \
+  "$SUPABASE_URL/rest/v1/table_name?column=eq.value"
+```
+
+### 6. If no Playwright tests exist yet, CREATE them
 Every product needs a baseline E2E test suite. Create `{product_slug}/e2e/` with:
 
 - **Smoke test**: Can the landing page load? Does it render without errors?
@@ -52,25 +82,40 @@ Every product needs a baseline E2E test suite. Create `{product_slug}/e2e/` with
 - **Core flow test**: Exercise the product's primary user journey end-to-end
   - Fill in every form field
   - Click every button
-  - Verify database reads/writes (check API responses)
+  - Verify database reads/writes (check API responses AND direct DB queries)
   - Verify error states (invalid input, network errors)
 - **Visual regression**: Take screenshots of every page for comparison
+- **Database state**: After each write action, query DB and assert on the row
+- **Browser state**: After login, assert `localStorage`, cookies, or session tokens are set correctly
 
-### 5. LLM-testable design verification
+### 7. LLM-testable design verification
 Check that the product is built to be testable by AI:
 - Test user accounts / seed data available
 - `data-testid` attributes on interactive elements
 - API endpoints return meaningful error messages
 - No CAPTCHAs or anti-bot measures blocking test flows
 - Environment variable for test mode (`TEST_MODE=true`)
+- `/api/test-auth` endpoint exists and is gated by `TEST_MODE`
 
-### 6. Screenshot & browser verification
+### 8. Screenshot & browser state verification
 Use multiple verification methods:
 
-**Playwright screenshots:**
+**Take and compare screenshots:**
 ```bash
 npx playwright screenshot --full-page {deploy_url} screenshots/home.png
 npx playwright screenshot --full-page {deploy_url}/dashboard screenshots/dashboard.png
+```
+Compare screenshots against previous baselines. Flag unexpected visual changes.
+
+**Check browser state (localStorage, cookies, sessions):**
+In Playwright tests, verify browser state after login:
+```typescript
+// After login, verify session state
+const cookies = await context.cookies();
+expect(cookies.find(c => c.name === 'sb-access-token')).toBeDefined();
+
+const localStorage = await page.evaluate(() => JSON.stringify(window.localStorage));
+expect(JSON.parse(localStorage)).toHaveProperty('supabase.auth.token');
 ```
 
 **Chrome integration (if available):**
@@ -86,7 +131,7 @@ Read the screenshots and verify visually that:
 - No obvious rendering errors
 - No console errors or warnings in browser
 
-**Exit condition rule:** Your pass/fail verdict MUST be based on external tool output (Playwright exit code, HTTP status codes, screenshot existence), NOT your self-assessment of whether things "look fine".
+**Exit condition rule:** Your pass/fail verdict MUST be based on external tool output (Playwright exit code, HTTP status codes, screenshot existence, DB query results), NOT your self-assessment of whether things "look fine".
 
 ### 7. Output
 ```json

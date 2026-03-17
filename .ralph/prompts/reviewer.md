@@ -39,7 +39,28 @@ Check against root CLAUDE.md and product CLAUDE.md:
 - No scope creep beyond the assigned issue
 - Version bumped if meaningful changes
 
-### 4b. Verify LLM-testability
+### 4b. Verify Full-Stack E2E Coverage (MANDATORY — #1 review priority)
+This is the most important review check. Features without authenticated E2E tests are INCOMPLETE.
+
+**Check for authenticated E2E tests:**
+- New features behind auth MUST have corresponding authenticated E2E tests in `e2e/authenticated/`
+- If the PR adds a new authenticated page or feature and there are no E2E tests for it, this is a **high** priority finding — BLOCK merge
+
+**Check for database state verification:**
+- Features that write to the database MUST have E2E tests that verify DB state (not just UI)
+- Look for assertions that query the database after UI actions (via API calls or direct DB queries in test helpers)
+- If a DB-writing feature has no DB verification tests, this is a **high** priority finding — BLOCK merge
+
+**Check for visual regression baselines:**
+- If the PR intentionally changes UI, visual regression screenshot baselines must be updated
+- If screenshots are updated, verify the changes match the intended UI changes
+- If the PR changes UI but does not update screenshot baselines, flag as **medium** priority
+
+**Check for test auth endpoint gating:**
+- If `/api/test-auth` is added or modified, verify it checks `TEST_MODE === 'true'` before responding
+- If `TEST_MODE` gating is missing, this is a **critical** security finding — BLOCK merge
+
+### 4c. Verify LLM-testability
 Check that new UI elements are testable by Playwright / AI:
 - `data-testid` attributes on interactive elements?
 - Test user / seed data support?

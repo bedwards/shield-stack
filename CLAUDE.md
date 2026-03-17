@@ -96,6 +96,32 @@ Verify and verify again — at various levels, from various perspectives, in var
 
 If ANY verification layer fails, it becomes the next work assignment. The loop self-heals.
 
+### Full-Stack E2E Verification (MANDATORY — #1 PRIORITY)
+No feature is done until it has authenticated E2E tests verifying UI, database state, browser state, and screenshots. This is the single most important quality gate in the entire system.
+
+Every product MUST have:
+- **Test auth endpoint** (`/api/test-auth`) gated by `TEST_MODE=true` — provides test session tokens without real OAuth
+- **Authenticated Playwright tests** in `e2e/authenticated/` — tests that run behind login
+- **Visual regression screenshots** — taken in E2E tests, committed to repo, compared on CI
+- **Database state verification** — E2E tests assert on DB rows after UI actions (via API or direct query)
+- **Browser/session state verification** — E2E tests check localStorage, cookies, session tokens
+- **Pattern**: Playwright setup project -> storage state -> authenticated tests:
+  ```
+  e2e/
+  ├── helpers/
+  │   ├── auth.ts          # Login helper, storage state setup
+  │   └── db.ts            # Database assertion helpers
+  ├── authenticated/
+  │   ├── dashboard.spec.ts
+  │   └── settings.spec.ts
+  ├── public/
+  │   └── landing.spec.ts
+  └── setup/
+      └── auth.setup.ts    # Playwright setup project that creates storageState
+  ```
+- **Playwright config** must define a `setup` project that authenticates and saves `storageState`, and an `authenticated` project that depends on it
+- **Command to run**: `TEST_MODE=true SUPABASE_SERVICE_ROLE_KEY=xxx bunx playwright test`
+
 ### LLM-Testable Design (MANDATORY)
 Every product must be built so an AI can test it with Playwright:
 - `data-testid` attributes on all interactive elements
