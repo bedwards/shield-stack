@@ -543,11 +543,12 @@ def phase_research(dry_run=False, product_slug=None):
         log_phase("research", f"[DRY RUN] Would run researcher ({len(prompt)} chars)")
         return True
 
-    success, _ = run_claude(prompt, max_turns=20, timeout=900)
+    success, _ = run_claude(prompt, max_turns=20, timeout=1200)
 
     if not success:
-        log_phase("research", "Research phase failed (Claude exited non-zero)")
-        return False
+        log_phase("research", "Research phase completed with non-zero exit (may have partial results)")
+        # Don't return False — research may have written partial findings to disk
+        # before timing out. Continue to plan phase.
 
     # Check what Claude wrote to disk
     after = read_json(RESEARCH_OUTPUT)
