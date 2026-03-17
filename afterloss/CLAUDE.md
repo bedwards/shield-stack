@@ -45,7 +45,7 @@ Anyone who has recently lost a loved one and is responsible for settling their a
 | Payments | Stripe | Not needed for users; only for affiliate tracking if needed |
 | AI | Claude API | Document generation, personalized letter writing |
 | Deploy | Vercel | Fast SSG pages, edge functions for document generation |
-| PDF Generation | @react-pdf/renderer | Server-side PDF generation for letters and forms |
+| PDF Generation | @react-pdf/renderer | Client-side PDF via dynamic import (server-side has DOMMatrix issues) |
 | Package Manager | bun | Fast installs, native TypeScript |
 
 ## Model & Effort
