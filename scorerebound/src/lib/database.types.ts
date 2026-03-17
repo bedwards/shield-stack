@@ -231,36 +231,43 @@ export interface Database {
         Row: Profile;
         Insert: ProfileInsert;
         Update: ProfileUpdate;
+        Relationships: [];
       };
       quiz_responses: {
         Row: QuizResponse;
         Insert: QuizResponseInsert;
         Update: QuizResponseUpdate;
+        Relationships: [];
       };
       recovery_plans: {
         Row: RecoveryPlan;
         Insert: RecoveryPlanInsert;
         Update: RecoveryPlanUpdate;
+        Relationships: [];
       };
       plan_steps: {
         Row: PlanStep;
         Insert: PlanStepInsert;
         Update: PlanStepUpdate;
+        Relationships: [];
       };
       progress_entries: {
         Row: ProgressEntry;
         Insert: ProgressEntryInsert;
         Update: ProgressEntryUpdate;
+        Relationships: [];
       };
       affiliate_clicks: {
         Row: AffiliateClick;
         Insert: AffiliateClickInsert;
         Update: AffiliateClickUpdate;
+        Relationships: [];
       };
       email_sequences: {
         Row: EmailSequence;
         Insert: EmailSequenceInsert;
         Update: EmailSequenceUpdate;
+        Relationships: [];
       };
     };
     Views: Record<string, never>;
@@ -272,5 +279,6 @@ export interface Database {
       score_range: ScoreRange;
       email_sequence_status: EmailSequenceStatus;
     };
+    CompositeTypes: Record<string, never>;
   };
 }

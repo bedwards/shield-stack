@@ -1,30 +1,37 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import Home from "./page";
 
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ push: vi.fn(), replace: vi.fn(), prefetch: vi.fn() }),
+  useParams: () => ({}),
+  useSearchParams: () => new URLSearchParams(),
+  usePathname: () => "/",
+}));
+
 describe("Home page", () => {
-  it("renders the hero title", () => {
+  beforeEach(() => {
     render(<Home />);
+  });
+
+  it("renders the hero title", () => {
     const heading = screen.getByTestId("hero-title");
     expect(heading).toBeInTheDocument();
     expect(heading.textContent).toContain("credit score");
   });
 
   it("renders the primary CTA button", () => {
-    render(<Home />);
     const cta = screen.getByTestId("hero-cta-primary");
     expect(cta).toBeInTheDocument();
     expect(cta.textContent).toContain("Start My Free Recovery Plan");
   });
 
   it("renders the stats section", () => {
-    render(<Home />);
     expect(screen.getByTestId("stats-section")).toBeInTheDocument();
     expect(screen.getByTestId("stat-borrowers")).toBeInTheDocument();
   });
 
   it("renders the how-it-works section", () => {
-    render(<Home />);
     expect(screen.getByTestId("how-it-works-section")).toBeInTheDocument();
     expect(screen.getByTestId("step-1")).toBeInTheDocument();
     expect(screen.getByTestId("step-2")).toBeInTheDocument();
@@ -32,10 +39,14 @@ describe("Home page", () => {
   });
 
   it("renders the recovery paths section", () => {
-    render(<Home />);
     expect(screen.getByTestId("recovery-paths-section")).toBeInTheDocument();
     expect(screen.getByTestId("path-ibr")).toBeInTheDocument();
     expect(screen.getByTestId("path-rehabilitation")).toBeInTheDocument();
     expect(screen.getByTestId("path-consolidation")).toBeInTheDocument();
+  });
+
+  it("renders the quiz funnel in CTA section", () => {
+    expect(screen.getByTestId("cta-section")).toBeInTheDocument();
+    expect(screen.getByTestId("quiz-funnel")).toBeInTheDocument();
   });
 });

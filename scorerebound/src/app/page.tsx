@@ -1,4 +1,5 @@
 import Link from "next/link";
+import QuizFunnel from "@/components/QuizFunnel";
 
 export default function Home() {
   return (
@@ -210,29 +211,23 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* Quiz Section */}
       <section
         id="quiz"
         data-testid="cta-section"
-        className="bg-emerald-700 py-24"
+        className="bg-gray-50 py-24"
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-2xl text-center">
-            <h2 className="text-3xl font-bold tracking-tight text-white">
-              Ready to start your recovery?
+          <div className="mx-auto max-w-2xl text-center mb-12">
+            <h2 className="text-3xl font-bold tracking-tight text-gray-900">
+              Start Your Free Recovery Plan
             </h2>
-            <p className="mt-4 text-lg text-emerald-100">
-              Take our free 2-minute quiz and get a personalized plan today. No
-              signup required.
+            <p className="mt-4 text-lg text-gray-600">
+              Answer 5 quick questions and get a personalized, step-by-step plan.
+              No signup required.
             </p>
-            <a
-              href="#quiz-start"
-              data-testid="cta-start-quiz"
-              className="mt-8 inline-block rounded-lg bg-white px-6 py-3 text-base font-semibold text-emerald-700 shadow-sm hover:bg-emerald-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-            >
-              Start My Free Recovery Plan
-            </a>
           </div>
+          <QuizFunnel />
         </div>
       </section>
     </>

@@ -14,6 +14,17 @@ function getSupabaseAnonKey(): string {
 }
 
 /**
+ * Check if Supabase environment variables are configured.
+ * Returns false during build/test when env vars are not set.
+ */
+export function isSupabaseConfigured(): boolean {
+  return !!(
+    process.env.NEXT_PUBLIC_SUPABASE_URL &&
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  );
+}
+
+/**
  * Supabase client for use in browser/client components.
  * Uses the anon key — all queries are subject to RLS policies.
  *
