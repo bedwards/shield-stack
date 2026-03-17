@@ -10,6 +10,8 @@ import type {
   PlanStepInsert,
 } from "@/lib/database.types";
 
+export const runtime = "edge";
+
 export async function POST(request: Request) {
   let body: unknown;
   try {

@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/database.types";
 
+export const runtime = "edge";
+
 const TEST_USER_EMAIL = "e2e-test@scorerebound.example.com";
 const TEST_USER_PASSWORD = "e2e-test-password-scorerebound-2026";
 

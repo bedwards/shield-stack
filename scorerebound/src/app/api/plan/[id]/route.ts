@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { getSupabaseClient, isSupabaseConfigured } from "@/lib/supabase";
 import type { RecoveryPlan } from "@/lib/database.types";
 
+export const runtime = "edge";
+
 export async function GET(
   _request: Request,
   { params }: { params: Promise<{ id: string }> },
