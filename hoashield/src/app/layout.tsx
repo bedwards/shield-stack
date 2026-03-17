@@ -87,7 +87,7 @@ export default function RootLayout({
         >
           <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-              <p className="text-sm text-[var(--muted)]">
+              <p className="text-sm text-[var(--muted)]" suppressHydrationWarning>
                 &copy; {new Date().getFullYear()} HOAshield. All rights
                 reserved.
               </p>

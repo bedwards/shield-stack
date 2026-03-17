@@ -1,0 +1,25 @@
+name: Deploy HOAshield
+on:
+  push:
+    branches: [main]
+    paths: ['hoashield/**']
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - name: Install dependencies
+        run: cd hoashield && bun install --frozen-lockfile
+      - name: Build for Cloudflare Pages
+        run: cd hoashield && bunx @cloudflare/next-on-pages
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy .vercel/output/static --project-name hoashield --branch main
+          workingDirectory: hoashield
