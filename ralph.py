@@ -608,7 +608,7 @@ def phase_orchestrate(dry_run=False):
         return True
 
     success, output, parsed = run_claude(
-        prompt, max_turns=10, timeout=180,
+        prompt, max_turns=15, timeout=600,
     )
 
     if success and parsed:
@@ -1040,7 +1040,8 @@ def run_phase(phase_name, dry_run=False, product_slug=None):
         return False
 
 
-def main_loop(max_loops=None, start_phase=None, dry_run=False, product_slug=None):
+def main_loop(max_loops=None, start_phase=None, single_phase=False,
+              dry_run=False, product_slug=None):
     log("=" * 60)
     log("RALPH — Research, Arrange, Loop, Produce, Heal")
     log("Shield Stack — 22 Consumer Protection Products")
@@ -1051,6 +1052,7 @@ def main_loop(max_loops=None, start_phase=None, dry_run=False, product_slug=None
     log(f"Start phase: {start_phase or 'research'}")
     log(f"Product focus: {product_slug or 'all'}")
     log(f"Research cadence: every {RESEARCH_CADENCE} impl cycles")
+    log(f"Single phase: {single_phase}")
     log(f"Dry run: {dry_run}")
     log("")
 
@@ -1080,16 +1082,45 @@ def main_loop(max_loops=None, start_phase=None, dry_run=False, product_slug=None
 
         update_status(loop_count=loop_count, started_at=now_iso())
 
+        # On the first loop, if --start-phase was given, skip phases before it
+        skip_to = None
+        if start_phase and loop_count == 1:
+            skip_to = start_phase
+            log(f"Skipping to start phase: {skip_to}")
+
+        # Determine which phases to run this cycle
+        research_phases = ["research", "plan"]
+        impl_phases = list(IMPL_PHASES)
+
+        # If skipping to a specific phase, filter out earlier phases
+        if skip_to:
+            if skip_to in research_phases:
+                idx = research_phases.index(skip_to)
+                research_phases = research_phases[idx:]
+                if single_phase:
+                    research_phases = [skip_to]
+                    impl_phases = []
+            elif skip_to in impl_phases:
+                research_phases = []
+                idx = impl_phases.index(skip_to)
+                impl_phases = impl_phases[idx:]
+                if single_phase:
+                    impl_phases = [skip_to]
+
         # Determine if we should do research+plan this cycle
-        do_research = (
+        do_research = bool(research_phases) and (
             impl_since_research >= RESEARCH_CADENCE
             or loop_count == 1
             or (start_phase and start_phase in ("research", "plan") and loop_count == 1)
         )
 
+        # If we explicitly skipped past research, don't run it
+        if skip_to and skip_to not in ("research", "plan"):
+            do_research = False
+
         if do_research:
             log("Running RESEARCH + PLAN phases")
-            for phase_name in ["research", "plan"]:
+            for phase_name in research_phases:
                 if check_should_halt():
                     break
                 result = run_phase(phase_name, dry_run=dry_run, product_slug=product_slug)
@@ -1109,7 +1140,7 @@ def main_loop(max_loops=None, start_phase=None, dry_run=False, product_slug=None
             log(f"Skipping research+plan ({impl_since_research}/{RESEARCH_CADENCE})")
 
         # Implementation phases
-        for phase_name in IMPL_PHASES:
+        for phase_name in impl_phases:
             if check_should_halt():
                 break
             result = run_phase(phase_name, dry_run=dry_run)
@@ -1155,6 +1186,8 @@ def main():
         help="Maximum number of loops (default: unlimited)")
     parser.add_argument("--start-phase", choices=PHASES, default=None,
         help="Phase to start from (default: research)")
+    parser.add_argument("--single-phase", action="store_true",
+        help="Run only the start phase, then stop (requires --start-phase)")
     parser.add_argument("--product", type=str, default=None,
         help="Focus on a specific product (slug)")
     parser.add_argument("--dry-run", action="store_true",
@@ -1195,6 +1228,7 @@ def main():
         main_loop(
             max_loops=args.max_loops,
             start_phase=args.start_phase,
+            single_phase=args.single_phase,
             dry_run=args.dry_run,
             product_slug=args.product,
         )
