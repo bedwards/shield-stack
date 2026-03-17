@@ -10,7 +10,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: "html",
   snapshotPathTemplate:
-    "{snapshotDir}/{testFileDir}/{testFileName}-snapshots/{arg}-{projectName}{ext}",
+    "{snapshotDir}/{testFileDir}/{testFileName}-snapshots/{platform}/{arg}-{projectName}{ext}",
   expect: {
     toHaveScreenshot: {
       maxDiffPixels: 200,

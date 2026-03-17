@@ -7,13 +7,6 @@ const screenshotCSS = fs.readFileSync(
   "utf-8",
 );
 
-// Visual regression baselines are platform-specific (font rendering differs
-// between macOS and Linux). Current baselines were generated on macOS.
-// CI runs on Linux and produces different page heights, causing immediate
-// dimension-mismatch failures. Skip in CI until Linux baselines are committed.
-// TODO: Generate Linux baselines from CI artifacts and commit them.
-test.skip(!!process.env.CI, "Visual baselines are macOS-only — Linux baselines not yet committed");
-
 async function injectStabilizationCSS(page: import("@playwright/test").Page) {
   await page.addStyleTag({ content: screenshotCSS });
   await page.waitForTimeout(100);
