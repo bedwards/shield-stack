@@ -14,12 +14,12 @@ jobs:
       - uses: oven-sh/setup-bun@v2
       - name: Install dependencies
         run: cd scorerebound && bun install --frozen-lockfile
-      - name: Build
-        run: cd scorerebound && bun run build
+      - name: Build for Cloudflare Pages
+        run: cd scorerebound && bunx @cloudflare/next-on-pages
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy out --project-name scorerebound --branch main
+          command: pages deploy .vercel/output/static --project-name scorerebound --branch main
           workingDirectory: scorerebound
