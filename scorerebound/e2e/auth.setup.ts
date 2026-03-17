@@ -1,5 +1,7 @@
 import { test as setup, expect } from "@playwright/test";
-import { loginAsTestUser, setAuthCookies } from "./helpers/auth";
+import fs from "fs";
+import path from "path";
+import { loginAsTestUser, setAuthCookies, hasSupabaseSecrets } from "./helpers/auth";
 
 const AUTH_FILE = "playwright/.auth/user.json";
 
@@ -10,8 +12,27 @@ const AUTH_FILE = "playwright/.auth/user.json";
  * This runs once before the "authenticated" project and saves cookies/localStorage
  * to playwright/.auth/user.json. Authenticated test projects reference this
  * storage state so they start already logged in.
+ *
+ * When Supabase secrets are not configured, the setup writes an empty
+ * storage-state file and skips authentication so that the rest of the
+ * E2E suite can still run.
  */
 setup("authenticate e2e test user", async ({ page, context }) => {
+  if (!hasSupabaseSecrets()) {
+    // Write an empty storage state so the authenticated project can load
+    const authDir = path.dirname(AUTH_FILE);
+    fs.mkdirSync(authDir, { recursive: true });
+    fs.writeFileSync(
+      AUTH_FILE,
+      JSON.stringify({ cookies: [], origins: [] }),
+    );
+    setup.skip(
+      true,
+      "Supabase secrets not configured — skipping auth setup",
+    );
+    return;
+  }
+
   const baseURL =
     process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3010";
 
