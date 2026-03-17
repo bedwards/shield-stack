@@ -1,5 +1,8 @@
 import { defineConfig, devices } from "@playwright/test";
 
+const baseURL =
+  process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001";
+
 export default defineConfig({
   testDir: "./e2e",
   fullyParallel: true,
@@ -8,18 +11,34 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: "html",
   use: {
-    baseURL: "http://localhost:3001",
+    baseURL,
     trace: "on-first-retry",
+    screenshot: "on",
   },
   projects: [
     {
+      name: "setup",
+      testMatch: /auth\.setup\.ts/,
+    },
+    {
       name: "chromium",
       use: { ...devices["Desktop Chrome"] },
+      testIgnore: /authenticated\//,
+    },
+    {
+      name: "authenticated",
+      use: {
+        ...devices["Desktop Chrome"],
+        storageState: "e2e/.auth/user.json",
+      },
+      dependencies: ["setup"],
+      testMatch: /authenticated\/.+\.spec\.ts/,
     },
   ],
   webServer: {
     command: "bun run dev",
-    url: "http://localhost:3001",
+    url: baseURL,
     reuseExistingServer: !process.env.CI,
+    timeout: 120_000,
   },
 });
