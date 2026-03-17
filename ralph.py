@@ -43,6 +43,7 @@ PROMPTS_DIR = os.path.join(RALPH_DIR, "prompts")
 LOGS_DIR = os.path.join(RALPH_DIR, "logs")
 WORKERS_DIR = os.path.join(RALPH_DIR, "workers")
 PRODUCTS_FILE = os.path.join(PROJECT_DIR, "products.json")
+MERGER_LOCK = os.path.join(RALPH_DIR, "merger.lock")
 
 PHASES = ["research", "plan", "orchestrate", "work", "review", "verify", "monitor"]
 IMPL_PHASES = ["orchestrate", "work", "review", "verify", "monitor"]
@@ -53,8 +54,13 @@ CLAUDE_MODEL = "claude-opus-4-6"
 CLAUDE_MAX_TURNS = 30
 CLAUDE_BUDGET = None  # Using Claude Max subscription, no dollar budget
 
-# Research cadence: research+plan every N implementation cycles
-RESEARCH_CADENCE = 10
+# Parallel workers: configurable 1-22
+DEFAULT_WORKERS = 3
+MAX_WORKERS = 22
+
+# Research cadence: measured in PRs merged (not loops)
+# With W workers per loop, research runs every RESEARCH_CADENCE_PRS merged PRs
+RESEARCH_CADENCE_PRS = 30
 
 # Error handling
 MAX_CONSECUTIVE_ERRORS = 5
@@ -945,6 +951,267 @@ def phase_monitor(dry_run=False):
 
 
 # ---------------------------------------------------------------------------
+# Lock-based merger
+# ---------------------------------------------------------------------------
+
+def acquire_merger_lock():
+    """Try to acquire the merger lock. Returns True if acquired."""
+    if os.path.exists(MERGER_LOCK):
+        # Check if the PID in the lock is still alive
+        try:
+            with open(MERGER_LOCK) as f:
+                pid = int(f.read().strip())
+            os.kill(pid, 0)  # Signal 0 = check if alive
+            return False  # Lock held by alive process
+        except (ValueError, OSError):
+            # PID invalid or process dead — stale lock
+            log("Removing stale merger lock", "WARN")
+            os.remove(MERGER_LOCK)
+
+    # Write our PID
+    with open(MERGER_LOCK, "w") as f:
+        f.write(str(os.getpid()))
+    return True
+
+
+def release_merger_lock():
+    """Release the merger lock."""
+    try:
+        os.remove(MERGER_LOCK)
+    except FileNotFoundError:
+        pass
+
+
+def build_merger_prompt():
+    """Build the prompt for the merger worker."""
+    return load_prompt_template("merger")
+
+
+def run_merger():
+    """Run the merger worker — handles all open PRs until none remain."""
+    if not acquire_merger_lock():
+        log("Merger already running (lock held), skipping")
+        return
+
+    try:
+        log_phase("merger", "Starting merger — handling all open PRs")
+        prompt = build_merger_prompt()
+        success, _ = run_claude(prompt, max_turns=50, timeout=1200)
+
+        if success:
+            log_phase("merger", "Merger completed")
+            # Count merged PRs
+            status = read_json(STATUS_FILE)
+            merged = status.get("prs_merged", [])
+            if merged:
+                increment_metric("total_prs_merged", len(merged))
+                log_phase("merger", f"Merged {len(merged)} PRs: {merged}")
+        else:
+            log_phase("merger", "Merger failed")
+            increment_metric("total_errors")
+    finally:
+        release_merger_lock()
+
+
+# ---------------------------------------------------------------------------
+# Parallel worker launcher
+# ---------------------------------------------------------------------------
+
+def select_issues(num_workers, dry_run=False):
+    """Use the orchestrator to select N issues for parallel work.
+    Returns list of {number, title, product, branch} dicts."""
+    log_phase("orchestrate", f"Selecting {num_workers} issues for parallel work")
+    update_status(phase="orchestrate")
+
+    if dry_run:
+        log_phase("orchestrate", f"[DRY RUN] Would select {num_workers} issues")
+        return []
+
+    # Build an orchestrator prompt that selects N issues
+    template = load_prompt_template("orchestrator")
+    metrics = read_json(METRICS_FILE)
+    prompt = (
+        f"{template}\n\n"
+        f"## Special Instructions\n"
+        f"Select the TOP {num_workers} highest-priority unblocked issues "
+        f"(not just 1). Write them ALL to `.ralph/status.json` as a "
+        f"`selected_issues` array. Each entry needs: number, title, product.\n\n"
+        f"## Metrics\n"
+        f"- Total PRs merged: {metrics.get('total_prs_merged', 0)}\n"
+        f"- Total issues created: {metrics.get('total_issues_created', 0)}\n"
+    )
+
+    success, _ = run_claude(prompt, max_turns=15, timeout=600)
+
+    if not success:
+        log_phase("orchestrate", "Orchestration failed")
+        return []
+
+    # Read what Claude wrote
+    status = read_json(STATUS_FILE)
+    selected = status.get("selected_issues", [])
+
+    # Fallback: if Claude wrote single issue in old format
+    if not selected and status.get("current_issue"):
+        selected = [status["current_issue"]]
+
+    if selected:
+        log_phase("orchestrate", f"Selected {len(selected)} issues:")
+        for s in selected:
+            log_phase("orchestrate", f"  #{s.get('number','?')} [{s.get('product','?')}] {s.get('title','?')}")
+    else:
+        log_phase("orchestrate", "No issues selected")
+
+    increment_phase_metric("orchestrate")
+    return selected[:num_workers]
+
+
+def spawn_worker(issue, dry_run=False):
+    """Spawn a single implementation worker as a subprocess.
+    Returns the subprocess.Popen object."""
+    issue_number = issue["number"]
+    issue_title = issue.get("title", "unknown")
+    product = issue.get("product", "unknown")
+    branch = branch_name_for_issue(issue_number, issue_title, product)
+
+    # Write worker state
+    worker_file = os.path.join(WORKERS_DIR, f"{issue_number}.json")
+    write_json(worker_file, {
+        "issue_number": issue_number,
+        "issue_title": issue_title,
+        "product": product,
+        "branch": branch,
+        "status": "running",
+        "started_at": now_iso(),
+        "pid": None,
+    })
+
+    if dry_run:
+        log_phase("work", f"[DRY RUN] Would spawn worker for #{issue_number} [{product}]")
+        return None
+
+    prompt = build_work_prompt(issue_number, issue_title, branch, product)
+
+    cmd = [CLAUDE_CMD, "-p", prompt]
+    cmd.extend(["--model", CLAUDE_MODEL])
+    cmd.extend(["--effort", "max"])
+    cmd.extend(["--dangerously-skip-permissions"])
+    cmd.extend(["--max-turns", str(CLAUDE_MAX_TURNS)])
+
+    log_phase("work", f"Spawning worker for #{issue_number} [{product}] on {branch}")
+
+    proc = subprocess.Popen(
+        cmd,
+        cwd=PROJECT_DIR,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+
+    # Update worker state with PID
+    write_json(worker_file, {
+        "issue_number": issue_number,
+        "issue_title": issue_title,
+        "product": product,
+        "branch": branch,
+        "status": "running",
+        "started_at": now_iso(),
+        "pid": proc.pid,
+    })
+
+    return proc
+
+
+def wait_for_workers_with_merger(workers, dry_run=False):
+    """Wait for parallel workers to finish. As each finishes,
+    check if merger lock is free and spawn merger if needed.
+
+    workers: list of (issue_dict, Popen_or_None) tuples
+    """
+    if dry_run or not workers:
+        return
+
+    active = {i: (issue, proc) for i, (issue, proc) in enumerate(workers) if proc}
+    merger_proc = None
+
+    while active or merger_proc:
+        # Check each active worker
+        finished = []
+        for idx, (issue, proc) in active.items():
+            retcode = proc.poll()
+            if retcode is not None:
+                issue_num = issue["number"]
+                product = issue.get("product", "unknown")
+
+                # Update worker state
+                worker_file = os.path.join(WORKERS_DIR, f"{issue_num}.json")
+                write_json(worker_file, {
+                    "issue_number": issue_num,
+                    "product": product,
+                    "status": "completed" if retcode == 0 else "failed",
+                    "exit_code": retcode,
+                    "completed_at": now_iso(),
+                })
+
+                if retcode == 0:
+                    log_phase("work", f"Worker #{issue_num} [{product}] completed")
+                    increment_metric("total_prs_created")
+
+                    # Try to start merger if not running
+                    if merger_proc is None or merger_proc.poll() is not None:
+                        if acquire_merger_lock():
+                            release_merger_lock()  # Release immediately — merger will re-acquire
+                            log_phase("merger", "Spawning merger to handle open PRs")
+                            merger_prompt = build_merger_prompt()
+                            merger_cmd = [CLAUDE_CMD, "-p", merger_prompt]
+                            merger_cmd.extend(["--model", CLAUDE_MODEL])
+                            merger_cmd.extend(["--effort", "max"])
+                            merger_cmd.extend(["--dangerously-skip-permissions"])
+                            merger_cmd.extend(["--max-turns", "50"])
+                            merger_proc = subprocess.Popen(
+                                merger_cmd,
+                                cwd=PROJECT_DIR,
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE,
+                            )
+                            # Write lock with merger PID
+                            with open(MERGER_LOCK, "w") as f:
+                                f.write(str(merger_proc.pid))
+                else:
+                    log_phase("work", f"Worker #{issue_num} [{product}] FAILED (exit {retcode})")
+                    increment_metric("total_errors")
+
+                increment_phase_metric("work")
+                finished.append(idx)
+
+        for idx in finished:
+            del active[idx]
+
+        # Check merger
+        if merger_proc and merger_proc.poll() is not None:
+            retcode = merger_proc.poll()
+            if retcode == 0:
+                log_phase("merger", "Merger completed successfully")
+            else:
+                log_phase("merger", f"Merger exited with code {retcode}")
+            release_merger_lock()
+            merger_proc = None
+
+            # Check if more PRs appeared while merger was running
+            open_prs = get_open_prs()
+            if open_prs and active:
+                log_phase("merger", f"{len(open_prs)} PRs still open, will re-check when next worker finishes")
+
+        if active or merger_proc:
+            time.sleep(10)  # Poll every 10 seconds
+
+    # Final merger sweep — if any PRs still open after all workers done
+    open_prs = get_open_prs()
+    if open_prs:
+        log_phase("merger", f"{len(open_prs)} PRs still open after all workers done — running final merger")
+        run_merger()
+
+
+# ---------------------------------------------------------------------------
 # Main loop
 # ---------------------------------------------------------------------------
 
@@ -1023,28 +1290,35 @@ def run_phase(phase_name, dry_run=False, product_slug=None):
         return False
 
 
-def main_loop(max_loops=None, start_phase=None, single_phase=False,
+def main_loop(max_loops=None, num_workers=DEFAULT_WORKERS,
               dry_run=False, product_slug=None):
+    """
+    Main RALPH loop with parallel implementation workers.
+
+    Architecture:
+      Research (serial) -> Plan (serial) ->
+      Repeat:
+        Orchestrate: select N issues (serial)
+        Spawn N workers (parallel)
+        As workers finish: lock-based merger handles open PRs
+        Monitor (serial)
+      Research again after RESEARCH_CADENCE_PRS merged
+    """
     log("=" * 60)
     log("RALPH — Research, Arrange, Loop, Produce, Heal")
     log("Shield Stack — 22 Consumer Protection Products")
-    log("Model: Claude Opus 4.6 | Effort: max")
+    log(f"Model: Claude Opus 4.6 | Effort: max | Workers: {num_workers}")
     log("=" * 60)
     log(f"Project: {PROJECT_DIR}")
     log(f"Max loops: {max_loops or 'unlimited'}")
-    log(f"Start phase: {start_phase or 'research'}")
+    log(f"Workers per loop: {num_workers}")
     log(f"Product focus: {product_slug or 'all'}")
-    log(f"Research cadence: every {RESEARCH_CADENCE} impl cycles")
-    log(f"Single phase: {single_phase}")
+    log(f"Research cadence: every {RESEARCH_CADENCE_PRS} PRs merged")
     log(f"Dry run: {dry_run}")
     log("")
 
-    if start_phase and start_phase not in PHASES:
-        log(f"Invalid start phase: {start_phase}. Valid: {PHASES}", "ERROR")
-        sys.exit(1)
-
     loop_count = 0
-    impl_since_research = 0
+    prs_since_research = 0
 
     while True:
         if max_loops and loop_count >= max_loops:
@@ -1059,51 +1333,18 @@ def main_loop(max_loops=None, start_phase=None, single_phase=False,
 
         log("")
         log(f"{'=' * 60}")
-        log(f"LOOP {loop_count} | impl_since_research: {impl_since_research}")
+        log(f"LOOP {loop_count} | workers: {num_workers} | prs_since_research: {prs_since_research}")
         log(f"{'=' * 60}")
         log("")
 
         update_status(loop_count=loop_count, started_at=now_iso())
 
-        # On the first loop, if --start-phase was given, skip phases before it
-        skip_to = None
-        if start_phase and loop_count == 1:
-            skip_to = start_phase
-            log(f"Skipping to start phase: {skip_to}")
-
-        # Determine which phases to run this cycle
-        research_phases = ["research", "plan"]
-        impl_phases = list(IMPL_PHASES)
-
-        # If skipping to a specific phase, filter out earlier phases
-        if skip_to:
-            if skip_to in research_phases:
-                idx = research_phases.index(skip_to)
-                research_phases = research_phases[idx:]
-                if single_phase:
-                    research_phases = [skip_to]
-                    impl_phases = []
-            elif skip_to in impl_phases:
-                research_phases = []
-                idx = impl_phases.index(skip_to)
-                impl_phases = impl_phases[idx:]
-                if single_phase:
-                    impl_phases = [skip_to]
-
-        # Determine if we should do research+plan this cycle
-        do_research = bool(research_phases) and (
-            impl_since_research >= RESEARCH_CADENCE
-            or loop_count == 1
-            or (start_phase and start_phase in ("research", "plan") and loop_count == 1)
-        )
-
-        # If we explicitly skipped past research, don't run it
-        if skip_to and skip_to not in ("research", "plan"):
-            do_research = False
+        # --- Research + Plan (serial, cadence-based) ---
+        do_research = (prs_since_research >= RESEARCH_CADENCE_PRS or loop_count == 1)
 
         if do_research:
-            log("Running RESEARCH + PLAN phases")
-            for phase_name in research_phases:
+            log("Running RESEARCH + PLAN phases (serial)")
+            for phase_name in ["research", "plan"]:
                 if check_should_halt():
                     break
                 result = run_phase(phase_name, dry_run=dry_run, product_slug=product_slug)
@@ -1114,35 +1355,53 @@ def main_loop(max_loops=None, start_phase=None, single_phase=False,
                     if metrics.get("last_rate_limit_at"):
                         backoff = datetime.datetime.now(datetime.timezone.utc) + \
                             datetime.timedelta(seconds=RATE_LIMIT_BACKOFF_SECONDS)
-                        update_metrics(backoff_until=backoff.isoformat(), last_rate_limit_at=None)
+                        update_metrics(backoff_until=backoff.isoformat(),
+                                       last_rate_limit_at=None)
                         log(f"Rate limited — backing off {RATE_LIMIT_BACKOFF_SECONDS}s", "WARN")
                         break
                     time.sleep(ERROR_BACKOFF_SECONDS)
-            impl_since_research = 0
+            prs_since_research = 0
         else:
-            log(f"Skipping research+plan ({impl_since_research}/{RESEARCH_CADENCE})")
+            log(f"Skipping research+plan ({prs_since_research}/{RESEARCH_CADENCE_PRS} PRs)")
 
-        # Implementation phases
-        for phase_name in impl_phases:
-            if check_should_halt():
-                break
-            result = run_phase(phase_name, dry_run=dry_run)
-            if result is None:
-                return
-            if not result:
-                metrics = read_json(METRICS_FILE)
-                if metrics.get("last_rate_limit_at"):
-                    backoff = datetime.datetime.now(datetime.timezone.utc) + \
-                        datetime.timedelta(seconds=RATE_LIMIT_BACKOFF_SECONDS)
-                    update_metrics(backoff_until=backoff.isoformat(), last_rate_limit_at=None)
-                    log(f"Rate limited — backing off {RATE_LIMIT_BACKOFF_SECONDS}s", "WARN")
-                    break
-                time.sleep(ERROR_BACKOFF_SECONDS)
-                continue
+        if check_should_halt():
+            break
 
-        impl_since_research += 1
+        # --- Orchestrate: select N issues (serial) ---
+        issues = select_issues(num_workers, dry_run=dry_run)
 
-        log("Loop complete, pausing 10s...")
+        if not issues:
+            log("No issues to work on. Pausing 60s...")
+            time.sleep(60)
+            continue
+
+        # --- Spawn N workers (parallel) ---
+        log(f"Spawning {len(issues)} implementation workers in parallel")
+        workers = []
+        for issue in issues:
+            proc = spawn_worker(issue, dry_run=dry_run)
+            workers.append((issue, proc))
+
+        # --- Wait for workers + run merger as they finish ---
+        wait_for_workers_with_merger(workers, dry_run=dry_run)
+
+        # Count completed workers this cycle
+        prs_this_cycle = 0
+        for issue, _ in workers:
+            wf = os.path.join(WORKERS_DIR, f"{issue['number']}.json")
+            if os.path.exists(wf):
+                ws = read_json(wf)
+                if ws.get("status") == "completed":
+                    prs_this_cycle += 1
+        prs_since_research += prs_this_cycle
+
+        # --- Monitor (serial) ---
+        if not dry_run:
+            log("Running MONITOR phase (serial)")
+            run_phase("monitor", dry_run=dry_run)
+
+        log(f"Loop {loop_count} complete. {prs_this_cycle}/{len(issues)} workers succeeded. "
+            f"Pausing 10s...")
         time.sleep(10)
 
     log("")
@@ -1156,21 +1415,14 @@ def main_loop(max_loops=None, start_phase=None, single_phase=False,
     log(f"Errors: {metrics.get('total_errors', 0)}")
     log("=" * 60)
 
-
-# ---------------------------------------------------------------------------
-# Entry point
-# ---------------------------------------------------------------------------
-
 def main():
     parser = argparse.ArgumentParser(
         description="RALPH — Autonomous coding loop for Shield Stack"
     )
     parser.add_argument("--max-loops", type=int, default=None,
         help="Maximum number of loops (default: unlimited)")
-    parser.add_argument("--start-phase", choices=PHASES, default=None,
-        help="Phase to start from (default: research)")
-    parser.add_argument("--single-phase", action="store_true",
-        help="Run only the start phase, then stop (requires --start-phase)")
+    parser.add_argument("--workers", type=int, default=DEFAULT_WORKERS,
+        help=f"Number of parallel implementation workers (1-{MAX_WORKERS}, default: {DEFAULT_WORKERS})")
     parser.add_argument("--product", type=str, default=None,
         help="Focus on a specific product (slug)")
     parser.add_argument("--dry-run", action="store_true",
@@ -1207,11 +1459,13 @@ def main():
             "per_product": {},
         })
 
+    # Clamp workers to valid range
+    num_workers = max(1, min(args.workers, MAX_WORKERS))
+
     try:
         main_loop(
             max_loops=args.max_loops,
-            start_phase=args.start_phase,
-            single_phase=args.single_phase,
+            num_workers=num_workers,
             dry_run=args.dry_run,
             product_slug=args.product,
         )
