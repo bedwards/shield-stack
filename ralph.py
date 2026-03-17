@@ -267,18 +267,41 @@ def load_prompt_template(name):
         return f.read()
 
 
+def pick_underserved_product():
+    """Pick the product with the fewest merged PRs / least development."""
+    products = load_products()
+    metrics = read_json(METRICS_FILE)
+    per_product = metrics.get("per_product", {})
+
+    # Score each product: lower = more underserved
+    scored = []
+    for p in products:
+        slug = p["slug"]
+        prs_merged = per_product.get(slug, {}).get("prs_merged", 0)
+        scored.append((prs_merged, slug))
+
+    scored.sort()
+    return scored[0][1] if scored else None
+
+
 def build_research_prompt(product_slug=None):
     template = load_prompt_template("researcher")
     status = read_json(STATUS_FILE)
     metrics = read_json(METRICS_FILE)
+
+    # If no product specified, pick the most underserved one
+    if not product_slug:
+        product_slug = pick_underserved_product()
+
     context = (
         f"\n\n## Current State\n"
         f"- Loop count: {metrics.get('total_loops', 0)}\n"
         f"- PRs merged so far: {metrics.get('total_prs_merged', 0)}\n"
         f"- Last phase: {status.get('last_phase_completed', 'none')}\n"
+        f"- **Focus product this cycle: {product_slug}**\n"
+        f"- Research this ONE product deeply. Read its code, docs, and issues. "
+        f"Search the web for its specific APIs, competitors, and user needs.\n"
     )
-    if product_slug:
-        context += f"- Focus product: {product_slug}\n"
     return template + context
 
 
@@ -514,7 +537,7 @@ def phase_research(dry_run=False, product_slug=None):
         log_phase("research", f"[DRY RUN] Would run researcher ({len(prompt)} chars)")
         return True
 
-    success, _ = run_claude(prompt, max_turns=15, timeout=600)
+    success, _ = run_claude(prompt, max_turns=20, timeout=900)
 
     if not success:
         log_phase("research", "Research phase failed (Claude exited non-zero)")
