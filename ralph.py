@@ -580,7 +580,7 @@ def phase_plan(dry_run=False, product_slug=None):
     except Exception:
         pass
 
-    success, _ = run_claude(prompt, max_turns=30, timeout=600)
+    success, _ = run_claude(prompt, max_turns=40, timeout=900)
 
     if not success:
         log_phase("plan", "Planning phase failed")
