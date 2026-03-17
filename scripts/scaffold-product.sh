@@ -168,6 +168,36 @@ if [ -f "${SCRIPT_DIR}/validate-pr.sh" ]; then
   else
     warn "validate: no e2e smoke test"
   fi
+  # Check e2e auth helpers
+  if [ -f "${TARGET_DIR}/e2e/helpers/auth.ts" ]; then
+    pass "validate: e2e auth helper exists"
+  else
+    warn "validate: missing e2e/helpers/auth.ts"
+  fi
+  # Check e2e db helper
+  if [ -f "${TARGET_DIR}/e2e/helpers/db.ts" ]; then
+    pass "validate: e2e db helper exists"
+  else
+    warn "validate: missing e2e/helpers/db.ts"
+  fi
+  # Check auth setup
+  if [ -f "${TARGET_DIR}/e2e/auth.setup.ts" ]; then
+    pass "validate: e2e auth.setup.ts exists"
+  else
+    warn "validate: missing e2e/auth.setup.ts"
+  fi
+  # Check authenticated smoke test
+  if [ -f "${TARGET_DIR}/e2e/authenticated/smoke.spec.ts" ]; then
+    pass "validate: authenticated smoke test exists"
+  else
+    warn "validate: missing e2e/authenticated/smoke.spec.ts"
+  fi
+  # Check SUPABASE_SERVICE_ROLE_KEY in .env.example
+  if [ -f "${TARGET_DIR}/.env.example" ] && grep -q "SUPABASE_SERVICE_ROLE_KEY" "${TARGET_DIR}/.env.example"; then
+    pass "validate: SUPABASE_SERVICE_ROLE_KEY in .env.example"
+  else
+    warn "validate: missing SUPABASE_SERVICE_ROLE_KEY in .env.example"
+  fi
   # Check CLAUDE.md
   if [ -f "${TARGET_DIR}/CLAUDE.md" ]; then
     if grep -qi "scaffold complete\|0\.1\.0" "${TARGET_DIR}/CLAUDE.md"; then

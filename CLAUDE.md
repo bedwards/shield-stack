@@ -206,11 +206,40 @@ Available keys:
 
 Claude access is via Claude Max subscription (20x plan) through the `claude` CLI.
 
+### GitHub Actions Secrets for E2E Tests
+
+The E2E workflow (`e2e-tests.yml`) requires these secrets in the GitHub repo settings.
+Secrets can be set per-product (prefixed with the slug) or shared across all products.
+
+**Per-product secrets** (preferred — each product has its own Supabase project):
+- `{PRODUCT_SLUG}_SUPABASE_URL` — Supabase project URL (e.g., `scorerebound_SUPABASE_URL`)
+- `{PRODUCT_SLUG}_SUPABASE_ANON_KEY` — Supabase anonymous/public key
+- `{PRODUCT_SLUG}_SERVICE_ROLE_KEY` — Supabase service role key (admin access, bypasses RLS)
+
+**Shared fallback secrets** (used when per-product secrets are not set):
+- `NEXT_PUBLIC_SUPABASE_URL` — Default Supabase URL for all products
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` — Default anon key for all products
+- `SUPABASE_SERVICE_ROLE_KEY` — Default service role key for all products
+
+The `SUPABASE_SERVICE_ROLE_KEY` is a server-only secret that grants full database access
+bypassing Row Level Security. It is used by E2E test helpers (`e2e/helpers/db.ts`) to seed
+test users, verify database state, and clean up test data. Never expose it to client code.
+
 ## GitHub Actions
 
 ### Per-Product CI
 Each product gets a workflow that triggers only on changes to its directory.
 Runs the product's build, test, and lint commands.
+
+### E2E Tests (`e2e-tests.yml`)
+Matrix-based workflow that runs authenticated Playwright E2E tests for each product.
+- **Matrix products**: scorerebound, ghostboard (add new products to the matrix)
+- **Environment**: `TEST_MODE=true`, Supabase credentials from secrets
+- **Setup**: `bunx playwright install --with-deps chromium`
+- **Tests**: Runs ALL tests including `e2e/authenticated/` and `e2e/visual/`
+- **Artifacts**: playwright-report, screenshots, test-results, traces, visual snapshots
+- **Visual regression**: Compares screenshots against baselines, reports diffs on PRs
+- **Secrets**: See "GitHub Actions Secrets for E2E Tests" section above
 
 ### Claude Code Review
 Uses `anthropics/claude-code-action@v1` to review PRs.
