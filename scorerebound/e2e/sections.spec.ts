@@ -1,9 +1,11 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("Section content verification", () => {
-  test("stats section shows correct values", async ({ page }) => {
+  test.beforeEach(async ({ page }) => {
     await page.goto("/");
+  });
 
+  test("stats section shows correct values", async ({ page }) => {
     const borrowers = page.getByTestId("stat-borrowers");
     await expect(borrowers).toContainText("2.2M+");
     await expect(borrowers).toContainText("Borrowers affected");
@@ -20,8 +22,6 @@ test.describe("Section content verification", () => {
   test("how-it-works section has 3 steps with correct content", async ({
     page,
   }) => {
-    await page.goto("/");
-
     const section = page.getByTestId("how-it-works-section");
     await expect(section).toBeVisible();
     await expect(section).toContainText("How ScoreRebound Works");
@@ -42,8 +42,6 @@ test.describe("Section content verification", () => {
   test("recovery paths section has 3 cards with correct info", async ({
     page,
   }) => {
-    await page.goto("/");
-
     const section = page.getByTestId("recovery-paths-section");
     await expect(section).toBeVisible();
     await expect(section).toContainText("Recovery Paths");
@@ -61,9 +59,20 @@ test.describe("Section content verification", () => {
     await expect(consol).toContainText("Combine multiple loans");
   });
 
-  test("hero badge displays free-for-all messaging", async ({ page }) => {
-    await page.goto("/");
+  test("FAQ section is visible with accordion items", async ({ page }) => {
+    const section = page.getByTestId("faq-section");
+    await expect(section).toBeVisible();
+    await expect(section).toContainText("Frequently Asked Questions");
 
+    const firstItem = page.getByTestId("faq-item-0");
+    await expect(firstItem).toBeVisible();
+
+    // Click to expand
+    await page.getByTestId("faq-toggle-0").click();
+    await expect(page.getByTestId("faq-answer-0")).toBeVisible();
+  });
+
+  test("hero badge displays free-for-all messaging", async ({ page }) => {
     const badge = page.getByTestId("hero-badge");
     await expect(badge).toBeVisible();
     await expect(badge).toContainText("Free for all borrowers");
@@ -72,8 +81,6 @@ test.describe("Section content verification", () => {
   test("hero description mentions quiz and recovery options", async ({
     page,
   }) => {
-    await page.goto("/");
-
     const desc = page.getByTestId("hero-description");
     await expect(desc).toContainText("2-minute quiz");
     await expect(desc).toContainText("IBR enrollment");
@@ -82,8 +89,6 @@ test.describe("Section content verification", () => {
   });
 
   test("CTA section has correct messaging", async ({ page }) => {
-    await page.goto("/");
-
     const ctaSection = page.getByTestId("cta-section");
     await expect(ctaSection).toContainText("Start Your Free Recovery Plan");
     await expect(ctaSection).toContainText("5 quick questions");
@@ -93,8 +98,6 @@ test.describe("Section content verification", () => {
   test("footer copyright includes current year and disclaimer", async ({
     page,
   }) => {
-    await page.goto("/");
-
     const copyright = page.getByTestId("footer-copyright");
     const year = new Date().getFullYear().toString();
     await expect(copyright).toContainText(year);

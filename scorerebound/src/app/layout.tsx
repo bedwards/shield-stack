@@ -12,17 +12,47 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "ScoreRebound — Student Loan Credit Score Recovery Planner",
+  title: {
+    default:
+      "ScoreRebound — Student Loan Credit Score Dropped? Free Recovery Plan",
+    template: "%s | ScoreRebound",
+  },
   description:
-    "Free personalized plan to recover your credit score after student loan delinquency. Get step-by-step guidance for IBR enrollment, rehabilitation, consolidation, and credit building.",
+    "Student loan credit score dropped? Get a free personalized recovery plan. Step-by-step guidance for IBR enrollment, rehabilitation, consolidation, and credit building after student loan delinquency.",
   keywords: [
-    "student loan credit score",
-    "credit score recovery",
-    "student loan default",
-    "student loan rehabilitation",
+    "student loan credit score dropped what to do",
+    "student loan credit score dropped",
+    "student loan credit score recovery",
+    "student loan default credit score",
+    "how to fix credit score after student loan default",
+    "student loan rehabilitation vs consolidation",
     "IBR enrollment",
-    "credit score dropped",
+    "loan rehabilitation",
   ],
+  openGraph: {
+    title: "ScoreRebound — Free Student Loan Credit Score Recovery Plan",
+    description:
+      "Student loan credit score dropped? Take a free 2-minute quiz and get a personalized recovery plan with IBR, rehabilitation, and consolidation guidance.",
+    type: "website",
+    siteName: "ScoreRebound",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ScoreRebound — Free Student Loan Credit Score Recovery Plan",
+    description:
+      "Student loan credit score dropped? Take a free 2-minute quiz and get a personalized recovery plan.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
 };
 
 export default function RootLayout({
@@ -126,7 +156,7 @@ export default function RootLayout({
                 <ul className="mt-2 space-y-2">
                   <li>
                     <Link
-                      href="/recovery/ibr"
+                      href="/guide/ibr"
                       data-testid="footer-link-ibr"
                       className="text-sm text-gray-600 hover:text-emerald-700"
                     >
@@ -135,7 +165,7 @@ export default function RootLayout({
                   </li>
                   <li>
                     <Link
-                      href="/recovery/rehabilitation"
+                      href="/guide/rehabilitation"
                       data-testid="footer-link-rehabilitation"
                       className="text-sm text-gray-600 hover:text-emerald-700"
                     >
@@ -144,7 +174,7 @@ export default function RootLayout({
                   </li>
                   <li>
                     <Link
-                      href="/recovery/consolidation"
+                      href="/guide/consolidation"
                       data-testid="footer-link-consolidation"
                       className="text-sm text-gray-600 hover:text-emerald-700"
                     >
@@ -160,20 +190,29 @@ export default function RootLayout({
                 <ul className="mt-2 space-y-2">
                   <li>
                     <Link
-                      href="/resources/credit-building"
-                      data-testid="footer-link-credit-building"
+                      href="/faq"
+                      data-testid="footer-link-faq"
                       className="text-sm text-gray-600 hover:text-emerald-700"
                     >
-                      Credit Building Guide
+                      FAQ
                     </Link>
                   </li>
                   <li>
                     <Link
-                      href="/resources/servicer-contacts"
+                      href="/about"
+                      data-testid="footer-link-about"
+                      className="text-sm text-gray-600 hover:text-emerald-700"
+                    >
+                      About
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/servicer/mohela"
                       data-testid="footer-link-servicers"
                       className="text-sm text-gray-600 hover:text-emerald-700"
                     >
-                      Servicer Contacts
+                      Servicer Guides
                     </Link>
                   </li>
                 </ul>

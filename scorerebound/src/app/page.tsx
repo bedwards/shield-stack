@@ -1,9 +1,18 @@
 import Link from "next/link";
 import QuizFunnel from "@/components/QuizFunnel";
+import FAQSection from "@/components/FAQSection";
+import { FAQ_ITEMS, generateFAQSchema } from "@/lib/faq-data";
 
 export default function Home() {
+  const faqSchema = generateFAQSchema(FAQ_ITEMS);
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+
       {/* Hero Section */}
       <section
         data-testid="hero-section"
@@ -162,7 +171,7 @@ export default function Home() {
                 federal loans.
               </p>
               <Link
-                href="/recovery/ibr"
+                href="/guide/ibr"
                 data-testid="path-ibr-link"
                 className="mt-4 inline-block text-sm font-medium text-emerald-600 hover:text-emerald-500"
               >
@@ -181,7 +190,7 @@ export default function Home() {
                 report. One-time opportunity.
               </p>
               <Link
-                href="/recovery/rehabilitation"
+                href="/guide/rehabilitation"
                 data-testid="path-rehabilitation-link"
                 className="mt-4 inline-block text-sm font-medium text-emerald-600 hover:text-emerald-500"
               >
@@ -200,7 +209,7 @@ export default function Home() {
                 Brings loans current immediately.
               </p>
               <Link
-                href="/recovery/consolidation"
+                href="/guide/consolidation"
                 data-testid="path-consolidation-link"
                 className="mt-4 inline-block text-sm font-medium text-emerald-600 hover:text-emerald-500"
               >
@@ -211,11 +220,39 @@ export default function Home() {
         </div>
       </section>
 
+      {/* FAQ Section */}
+      <section
+        id="faq"
+        data-testid="faq-section"
+        className="bg-gray-50 py-24"
+      >
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-2xl text-center mb-12">
+            <h2 className="text-3xl font-bold tracking-tight text-gray-900">
+              Frequently Asked Questions
+            </h2>
+            <p className="mt-4 text-lg text-gray-600">
+              Answers to common questions about student loan credit score recovery
+            </p>
+          </div>
+          <FAQSection items={FAQ_ITEMS} />
+          <div className="mt-10 text-center">
+            <Link
+              href="/faq"
+              data-testid="faq-view-all"
+              className="text-sm font-medium text-emerald-600 hover:text-emerald-500"
+            >
+              View all frequently asked questions &rarr;
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* Quiz Section */}
       <section
         id="quiz"
         data-testid="cta-section"
-        className="bg-gray-50 py-24"
+        className="bg-white py-24"
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-2xl text-center mb-12">

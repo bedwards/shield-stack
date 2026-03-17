@@ -45,8 +45,27 @@ describe("Home page", () => {
     expect(screen.getByTestId("path-consolidation")).toBeInTheDocument();
   });
 
+  it("renders the FAQ section", () => {
+    expect(screen.getByTestId("faq-section")).toBeInTheDocument();
+    expect(screen.getByTestId("faq-list")).toBeInTheDocument();
+    expect(screen.getByTestId("faq-item-0")).toBeInTheDocument();
+  });
+
   it("renders the quiz funnel in CTA section", () => {
     expect(screen.getByTestId("cta-section")).toBeInTheDocument();
     expect(screen.getByTestId("quiz-funnel")).toBeInTheDocument();
+  });
+
+  it("includes FAQ schema structured data", () => {
+    const scripts = document.querySelectorAll(
+      'script[type="application/ld+json"]',
+    );
+    const faqScript = Array.from(scripts).find((s) =>
+      s.textContent?.includes("FAQPage"),
+    );
+    expect(faqScript).toBeTruthy();
+    const data = JSON.parse(faqScript!.textContent!);
+    expect(data["@type"]).toBe("FAQPage");
+    expect(data.mainEntity.length).toBeGreaterThan(0);
   });
 });
