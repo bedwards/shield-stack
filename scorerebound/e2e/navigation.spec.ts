@@ -85,17 +85,15 @@ test.describe("Navigation & anchor links", () => {
     );
   });
 
-  test("CTA section start-quiz button has correct anchor", async ({
+  test("CTA section contains embedded quiz funnel", async ({
     page,
   }) => {
     await page.goto("/");
 
-    await expect(page.getByTestId("cta-start-quiz")).toHaveAttribute(
-      "href",
-      "#quiz-start"
-    );
-    await expect(page.getByTestId("cta-start-quiz")).toContainText(
-      "Start My Free Recovery Plan"
-    );
+    const ctaSection = page.getByTestId("cta-section");
+    await expect(ctaSection).toBeVisible();
+    await expect(ctaSection).toContainText("Start Your Free Recovery Plan");
+    // Quiz funnel is now embedded directly in the CTA section
+    await expect(ctaSection.getByTestId("quiz-funnel")).toBeVisible();
   });
 });

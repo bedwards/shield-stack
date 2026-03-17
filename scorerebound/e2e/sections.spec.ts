@@ -85,8 +85,8 @@ test.describe("Section content verification", () => {
     await page.goto("/");
 
     const ctaSection = page.getByTestId("cta-section");
-    await expect(ctaSection).toContainText("Ready to start your recovery?");
-    await expect(ctaSection).toContainText("free 2-minute quiz");
+    await expect(ctaSection).toContainText("Start Your Free Recovery Plan");
+    await expect(ctaSection).toContainText("5 quick questions");
     await expect(ctaSection).toContainText("No signup required");
   });
 
