@@ -137,7 +137,7 @@ describe("Email Templates", () => {
 
     it("includes federal loan refinancing warning", () => {
       const template = weekTwelveEmail(BASE_PARAMS);
-      expect(template.html).toContain("federal protections");
+      expect(template.html).toContain("losing access to federal");
     });
 
     it("includes refinancing affiliate CTAs", () => {

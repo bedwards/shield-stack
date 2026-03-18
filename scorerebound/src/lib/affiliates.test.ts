@@ -6,7 +6,7 @@ import {
   getAffiliateSlugs,
   AFFILIATE_PRODUCTS,
 } from "./affiliates";
-import type { RecoveryPath, ScoreRange } from "./database.types";
+import type { RecoveryPath } from "./database.types";
 
 describe("AFFILIATE_PRODUCTS", () => {
   it("has required fields on every product", () => {

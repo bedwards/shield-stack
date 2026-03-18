@@ -132,14 +132,6 @@ interface MatchRule {
   priority: number;
 }
 
-const ALL_PATHS: Set<RecoveryPath> = new Set([
-  "ibr_enrollment",
-  "rehabilitation",
-  "consolidation",
-  "credit_building",
-  "mixed",
-]);
-
 /**
  * Rules that map (path, score) → product recommendations.
  * Lower priority number = shown first.

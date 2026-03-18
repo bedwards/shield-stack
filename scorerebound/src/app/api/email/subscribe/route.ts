@@ -60,11 +60,13 @@ export async function POST(request: Request) {
 
   try {
     // Check for existing subscriber
-    const { data: existing } = await supabase
+    const { data: existingRaw } = await supabase
       .from("email_subscribers")
       .select("id, drip_status")
       .eq("email", email)
       .single();
+
+    const existing = existingRaw as { id: string; drip_status: string } | null;
 
     let subscriberId: string;
     let shouldSendWelcome = true;

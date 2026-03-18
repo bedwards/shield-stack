@@ -1,4 +1,3 @@
-import { NextResponse } from "next/server";
 import { isAdminConfigured, createAdminClient } from "@/lib/supabase";
 
 export const runtime = "edge";
