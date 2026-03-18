@@ -226,5 +226,58 @@ The estate settlement space has exploded — 12+ competitors now exist. AfterLos
 - **Portability**: Must file Form 706 even if under $15M threshold to preserve unused exemption for surviving spouse.
 - **99%+ of families will NOT owe federal estate tax** — emphasize this to users to reduce anxiety.
 
+## Deployment
+
+### Production
+- **Platform**: Vercel
+- **Production URL**: _(update once deployed — set up via Vercel dashboard)_
+- **Framework**: Next.js (auto-detected by Vercel)
+- **Build command**: `bun run build`
+- **Install command**: `bun install`
+- **Root directory**: `afterloss/` (set in Vercel project settings)
+
+### Preview Deployments
+Vercel automatically creates a unique preview URL for every PR that touches `afterloss/`. This enables:
+- RALPH verifier phase to run E2E tests against deployed previews
+- Visual review of changes before merging
+- Isolated testing of feature branches
+
+The `ignoreCommand` in `vercel.json` ensures Vercel only rebuilds when files in `afterloss/` change, not on every repo push.
+
+### Environment Variables (Vercel Dashboard)
+Set these in the Vercel project settings → Environment Variables:
+
+| Variable | Required | Environments | Notes |
+|----------|----------|-------------|-------|
+| `TEST_MODE` | No | Preview | Set to `true` for preview deployments to enable test accounts |
+| `NEXT_PUBLIC_SUPABASE_URL` | When DB ready | All | Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | When DB ready | All | Supabase anonymous/public key |
+| `SUPABASE_SERVICE_ROLE_KEY` | When DB ready | Preview only | Server-only, bypasses RLS — for E2E tests |
+| `ANTHROPIC_API_KEY` | When AI ready | Production, Preview | Claude API key for document generation |
+
+**Never commit secrets to the repo.** All secrets are set in the Vercel dashboard only.
+
+### Custom Domain
+To connect a custom domain (e.g., afterloss.io):
+1. Go to Vercel project → Settings → Domains
+2. Add domain and follow DNS configuration instructions
+3. Vercel handles SSL automatically
+
+### Security Headers
+Security headers are configured in `next.config.ts`:
+- `X-Content-Type-Options: nosniff`
+- `X-Frame-Options: DENY`
+- `Referrer-Policy: strict-origin-when-cross-origin`
+- `Content-Security-Policy` (restricts to self + Supabase + Anthropic API + Vercel analytics)
+
+### Vercel Setup Steps (Manual — Repo Owner)
+1. Go to [vercel.com/new](https://vercel.com/new)
+2. Import `bedwards/shield-stack` repository
+3. Set "Root Directory" to `afterloss/`
+4. Set "Framework Preset" to Next.js
+5. Build command: `bun run build` (or let Vercel auto-detect via vercel.json)
+6. Add environment variables as needed (none required for initial scaffold deploy)
+7. Deploy
+
 ## Version
-0.1.0
+0.1.2
