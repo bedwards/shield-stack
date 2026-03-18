@@ -36,14 +36,22 @@ Exit conditions must be driven by EXTERNAL tool results (HTTP status codes, Play
   - Local dev: `cd {product_slug} && npm run dev` or equivalent, test against localhost
 - If no deployment exists yet, run local dev server and test against it
 
-### 3. Run authenticated E2E tests (NOT just smoke tests)
-This is the #1 priority. Run the full authenticated test suite:
+### 3. Run ALL E2E tests including visual regression (NOT just smoke tests)
+This is the #1 priority. Run the FULL test suite — functional AND visual:
 ```bash
 cd {product_slug}
 npx playwright install --with-deps chromium
 TEST_MODE=true SUPABASE_SERVICE_ROLE_KEY=xxx bunx playwright test --reporter=json
 ```
-This runs BOTH public and authenticated tests. The setup project authenticates via `/api/test-auth` and saves storageState. Authenticated tests then use that state.
+This runs public tests, authenticated tests, AND visual regression tests.
+The setup project authenticates via `/api/test-auth` and saves storageState.
+
+**IMPORTANT: Visual regression tests (`e2e/visual/`) are YOUR responsibility.**
+They are excluded from GitHub Actions CI because screenshot comparisons are
+platform-dependent (darwin vs linux). They ONLY run locally on this Mac via
+RALPH verifier/monitor. If visual tests fail:
+- If UI intentionally changed: update baselines with `bunx playwright test e2e/visual/ --update-snapshots`
+- If UI unintentionally changed: this is a regression — create a GitHub issue
 
 If the product has no authenticated tests, this is a CRITICAL finding — report it immediately.
 

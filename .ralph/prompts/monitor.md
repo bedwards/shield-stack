@@ -26,16 +26,19 @@ Check the health of the main branch, CI status, and overall project state across
 7. Verify code review infrastructure:
    - Check that Claude and Gemini review workflows exist and are active
    - If reviews are broken → set `halted: true` in status.json with reason
-8. For each product with Playwright tests, run AUTHENTICATED E2E against production:
+8. For each product with Playwright tests, run the FULL E2E suite including visual regression:
    - `cd {product} && TEST_MODE=true SUPABASE_SERVICE_ROLE_KEY=xxx bunx playwright test --reporter=json 2>&1 | head -50`
-   - This must run the full suite including authenticated tests, not just smoke tests
+   - This must run ALL tests: functional, authenticated, AND visual regression
+   - **Visual regression tests (`e2e/visual/`) are YOUR responsibility.** They are excluded
+     from GitHub Actions CI because screenshot comparisons are platform-dependent (darwin
+     vs linux). They ONLY run locally on this Mac via RALPH verifier/monitor.
+   - If visual tests fail due to intentional UI changes: update baselines with
+     `bunx playwright test e2e/visual/ --update-snapshots`, commit, and push
+   - If visual tests fail unexpectedly: create a GitHub issue for the regression
    - If E2E fails on main, this is a critical warning — a broken deployment slipped through
 9. Verify authenticated E2E tests pass on main:
    - Check that `e2e/authenticated/` tests exist for products with auth features
    - If a product has auth but no authenticated E2E tests, create a CRITICAL GitHub issue
-10. Verify visual regression screenshots haven't changed unexpectedly:
-    - Compare `e2e/screenshots/` against previous commit's screenshots
-    - If screenshots changed but no UI PR was merged, flag as potential regression
 11. Verify test auth endpoint is NOT accessible without TEST_MODE:
     - For each deployed product, `curl -s https://{deploy_url}/api/test-auth` should return 404 or 403 in production (where TEST_MODE is not set)
     - If `/api/test-auth` responds with 200 on a production deployment, this is a CRITICAL security issue — halt and report

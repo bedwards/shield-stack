@@ -23,11 +23,16 @@ export default defineConfig({
     screenshot: "on",
   },
   projects: [
-    // Unauthenticated smoke/landing tests — run without any auth setup
+    // Unauthenticated functional tests — run without any auth setup
+    // Visual regression tests (e2e/visual/) excluded in CI — they're platform-dependent
+    // and run locally via RALPH verifier/monitor on macOS instead.
     {
       name: "chromium",
       use: { ...devices["Desktop Chrome"] },
-      testIgnore: ["**/authenticated/**"],
+      testIgnore: [
+        "**/authenticated/**",
+        ...(process.env.CI ? ["**/visual/**"] : []),
+      ],
     },
     // Auth setup — creates test user and saves storage state
     {
