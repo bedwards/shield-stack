@@ -134,6 +134,20 @@ export interface EmailSequence {
   updated_at: string;
 }
 
+export interface EmailSubscriber {
+  id: string;
+  email: string;
+  plan_id: string | null;
+  recovery_path: string | null;
+  unsubscribe_token: string;
+  drip_step: number;
+  drip_status: "active" | "paused" | "completed" | "unsubscribed";
+  last_sent_at: string | null;
+  next_send_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 // ============================================================================
 // Insert types (omit auto-generated fields)
 // ============================================================================
@@ -179,6 +193,20 @@ export type AffiliateClickInsert = Omit<
   clicked_at?: string;
 };
 
+export type EmailSubscriberInsert = Omit<
+  EmailSubscriber,
+  "id" | "unsubscribe_token" | "drip_step" | "drip_status" | "last_sent_at" | "next_send_at" | "created_at" | "updated_at"
+> & {
+  id?: string;
+  unsubscribe_token?: string;
+  drip_step?: number;
+  drip_status?: EmailSubscriber["drip_status"];
+  last_sent_at?: string | null;
+  next_send_at?: string | null;
+  created_at?: string;
+  updated_at?: string;
+};
+
 export type EmailSequenceInsert = Omit<
   EmailSequence,
   | "id"
@@ -215,6 +243,10 @@ export type PlanStepUpdate = Partial<Omit<PlanStep, "id" | "created_at">>;
 export type ProgressEntryUpdate = Partial<Omit<ProgressEntry, "id">>;
 
 export type AffiliateClickUpdate = Partial<Omit<AffiliateClick, "id">>;
+
+export type EmailSubscriberUpdate = Partial<
+  Omit<EmailSubscriber, "id" | "created_at">
+>;
 
 export type EmailSequenceUpdate = Partial<
   Omit<EmailSequence, "id" | "created_at">
@@ -267,6 +299,12 @@ export interface Database {
         Row: EmailSequence;
         Insert: EmailSequenceInsert;
         Update: EmailSequenceUpdate;
+        Relationships: [];
+      };
+      email_subscribers: {
+        Row: EmailSubscriber;
+        Insert: EmailSubscriberInsert;
+        Update: EmailSubscriberUpdate;
         Relationships: [];
       };
     };

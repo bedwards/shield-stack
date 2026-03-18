@@ -112,7 +112,7 @@ export default function PlanPage() {
 
   return (
     <div className="py-12 px-4 sm:px-6 lg:px-8">
-      <PlanViewer plan={state.plan} />
+      <PlanViewer plan={state.plan} planId={params.id} />
     </div>
   );
 }

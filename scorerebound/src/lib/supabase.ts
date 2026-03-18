@@ -41,6 +41,30 @@ export function getSupabaseClient() {
  *
  * @remarks Server-side only — do not import in client components.
  */
+/**
+ * Check if the Supabase service role key is configured.
+ * Required for admin operations (bypassing RLS) in API routes.
+ */
+export function isAdminConfigured(): boolean {
+  return !!(
+    process.env.NEXT_PUBLIC_SUPABASE_URL &&
+    process.env.SUPABASE_SERVICE_ROLE_KEY
+  );
+}
+
+/**
+ * Create a Supabase client with the service role key (bypasses RLS).
+ * Use ONLY in server-side API routes — never in client components.
+ */
+export function createAdminClient() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !serviceRoleKey) {
+    throw new Error("NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set");
+  }
+  return createClient<Database>(url, serviceRoleKey);
+}
+
 export function createServerSupabaseClient(accessToken?: string) {
   return createClient<Database>(getSupabaseUrl(), getSupabaseAnonKey(), {
     global: {
