@@ -29,19 +29,9 @@ export const metadata: Metadata = {
     type: "website",
     siteName: "AfterLoss",
     locale: "en_US",
-    title: "AfterLoss — Free After-Death Estate Settlement Guide",
-    description:
-      "Free step-by-step guide for settling an estate after someone dies. State-specific checklists, document templates, and compassionate guidance.",
-    url: BASE_URL,
   },
   twitter: {
     card: "summary_large_image",
-    title: "AfterLoss — Free After-Death Estate Settlement Guide",
-    description:
-      "Free step-by-step guide for settling an estate after someone dies. State-specific checklists, document templates, and compassionate guidance.",
-  },
-  alternates: {
-    canonical: "/",
   },
   robots: {
     index: true,
