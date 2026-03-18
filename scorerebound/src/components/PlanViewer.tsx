@@ -4,16 +4,27 @@ import { useState } from "react";
 import type { GeneratedPlan } from "@/lib/plan-generator";
 import RecoveryTimeline from "./RecoveryTimeline";
 import { RECOVERY_PATHS } from "@/lib/recovery-paths";
+import { getAffiliateRecommendations } from "@/lib/affiliates";
+import AffiliateCard, { AffiliateDisclosure } from "./AffiliateCard";
+import EmailCapture from "./EmailCapture";
+import type { ScoreRange } from "@/lib/database.types";
 
 interface PlanViewerProps {
   plan: GeneratedPlan;
+  planId?: string;
+  scoreRange?: ScoreRange;
 }
 
-export default function PlanViewer({ plan }: PlanViewerProps) {
+export default function PlanViewer({ plan, planId, scoreRange }: PlanViewerProps) {
   const [expandedSteps, setExpandedSteps] = useState<Set<number>>(
     new Set([0]),
   );
   const pathInfo = RECOVERY_PATHS[plan.recovery_path];
+  const affiliateProducts = getAffiliateRecommendations(
+    plan.recovery_path,
+    scoreRange ?? "580_619",
+  );
+  const referrerPage = planId ? `/plan/${planId}` : undefined;
 
   const toggleStep = (index: number) => {
     setExpandedSteps((prev) => {
@@ -192,6 +203,38 @@ export default function PlanViewer({ plan }: PlanViewerProps) {
             </ul>
           </div>
         </div>
+      </div>
+
+      {/* Affiliate Recommendations */}
+      {affiliateProducts.length > 0 && (
+        <div data-testid="plan-affiliate-section" className="mt-10">
+          <h3 className="text-lg font-bold text-gray-900 mb-1">
+            Recommended Tools for Your Recovery
+          </h3>
+          <p className="text-sm text-gray-600 mb-4">
+            Based on your recovery path and score range, these products can help accelerate your progress.
+          </p>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {affiliateProducts.map((product) => (
+              <AffiliateCard
+                key={product.slug}
+                product={product}
+                referrerPage={referrerPage}
+              />
+            ))}
+          </div>
+          <div className="mt-4">
+            <AffiliateDisclosure />
+          </div>
+        </div>
+      )}
+
+      {/* Email Capture */}
+      <div data-testid="plan-email-section" className="mt-10">
+        <EmailCapture
+          planId={planId ?? null}
+          recoveryPath={plan.recovery_path}
+        />
       </div>
 
       {/* CTA */}
