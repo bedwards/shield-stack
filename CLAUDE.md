@@ -102,7 +102,7 @@ No feature is done until it has authenticated E2E tests verifying UI, database s
 Every product MUST have:
 - **Test auth endpoint** (`/api/test-auth`) gated by `TEST_MODE=true` — provides test session tokens without real OAuth
 - **Authenticated Playwright tests** in `e2e/authenticated/` — tests that run behind login
-- **Visual regression screenshots** — taken in E2E tests, committed to repo, compared on CI
+- **Visual regression screenshots** — taken in E2E tests, committed to repo, run locally via RALPH (excluded from CI due to platform-dependent baselines)
 - **Database state verification** — E2E tests assert on DB rows after UI actions (via API or direct query)
 - **Browser/session state verification** — E2E tests check localStorage, cookies, session tokens
 - **Pattern**: Playwright setup project -> storage state -> authenticated tests:
@@ -262,9 +262,9 @@ Matrix-based workflow that runs authenticated Playwright E2E tests for each prod
 - **Matrix products**: scorerebound, ghostboard (add new products to the matrix)
 - **Environment**: `TEST_MODE=true`, Supabase credentials from secrets
 - **Setup**: `bunx playwright install --with-deps chromium`
-- **Tests**: Runs ALL tests including `e2e/authenticated/` and `e2e/visual/`
-- **Artifacts**: playwright-report, screenshots, test-results, traces, visual snapshots
-- **Visual regression**: Compares screenshots against baselines, reports diffs on PRs
+- **Tests**: Runs functional and authenticated tests (visual regression excluded — platform-dependent)
+- **Artifacts**: playwright-report, screenshots, test-results, traces
+- **Visual regression**: Excluded from CI. Run locally via RALPH verifier/monitor on macOS where baselines match the platform
 - **Secrets**: See "GitHub Actions Secrets for E2E Tests" section above
 
 ### Claude Code Review
