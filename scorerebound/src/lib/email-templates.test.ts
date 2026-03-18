@@ -49,9 +49,16 @@ describe("Email Templates", () => {
       expect(template.html).toContain("Week 12");
     });
 
-    it("includes affiliate CTAs", () => {
+    it("includes affiliate CTAs with tracking URLs", () => {
       expect(template.html).toContain("Credit Karma");
       expect(template.html).toContain("Self Credit Builder");
+      expect(template.html).toContain("/api/affiliate/click?slug=credit_karma&referrer=email-welcome");
+      expect(template.html).toContain("/api/affiliate/click?slug=self&referrer=email-welcome");
+    });
+
+    it("does not contain hardcoded affiliate base URLs", () => {
+      expect(template.html).not.toContain("https://www.creditkarma.com");
+      expect(template.html).not.toContain("https://www.self.inc");
     });
 
     it("omits plan link when not provided", () => {
@@ -90,11 +97,21 @@ describe("Email Templates", () => {
       expect(template.html).toContain("AnnualCreditReport.com");
     });
 
-    it("includes credit builder affiliate CTAs", () => {
+    it("includes credit builder affiliate CTAs with tracking URLs", () => {
       const template = weekOneEmail(BASE_PARAMS);
       expect(template.html).toContain("Self Credit Builder");
       expect(template.html).toContain("MoneyLion");
       expect(template.html).toContain("Chime");
+      expect(template.html).toContain("/api/affiliate/click?slug=self&referrer=email-week-1");
+      expect(template.html).toContain("/api/affiliate/click?slug=moneylion&referrer=email-week-1");
+      expect(template.html).toContain("/api/affiliate/click?slug=chime&referrer=email-week-1");
+    });
+
+    it("does not contain hardcoded affiliate base URLs", () => {
+      const template = weekOneEmail(BASE_PARAMS);
+      expect(template.html).not.toContain("https://www.self.inc");
+      expect(template.html).not.toContain("https://www.moneylion.com");
+      expect(template.html).not.toContain("https://www.chime.com");
     });
 
     it("includes unsubscribe link", () => {
@@ -110,11 +127,21 @@ describe("Email Templates", () => {
       expect(template.html).toContain("autopay");
     });
 
-    it("includes credit monitoring affiliate CTAs", () => {
+    it("includes credit monitoring affiliate CTAs with tracking URLs", () => {
       const template = weekFourEmail(BASE_PARAMS);
       expect(template.html).toContain("Credit Karma");
       expect(template.html).toContain("Experian");
       expect(template.html).toContain("CreditWise");
+      expect(template.html).toContain("/api/affiliate/click?slug=credit_karma&referrer=email-week-4");
+      expect(template.html).toContain("/api/affiliate/click?slug=experian&referrer=email-week-4");
+      expect(template.html).toContain("/api/affiliate/click?slug=capital_one_creditwise&referrer=email-week-4");
+    });
+
+    it("does not contain hardcoded affiliate base URLs", () => {
+      const template = weekFourEmail(BASE_PARAMS);
+      expect(template.html).not.toContain("https://www.creditkarma.com");
+      expect(template.html).not.toContain("https://www.experian.com");
+      expect(template.html).not.toContain("https://www.capitalone.com");
     });
 
     it("includes plan link when provided", () => {
@@ -140,11 +167,21 @@ describe("Email Templates", () => {
       expect(template.html).toContain("losing access to federal");
     });
 
-    it("includes refinancing affiliate CTAs", () => {
+    it("includes refinancing affiliate CTAs with tracking URLs", () => {
       const template = weekTwelveEmail(BASE_PARAMS);
       expect(template.html).toContain("SoFi");
       expect(template.html).toContain("Earnest");
       expect(template.html).toContain("Splash");
+      expect(template.html).toContain("/api/affiliate/click?slug=sofi_refi&referrer=email-week-12");
+      expect(template.html).toContain("/api/affiliate/click?slug=earnest&referrer=email-week-12");
+      expect(template.html).toContain("/api/affiliate/click?slug=splash&referrer=email-week-12");
+    });
+
+    it("does not contain hardcoded affiliate base URLs", () => {
+      const template = weekTwelveEmail(BASE_PARAMS);
+      expect(template.html).not.toContain("https://www.sofi.com");
+      expect(template.html).not.toContain("https://www.earnest.com");
+      expect(template.html).not.toContain("https://www.splashfinancial.com");
     });
 
     it("includes recovery continuation tips", () => {

@@ -78,15 +78,23 @@ function ctaButton(text: string, url: string): string {
 </table>`;
 }
 
-function affiliateSection(title: string, items: { name: string; description: string; url: string }[]): string {
+function affiliateSection(
+  title: string,
+  items: { name: string; description: string; slug: string }[],
+  siteUrl: string,
+  referrer: string,
+): string {
   const rows = items
     .map(
-      (item) => `<tr>
+      (item) => {
+        const trackingUrl = `${siteUrl}/api/affiliate/click?slug=${encodeURIComponent(item.slug)}&referrer=${encodeURIComponent(referrer)}`;
+        return `<tr>
         <td style="padding:12px 0;border-bottom:1px solid #f3f4f6;">
-          <a href="${item.url}" style="font-size:15px;font-weight:600;color:#059669;text-decoration:none;">${item.name}</a>
+          <a href="${trackingUrl}" style="font-size:15px;font-weight:600;color:#059669;text-decoration:none;">${item.name}</a>
           <p style="margin:4px 0 0;font-size:13px;color:#6b7280;">${item.description}</p>
         </td>
-      </tr>`,
+      </tr>`;
+      },
     )
     .join("");
 
@@ -162,14 +170,14 @@ export function welcomeEmail(params: EmailTemplateParams): EmailTemplate {
       {
         name: "Credit Karma",
         description: "Free credit score monitoring — see where you stand right now.",
-        url: "https://www.creditkarma.com",
+        slug: "credit_karma",
       },
       {
         name: "Self Credit Builder",
         description: "Build credit with small monthly payments (no credit check to apply).",
-        url: "https://www.self.inc",
+        slug: "self",
       },
-    ])}
+    ], params.siteUrl, "email-welcome")}
     <p style="margin:24px 0 0;font-size:13px;color:#9ca3af;">
       Reply to this email if you have any questions. We're here to help.
     </p>`;
@@ -257,19 +265,19 @@ export function weekOneEmail(params: EmailTemplateParams): EmailTemplate {
       {
         name: "Self Credit Builder Loan",
         description: "Build credit history with payments starting at $25/month. No credit check required.",
-        url: "https://www.self.inc",
+        slug: "self",
       },
       {
         name: "MoneyLion Credit Builder Plus",
         description: "0% APR credit-builder loan with credit monitoring included.",
-        url: "https://www.moneylion.com",
+        slug: "moneylion",
       },
       {
         name: "Chime Credit Builder Card",
         description: "Secured card with no annual fee, no interest, no credit check.",
-        url: "https://www.chime.com/credit-builder",
+        slug: "chime",
       },
-    ])}`;
+    ], params.siteUrl, "email-week-1")}`;
 
   return {
     subject: "Week 1: Your Step-by-Step Guide to Start Recovering",
@@ -333,19 +341,19 @@ export function weekFourEmail(params: EmailTemplateParams): EmailTemplate {
       {
         name: "Credit Karma",
         description: "Free TransUnion and Equifax scores, updated weekly. Personalized recommendations.",
-        url: "https://www.creditkarma.com",
+        slug: "credit_karma",
       },
       {
         name: "Experian Free Credit Monitoring",
         description: "Free Experian score and FICO score. Dark web monitoring included.",
-        url: "https://www.experian.com/consumer-products/free-credit-monitoring.html",
+        slug: "experian",
       },
       {
         name: "Capital One CreditWise",
         description: "Free TransUnion score and credit simulator. No Capital One account needed.",
-        url: "https://www.capitalone.com/creditwise",
+        slug: "capital_one_creditwise",
       },
-    ])}`;
+    ], params.siteUrl, "email-week-4")}`;
 
   return {
     subject: "Week 4: Your Credit Recovery Progress Check-In",
@@ -402,19 +410,19 @@ export function weekTwelveEmail(params: EmailTemplateParams): EmailTemplate {
       {
         name: "SoFi Student Loan Refinancing",
         description: "Check your rate in 2 minutes. No fees, no prepayment penalties. Rates from 4.49% APR.",
-        url: "https://www.sofi.com/refinance-student-loan",
+        slug: "sofi_refi",
       },
       {
         name: "Earnest Student Loan Refinancing",
         description: "Customize your monthly payment. Skip a payment once a year. Rates from 4.49% APR.",
-        url: "https://www.earnest.com/student-loan-refinancing",
+        slug: "earnest",
       },
       {
         name: "Splash Financial",
         description: "Compare rates from multiple lenders in one application. Quick prequalification.",
-        url: "https://www.splashfinancial.com",
+        slug: "splash",
       },
-    ])}
+    ], params.siteUrl, "email-week-12")}
     <h3 style="margin:24px 0 12px;font-size:17px;color:#111827;">What's Next?</h3>
     <p style="margin:0 0 16px;font-size:15px;line-height:1.6;color:#374151;">
       This is our last scheduled email, but your recovery journey continues. Keep doing what's working:
