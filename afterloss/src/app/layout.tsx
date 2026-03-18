@@ -54,6 +54,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
               <Link href="/" data-testid="logo-link" className="text-xl font-bold text-primary">AfterLoss</Link>
               <div className="flex items-center gap-4">
                 <Link href="/guide" data-testid="nav-guide" className="text-sm text-muted hover:text-foreground transition-colors">Start Guide</Link>
+                <Link href="/scripts" data-testid="nav-scripts" className="text-sm text-muted hover:text-foreground transition-colors">Phone Scripts</Link>
                 <Link href="/states" data-testid="nav-states" className="text-sm text-muted hover:text-foreground transition-colors">State Guides</Link>
                 <Link href="/login" data-testid="nav-login" className="rounded-md bg-primary px-3 py-2 text-sm font-medium text-white hover:bg-primary-hover transition-colors">Sign In</Link>
               </div>
