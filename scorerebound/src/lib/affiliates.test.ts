@@ -127,6 +127,11 @@ describe("getAffiliateSlugs", () => {
     expect(slugs).toContain("discover_secured");
     expect(slugs).toContain("capital_one_secured");
     expect(slugs).toContain("credit_karma");
-    expect(slugs.length).toBe(6);
+    expect(slugs).toContain("moneylion");
+    expect(slugs).toContain("chime");
+    expect(slugs).toContain("capital_one_creditwise");
+    expect(slugs).toContain("earnest");
+    expect(slugs).toContain("splash");
+    expect(slugs.length).toBe(11);
   });
 });
