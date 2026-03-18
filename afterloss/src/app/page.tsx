@@ -1,61 +1,114 @@
-import Link from "next/link";
+import type { Metadata } from "next";
+import HeroSection from "@/components/landing/HeroSection";
+import ValuePropSection from "@/components/landing/ValuePropSection";
+import HowItWorksSection from "@/components/landing/HowItWorksSection";
+import TrustSection from "@/components/landing/TrustSection";
+import FaqSection, { faqs } from "@/components/landing/FaqSection";
+import CtaSection from "@/components/landing/CtaSection";
+
+const BASE_URL =
+  process.env.NEXT_PUBLIC_APP_URL || "https://afterloss.pages.dev";
+
+export const metadata: Metadata = {
+  title: "AfterLoss \u2014 Free After-Death Estate Settlement Guide",
+  description:
+    "Free step-by-step guide for settling an estate after someone dies. Personalized state-specific checklists, AI-generated document templates, deadline tracking, and compassionate guidance.",
+  keywords: [
+    "what to do when someone dies",
+    "what to do when someone dies checklist",
+    "after death checklist",
+    "estate settlement checklist",
+    "probate guide",
+    "settling an estate",
+    "how to close bank account after death",
+    "cancel subscription after someone dies",
+    "notify social security of death",
+  ],
+  openGraph: {
+    title: "AfterLoss \u2014 Free After-Death Estate Settlement Guide",
+    description:
+      "Free step-by-step guide for settling an estate after someone dies. Personalized state-specific checklists, document templates, and compassionate guidance.",
+    type: "website",
+    siteName: "AfterLoss",
+    url: BASE_URL,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "AfterLoss \u2014 Free After-Death Estate Settlement Guide",
+    description:
+      "Free step-by-step guide for settling an estate after someone dies. Personalized checklists, document templates, and compassionate guidance.",
+  },
+  alternates: {
+    canonical: BASE_URL,
+  },
+};
+
+function JsonLd() {
+  const webApplicationSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    name: "AfterLoss",
+    url: BASE_URL,
+    description:
+      "Free step-by-step guide for settling an estate after someone dies. Personalized state-specific checklists, AI-generated document templates, and deadline tracking.",
+    applicationCategory: "LifestyleApplication",
+    operatingSystem: "Any",
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "USD",
+    },
+    featureList: [
+      "State-specific estate settlement checklists",
+      "AI-generated personalized letters and forms",
+      "Deadline tracking and reminders",
+      "Subscription cancellation templates",
+      "Government form guidance",
+      "Probate guides for all 50 states + DC",
+    ],
+  };
+
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((faq) => ({
+      "@type": "Question",
+      name: faq.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: faq.answer,
+      },
+    })),
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(webApplicationSchema),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(faqSchema),
+        }}
+      />
+    </>
+  );
+}
 
 export default function Home() {
   return (
     <div data-testid="landing-page">
-      <section data-testid="hero-section" className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 text-center">
-        <h1 data-testid="hero-title" className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground">
-          A compassionate guide{" "}<span className="text-primary">through what comes next</span>
-        </h1>
-        <p data-testid="hero-subtitle" className="mt-6 text-lg sm:text-xl text-muted max-w-2xl mx-auto">
-          Free, step-by-step guidance for settling an estate after someone dies. State-specific checklists, document templates, and everything you need — at no cost, ever.
-        </p>
-        <div data-testid="hero-cta" className="mt-10 flex justify-center gap-4">
-          <Link href="/guide" data-testid="cta-guide-button" className="rounded-lg bg-primary px-8 py-3 font-medium text-white hover:bg-primary-hover transition-colors">Start the Guide</Link>
-          <Link href="/states" data-testid="cta-states-button" className="rounded-lg border border-border px-8 py-3 font-medium text-foreground hover:bg-secondary transition-colors">Find Your State</Link>
-        </div>
-      </section>
-
-      <section data-testid="stats-section" className="bg-secondary py-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
-            <div data-testid="stat-states"><p className="text-3xl font-bold text-primary">50+</p><p className="mt-2 text-sm text-muted">State Guides</p></div>
-            <div data-testid="stat-tasks"><p className="text-3xl font-bold text-primary">100+</p><p className="mt-2 text-sm text-muted">Guided Tasks</p></div>
-            <div data-testid="stat-price"><p className="text-3xl font-bold text-accent">$0</p><p className="mt-2 text-sm text-muted">Always Free</p></div>
-          </div>
-        </div>
-      </section>
-
-      <section data-testid="how-it-works-section" className="py-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center text-foreground">How AfterLoss Helps</h2>
-          <div className="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-8">
-            <div data-testid="step-start" className="text-center">
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary text-white font-bold">1</div>
-              <h3 className="mt-4 text-lg font-semibold text-foreground">Tell Us Your Situation</h3>
-              <p className="mt-2 text-sm text-muted">Answer a few simple questions about your state, the estate, and your role. We personalize the guide.</p>
-            </div>
-            <div data-testid="step-follow" className="text-center">
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary text-white font-bold">2</div>
-              <h3 className="mt-4 text-lg font-semibold text-foreground">Follow the Checklist</h3>
-              <p className="mt-2 text-sm text-muted">Work through tasks at your own pace — from immediate needs to long-term estate settlement.</p>
-            </div>
-            <div data-testid="step-complete" className="text-center">
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary text-white font-bold">3</div>
-              <h3 className="mt-4 text-lg font-semibold text-foreground">Track Your Progress</h3>
-              <p className="mt-2 text-sm text-muted">Save your progress, add notes, and come back anytime. We keep track so you don&apos;t have to.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section data-testid="cta-section" className="bg-secondary py-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold text-foreground">You Don&apos;t Have to Figure This Out Alone</h2>
-          <p className="mt-4 text-lg text-muted max-w-2xl mx-auto">Losing someone is hard enough. AfterLoss provides clear, compassionate guidance through the estate settlement process — completely free.</p>
-          <Link href="/guide" data-testid="cta-bottom-button" className="mt-8 inline-block rounded-lg bg-primary px-8 py-3 font-medium text-white hover:bg-primary-hover transition-colors">Get Started — Free Forever</Link>
-        </div>
-      </section>
+      <JsonLd />
+      <HeroSection />
+      <ValuePropSection />
+      <HowItWorksSection />
+      <TrustSection />
+      <FaqSection />
+      <CtaSection />
     </div>
   );
 }
