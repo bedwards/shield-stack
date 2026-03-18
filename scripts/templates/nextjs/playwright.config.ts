@@ -23,7 +23,10 @@ export default defineConfig({
     {
       name: "chromium",
       use: { ...devices["Desktop Chrome"] },
-      testIgnore: /authenticated\//,
+      testIgnore: [
+        "**/authenticated/**",
+        ...(process.env.CI ? ["**/visual/**"] : []),
+      ],
     },
     {
       name: "authenticated",

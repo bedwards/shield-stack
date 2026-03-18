@@ -82,31 +82,6 @@ jobs:
           path: ${{ matrix.product.slug }}/test-results/
           retention-days: 14
 
-      - name: Upload visual regression snapshots
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: ${{ matrix.product.slug }}-visual-snapshots
-          path: |
-            ${{ matrix.product.slug }}/e2e/visual/*.spec.ts-snapshots/
-            ${{ matrix.product.slug }}/e2e/**/*-snapshots/
-          retention-days: 30
-
-      - name: Compare visual snapshots (PR only)
-        if: github.event_name == 'pull_request' && always()
-        run: |
-          SNAPSHOT_DIR="e2e/visual/pages.spec.ts-snapshots"
-          if [ -d "$SNAPSHOT_DIR" ]; then
-            echo "## Visual Regression Results for ${{ matrix.product.name }}" >> "$GITHUB_STEP_SUMMARY"
-            DIFF_COUNT=$(find "$SNAPSHOT_DIR" -name "*-diff.png" 2>/dev/null | wc -l | tr -d ' ')
-            if [ "$DIFF_COUNT" -gt 0 ]; then
-              echo ":warning: **$DIFF_COUNT visual difference(s) detected**" >> "$GITHUB_STEP_SUMMARY"
-              echo "" >> "$GITHUB_STEP_SUMMARY"
-              echo "Download the \`${{ matrix.product.slug }}-visual-snapshots\` artifact to review diff images." >> "$GITHUB_STEP_SUMMARY"
-            else
-              echo ":white_check_mark: No visual regressions detected." >> "$GITHUB_STEP_SUMMARY"
-            fi
-          else
-            echo "## Visual Regression Results for ${{ matrix.product.name }}" >> "$GITHUB_STEP_SUMMARY"
-            echo ":information_source: No visual snapshots found. Run \`bunx playwright test --update-snapshots\` to generate baseline snapshots." >> "$GITHUB_STEP_SUMMARY"
-          fi
+      # Visual regression tests (e2e/visual/) are excluded from CI.
+      # They're platform-dependent (darwin vs linux baselines) and run
+      # locally via RALPH verifier/monitor on macOS instead.
