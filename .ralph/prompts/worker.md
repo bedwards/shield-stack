@@ -24,7 +24,7 @@ These files contain hard-won lessons from previous workers. Read them FIRST:
 4. Read the GitHub issue: `gh issue view {issue_number} --json title,body,labels`
 5. Read existing code in `{product_slug}/` to understand current state
 6. **Before modifying any files**, run `git diff --stat` to see what exists. Do not delete files that were there before your branch.
-7. You are already on branch `{branch_name}` — implement the issue:
+7. You are running in an **isolated git worktree** on branch `{branch_name}`. Your working directory is a separate copy of the repo — changes here do NOT affect the main working directory. Implement the issue:
    - Follow the product's chosen tech stack and conventions
    - Write clean, type-safe code
    - Follow the product's CLAUDE.md rules

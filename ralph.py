@@ -34,6 +34,7 @@ import traceback
 # ---------------------------------------------------------------------------
 
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
+WORKTREES_DIR = os.path.join(PROJECT_DIR, ".claude", "worktrees")
 RALPH_DIR = os.path.join(PROJECT_DIR, ".ralph")
 STATUS_FILE = os.path.join(RALPH_DIR, "status.json")
 METRICS_FILE = os.path.join(RALPH_DIR, "metrics.json")
@@ -204,7 +205,7 @@ def update_worker_state(worker_id, **kwargs):
 # Claude Code CLI runner
 # ---------------------------------------------------------------------------
 
-def run_claude(prompt, max_turns=None, timeout=600):
+def run_claude(prompt, max_turns=None, timeout=600, cwd=None):
     """
     Run a single-shot Claude Code CLI instance.
     Always uses Claude Opus 4.6 with max effort.
@@ -227,7 +228,7 @@ def run_claude(prompt, max_turns=None, timeout=600):
     try:
         result = subprocess.run(
             cmd,
-            cwd=PROJECT_DIR,
+            cwd=cwd or PROJECT_DIR,
             capture_output=True,
             text=True,
             timeout=timeout,
@@ -525,6 +526,76 @@ def branch_name_for_issue(issue_number, issue_title, product_slug):
 
 
 # ---------------------------------------------------------------------------
+# Worktree helpers — isolate worker changes from main working directory
+# ---------------------------------------------------------------------------
+
+def worktree_path_for_issue(issue_number):
+    """Return the worktree directory path for a given issue number."""
+    return os.path.join(WORKTREES_DIR, f"issue-{issue_number}")
+
+
+def create_worktree(branch_name, issue_number):
+    """Create an isolated git worktree for a worker.
+
+    Creates a new branch and worktree in .claude/worktrees/issue-{N}.
+    If the branch already exists, checks it out in the worktree.
+    Returns the absolute path to the worktree directory.
+    """
+    wt_path = worktree_path_for_issue(issue_number)
+
+    # Clean up stale worktree if directory exists but git doesn't know about it
+    if os.path.isdir(wt_path):
+        try:
+            git_run("worktree", "remove", "--force", wt_path)
+        except Exception:
+            import shutil
+            shutil.rmtree(wt_path, ignore_errors=True)
+
+    os.makedirs(WORKTREES_DIR, exist_ok=True)
+
+    # Try creating worktree with new branch
+    _, rc = git_run("worktree", "add", wt_path, "-b", branch_name, "main")
+    if rc != 0:
+        # Branch already exists — check it out in the worktree
+        _, rc2 = git_run("worktree", "add", wt_path, branch_name)
+        if rc2 != 0:
+            log(f"Failed to create worktree for {branch_name} at {wt_path}", "ERROR")
+            return None
+
+    log(f"Created worktree at {wt_path} on branch {branch_name}")
+    return wt_path
+
+
+def remove_worktree(issue_number):
+    """Remove a worktree after the worker finishes.
+
+    Only removes if the worktree has no uncommitted changes.
+    """
+    wt_path = worktree_path_for_issue(issue_number)
+    if not os.path.isdir(wt_path):
+        return
+
+    # Check for uncommitted changes
+    try:
+        result = subprocess.run(
+            ["git", "status", "--porcelain"],
+            cwd=wt_path, capture_output=True, text=True, timeout=10,
+        )
+        if result.stdout.strip():
+            log(f"Worktree {wt_path} has uncommitted changes — NOT removing", "WARN")
+            return
+    except Exception:
+        pass
+
+    try:
+        # Use --force because worker branches are typically not yet merged to main
+        git_run("worktree", "remove", "--force", wt_path)
+        log(f"Removed worktree at {wt_path}")
+    except Exception as e:
+        log(f"Failed to remove worktree {wt_path}: {e}", "WARN")
+
+
+# ---------------------------------------------------------------------------
 # Phase implementations
 # ---------------------------------------------------------------------------
 
@@ -664,7 +735,7 @@ def phase_orchestrate(dry_run=False):
 
 
 def phase_work(dry_run=False):
-    """Work phase: Claude implements on a feature branch, commits, pushes, creates PR.
+    """Work phase: Claude implements in an isolated worktree, commits, pushes, creates PR.
     ralph.py detects the PR by checking gh after Claude exits."""
     log_phase("work", "Starting work phase")
     update_status(phase="work")
@@ -698,19 +769,26 @@ def phase_work(dry_run=False):
     log_phase("work", f"Working on #{issue_number} [{product}]: {issue_title}")
     log_phase("work", f"Branch: {branch}")
 
-    create_branch(branch)
+    # Create isolated worktree instead of branching in main tree
+    wt_path = create_worktree(branch, issue_number)
+    if not wt_path:
+        log_phase("work", f"Failed to create worktree for #{issue_number}")
+        increment_phase_metric("work")
+        update_status(last_phase_completed="work")
+        return False
 
     prompt = build_work_prompt(issue_number, issue_title, branch, product)
 
     if dry_run:
         log_phase("work", f"[DRY RUN] Would implement #{issue_number}")
-        ensure_main()
+        remove_worktree(issue_number)
         return True
 
     success, _ = run_claude(
         prompt,
         max_turns=CLAUDE_MAX_TURNS,
         timeout=900,
+        cwd=wt_path,
     )
 
     # Detect PR from git state (Claude creates it, we find it)
@@ -736,7 +814,9 @@ def phase_work(dry_run=False):
     else:
         log_phase("work", "Work phase failed")
 
-    ensure_main()
+    # Clean up worktree (only if no uncommitted changes)
+    remove_worktree(issue_number)
+
     increment_phase_metric("work")
     update_status(last_phase_completed="work")
     return success or pr_number is not None
@@ -1068,8 +1148,8 @@ def select_issues(num_workers, dry_run=False):
 
 
 def spawn_worker(issue, dry_run=False):
-    """Spawn a single implementation worker as a subprocess.
-    Returns the subprocess.Popen object."""
+    """Spawn a single implementation worker in an isolated git worktree.
+    Returns the subprocess.Popen object (or None on failure/dry-run)."""
     issue_number = issue["number"]
     issue_title = issue.get("title", "unknown")
     product = issue.get("product", "unknown")
@@ -1085,10 +1165,24 @@ def spawn_worker(issue, dry_run=False):
         "status": "running",
         "started_at": now_iso(),
         "pid": None,
+        "worktree": None,
     })
 
     if dry_run:
         log_phase("work", f"[DRY RUN] Would spawn worker for #{issue_number} [{product}]")
+        return None
+
+    # Create isolated worktree for this worker
+    wt_path = create_worktree(branch, issue_number)
+    if not wt_path:
+        log_phase("work", f"Failed to create worktree for #{issue_number}, skipping")
+        write_json(worker_file, {
+            "issue_number": issue_number,
+            "product": product,
+            "status": "failed",
+            "error": "worktree creation failed",
+            "completed_at": now_iso(),
+        })
         return None
 
     prompt = build_work_prompt(issue_number, issue_title, branch, product)
@@ -1099,16 +1193,16 @@ def spawn_worker(issue, dry_run=False):
     cmd.extend(["--dangerously-skip-permissions"])
     cmd.extend(["--max-turns", str(CLAUDE_MAX_TURNS)])
 
-    log_phase("work", f"Spawning worker for #{issue_number} [{product}] on {branch}")
+    log_phase("work", f"Spawning worker for #{issue_number} [{product}] on {branch} in {wt_path}")
 
     proc = subprocess.Popen(
         cmd,
-        cwd=PROJECT_DIR,
+        cwd=wt_path,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
     )
 
-    # Update worker state with PID
+    # Update worker state with PID and worktree path
     write_json(worker_file, {
         "issue_number": issue_number,
         "issue_title": issue_title,
@@ -1117,6 +1211,7 @@ def spawn_worker(issue, dry_run=False):
         "status": "running",
         "started_at": now_iso(),
         "pid": proc.pid,
+        "worktree": wt_path,
     })
 
     return proc
@@ -1152,6 +1247,9 @@ def wait_for_workers_with_merger(workers, dry_run=False):
                     "exit_code": retcode,
                     "completed_at": now_iso(),
                 })
+
+                # Clean up worktree (only if no uncommitted changes)
+                remove_worktree(issue_num)
 
                 if retcode == 0:
                     log_phase("work", f"Worker #{issue_num} [{product}] completed")
