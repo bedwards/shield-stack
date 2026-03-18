@@ -588,7 +588,8 @@ def remove_worktree(issue_number):
         pass
 
     try:
-        git_run("worktree", "remove", wt_path)
+        # Use --force because worker branches are typically not yet merged to main
+        git_run("worktree", "remove", "--force", wt_path)
         log(f"Removed worktree at {wt_path}")
     except Exception as e:
         log(f"Failed to remove worktree {wt_path}: {e}", "WARN")
@@ -1148,7 +1149,7 @@ def select_issues(num_workers, dry_run=False):
 
 def spawn_worker(issue, dry_run=False):
     """Spawn a single implementation worker in an isolated git worktree.
-    Returns a (subprocess.Popen, worktree_path) tuple."""
+    Returns the subprocess.Popen object (or None on failure/dry-run)."""
     issue_number = issue["number"]
     issue_title = issue.get("title", "unknown")
     product = issue.get("product", "unknown")
