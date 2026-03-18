@@ -16,8 +16,8 @@
     309
   ],
   "prs_blocked": [],
-  "halted": false,
-  "halt_reason": null,
+  "halted": true,
+  "halt_reason": "Manual halt — interactive TUI orchestrator taking over for branch/PR workflow",
   "selected_issues": [
     {
       "number": 284,
