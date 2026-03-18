@@ -44,8 +44,9 @@ export async function POST(request: Request) {
     );
   }
 
-  // Optional fields
-  const planId = typeof data["plan_id"] === "string" && data["plan_id"] ? data["plan_id"] : null;
+  // Optional fields — plan_id must be a valid UUID (not a local- prefixed session ID)
+  const rawPlanId = typeof data["plan_id"] === "string" && data["plan_id"] ? data["plan_id"] : null;
+  const planId = rawPlanId && !rawPlanId.startsWith("local-") ? rawPlanId : null;
   const recoveryPath = typeof data["recovery_path"] === "string" && data["recovery_path"] ? data["recovery_path"] : null;
 
   // Require Supabase for persistence
