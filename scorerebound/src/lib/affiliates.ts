@@ -98,6 +98,61 @@ export const AFFILIATE_PRODUCTS: Record<string, AffiliateProduct> = {
     whyRecommended:
       "Once your score recovers, refinancing can save thousands in interest.",
   },
+  moneylion: {
+    slug: "moneylion",
+    name: "MoneyLion Credit Builder Plus",
+    category: "credit_builder",
+    description:
+      "0% APR credit-builder loan with credit monitoring included.",
+    ctaText: "Start Building Credit",
+    baseUrl: "https://www.moneylion.com/",
+    whyRecommended:
+      "Combines credit building and monitoring in a single product.",
+  },
+  chime: {
+    slug: "chime",
+    name: "Chime Credit Builder Card",
+    category: "secured_card",
+    description:
+      "Secured card with no annual fee, no interest, no credit check.",
+    ctaText: "Get Started",
+    baseUrl: "https://www.chime.com/credit-builder/",
+    whyRecommended:
+      "Build credit with everyday purchases — no risk of interest charges.",
+  },
+  capital_one_creditwise: {
+    slug: "capital_one_creditwise",
+    name: "Capital One CreditWise",
+    category: "credit_monitoring",
+    description:
+      "Free TransUnion score and credit simulator. No Capital One account needed.",
+    ctaText: "Check Your Score Free",
+    baseUrl: "https://www.capitalone.com/creditwise/",
+    whyRecommended:
+      "Free credit monitoring and score simulator to track recovery progress.",
+  },
+  earnest: {
+    slug: "earnest",
+    name: "Earnest Student Loan Refinancing",
+    category: "refinancing",
+    description:
+      "Customize your monthly payment. Skip a payment once a year. Rates from 4.49% APR.",
+    ctaText: "Check Your Rate",
+    baseUrl: "https://www.earnest.com/student-loan-refinancing/",
+    whyRecommended:
+      "Flexible repayment options let you customize your monthly payment amount.",
+  },
+  splash: {
+    slug: "splash",
+    name: "Splash Financial",
+    category: "refinancing",
+    description:
+      "Compare rates from multiple lenders in one application. Quick prequalification.",
+    ctaText: "Compare Rates",
+    baseUrl: "https://www.splashfinancial.com/",
+    whyRecommended:
+      "One application lets you compare offers from multiple lenders.",
+  },
 };
 
 // ============================================================================
