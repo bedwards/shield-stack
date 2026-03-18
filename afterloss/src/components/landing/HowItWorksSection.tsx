@@ -24,7 +24,7 @@ const steps = [
 
 export default function HowItWorksSection() {
   return (
-    <section data-testid="how-it-works-section" className="py-20">
+    <section id="how-it-works-section" data-testid="how-it-works-section" className="py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <h2
           data-testid="how-it-works-heading"

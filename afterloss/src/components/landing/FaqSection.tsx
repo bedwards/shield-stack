@@ -33,7 +33,7 @@ const faqs = [
 
 export default function FaqSection() {
   return (
-    <section data-testid="faq-section" className="py-20">
+    <section id="faq-section" data-testid="faq-section" className="py-20">
       <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
         <h2
           data-testid="faq-heading"
