@@ -45,6 +45,8 @@ interface OnboardingData {
 interface EstateStoreState {
   currentCase: LocalEstateCase | null;
   setOnboardingData: (data: OnboardingData) => void;
+  toggleItem: (itemId: string) => void;
+  skipItem: (itemId: string) => void;
   resetCase: () => void;
   getCase: () => LocalEstateCase | null;
 }
@@ -68,6 +70,51 @@ export const useEstateStore = create<EstateStoreState>()(
           deadlines: [],
         };
         set({ currentCase: newCase });
+      },
+
+      toggleItem: (itemId: string) => {
+        const currentCase = get().currentCase;
+        if (!currentCase) return;
+
+        const progress = { ...currentCase.checklistProgress };
+        const current = progress[itemId];
+
+        if (current?.status === "completed") {
+          // Toggle back to pending
+          delete progress[itemId];
+        } else {
+          // Mark completed
+          progress[itemId] = {
+            status: "completed",
+            completedAt: new Date().toISOString(),
+          };
+        }
+
+        set({
+          currentCase: { ...currentCase, checklistProgress: progress },
+        });
+      },
+
+      skipItem: (itemId: string) => {
+        const currentCase = get().currentCase;
+        if (!currentCase) return;
+
+        const progress = { ...currentCase.checklistProgress };
+        const current = progress[itemId];
+
+        if (current?.status === "skipped") {
+          // Un-skip
+          delete progress[itemId];
+        } else {
+          // Mark skipped
+          progress[itemId] = {
+            status: "skipped",
+          };
+        }
+
+        set({
+          currentCase: { ...currentCase, checklistProgress: progress },
+        });
       },
 
       resetCase: () => {
