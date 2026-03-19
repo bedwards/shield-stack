@@ -1,8 +1,5 @@
 import Link from "next/link";
 
-const BASE_URL =
-  process.env.NEXT_PUBLIC_APP_URL || "https://afterloss.pages.dev";
-
 export function GuideHero() {
   return (
     <header data-testid="guide-hero" className="mb-12">
