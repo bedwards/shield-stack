@@ -69,6 +69,13 @@ export default function RootLayout({
                   How It Works
                 </Link>
                 <Link
+                  href="/scripts"
+                  data-testid="nav-scripts"
+                  className="text-sm text-muted hover:text-foreground transition-colors hidden sm:inline"
+                >
+                  Phone Scripts
+                </Link>
+                <Link
                   href="/states"
                   data-testid="nav-states"
                   className="text-sm text-muted hover:text-foreground transition-colors hidden sm:inline"
