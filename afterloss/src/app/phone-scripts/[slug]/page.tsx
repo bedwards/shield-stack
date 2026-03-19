@@ -49,8 +49,6 @@ export async function generateMetadata({
       canonical: `${BASE_URL}/phone-scripts/${slug}`,
     },
     openGraph: {
-      title: script.seoTitle,
-      description: script.description,
       type: "article",
       url: `${BASE_URL}/phone-scripts/${slug}`,
       siteName: "AfterLoss",

@@ -40,3 +40,35 @@ body {
   color: var(--foreground);
   background: var(--background);
 }
+
+@media print {
+  body {
+    background: white;
+    color: black;
+  }
+
+  nav,
+  footer,
+  .print\:hidden {
+    display: none !important;
+  }
+
+  a {
+    color: black;
+    text-decoration: underline;
+  }
+
+  a[href^="tel:"]::after {
+    content: " (" attr(href) ")";
+  }
+
+  h1,
+  h2,
+  h3 {
+    page-break-after: avoid;
+  }
+
+  section {
+    page-break-inside: avoid;
+  }
+}
