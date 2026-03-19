@@ -7,10 +7,11 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import PlanViewer from "@/components/PlanViewer";
 import type { GeneratedPlan } from "@/lib/plan-generator";
+import type { ScoreRange } from "@/lib/database.types";
 
 type LoadState =
   | { status: "loading" }
-  | { status: "loaded"; plan: GeneratedPlan }
+  | { status: "loaded"; plan: GeneratedPlan; scoreRange?: ScoreRange }
   | { status: "error"; message: string };
 
 export default function PlanPage() {
@@ -29,8 +30,11 @@ export default function PlanPage() {
       const stored = sessionStorage.getItem(`plan-${id}`);
       if (stored) {
         try {
-          const plan = JSON.parse(stored) as GeneratedPlan;
-          setState({ status: "loaded", plan });
+          const parsed = JSON.parse(stored);
+          // Support new format { plan, scoreRange } and legacy format (just the plan object)
+          const plan: GeneratedPlan = parsed.plan ?? parsed;
+          const scoreRange: ScoreRange | undefined = parsed.scoreRange ?? undefined;
+          setState({ status: "loaded", plan, scoreRange });
         } catch {
           setState({ status: "error", message: "Failed to load plan from session" });
         }
@@ -61,7 +65,12 @@ export default function PlanPage() {
             action_url: s.action_url,
           })),
         };
-        setState({ status: "loaded", plan });
+        // Extract scoreRange from quiz response or sessionStorage for affiliate matching
+        const scoreRange: ScoreRange | undefined =
+          data.quiz_response?.current_score_range ??
+          (sessionStorage.getItem(`score-${id}`) as ScoreRange | null) ??
+          undefined;
+        setState({ status: "loaded", plan, scoreRange });
       })
       .catch((err) => {
         setState({
@@ -112,7 +121,7 @@ export default function PlanPage() {
 
   return (
     <div className="py-12 px-4 sm:px-6 lg:px-8">
-      <PlanViewer plan={state.plan} planId={params.id} />
+      <PlanViewer plan={state.plan} planId={params.id} scoreRange={state.scoreRange} />
     </div>
   );
 }
