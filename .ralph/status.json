@@ -1,39 +1,41 @@
 {
   "phase": "orchestrate",
-  "loop_count": 6,
-  "last_phase_completed": "orchestrate",
+  "loop_count": 1,
+  "last_phase_completed": "plan",
   "last_error": null,
-  "started_at": "2026-03-19T03:17:44.625262+00:00",
-  "updated_at": "2026-03-19T08:10:00.000000+00:00",
-  "current_product": "afterloss",
+  "started_at": "2026-03-19T04:21:00.266162+00:00",
+  "updated_at": "2026-03-19T10:30:00.000000+00:00",
+  "current_product": "scorerebound",
   "current_issue": {
-    "number": 254,
-    "title": "[afterloss] Build interactive checklist engine with localStorage-first persistence",
-    "product": "afterloss"
+    "number": 349,
+    "title": "[scorerebound] Embed affiliate product recommendations in recovery plan results",
+    "product": "scorerebound"
   },
-  "current_branch": "afterloss/issue-254-checklist-engine",
+  "current_branch": "scorerebound/issue-349-affiliate-recommendations",
   "current_pr": null,
-  "merger_notes": "PR #339 (billwatch SEO guide) — merger fixed HIGH blocker (state name links) and MEDIUM (openGraph duplication), pushed fix, CI passed, merged. Zero open PRs remain.",
-  "merger_completed_at": "2026-03-19T08:45:00.000000+00:00",
-  "prs_merged": [
-    325,
-    326,
-    328,
-    338,
-    339
-  ],
-  "prs_blocked": [],
+  "merger_notes": "PR #353 (scorerebound affiliate recommendations) merged after merger fixed browser-state.spec.ts E2E test. PR #343 (afterloss checklist engine) BLOCKED: Zustand persist hydration mismatch — needs mounted guard. PR #352 (billwatch DB schema) BLOCKED: seed data commented out + materialized view missing GRANT.",
+  "merger_completed_at": "2026-03-19T11:00:00.000000+00:00",
+  "prs_merged": [325, 326, 328, 338, 339, 341, 342, 353],
+  "prs_blocked": [343, 352],
   "halted": false,
   "halt_reason": null,
-  "review_notes": "PR #339 merged. All open PRs processed. Zero PRs remain.",
+  "review_notes": "1 draft PR open: #343 (afterloss checklist engine, partial work for #254). All other PRs merged. Clean slate for new workers.",
   "selected_issues": [
+    {
+      "number": 349,
+      "title": "[scorerebound] Embed affiliate product recommendations in recovery plan results",
+      "product": "scorerebound",
+      "branch": "scorerebound/issue-349-affiliate-recommendations",
+      "draft_pr": null,
+      "reason": "P0 — FASTEST PATH TO FIRST DOLLAR ACROSS ALL PRODUCTS. ScoreRebound is deployed and healthy (14 PRs merged). Affiliate click tracking endpoint (/api/affiliate/click) already exists from PR #321. Quiz funnel and recovery plan generation are working. This issue ONLY needs: (1) affiliate product catalog, (2) AffiliateCard UI component, (3) embed cards in recovery plan results page. Zero infrastructure dependencies. Revenue chain: user completes quiz → views recovery plan → sees contextual affiliate cards → clicks → commission ($5-300/conversion depending on product). NEW ISSUE — zero prior failures, well-scoped, high success probability."
+    },
     {
       "number": 254,
       "title": "[afterloss] Build interactive checklist engine with localStorage-first persistence",
       "product": "afterloss",
-      "branch": "afterloss/issue-254-checklist-engine",
-      "draft_pr": null,
-      "reason": "HIGHEST PRIORITY — THE shortest path to FIRST DOLLAR. Revenue chain: #254 (checklist) → #302 (affiliate links: BetterHelp $10-$150/referral, Trust & Will 20%/sale). localStorage-first persistence — NO DB dependency, can ship immediately. AfterLoss has 21 PRs of infrastructure investment — this converts all of that into revenue. SELECTED 4th CONSECUTIVE CYCLE — zero worker output for 3 cycles. If worker fails again, systemic dispatch issue must be escalated."
+      "branch": "afterloss/issue-254-afterloss-build-interactive-checklist-engine",
+      "draft_pr": 343,
+      "reason": "P0 — HAS DRAFT PR #343 (PARTIAL WORK). 7th consecutive selection but this time the worker has partial work to build on from PR #343, dramatically increasing success probability. The checklist engine is AfterLoss's CORE product — everything downstream depends on it. Revenue chain: #254 (checklist) → #302 (affiliate links: BetterHelp $10-$150/referral, Trust & Will 20%/sale). localStorage-first = NO DB dependency, ships immediately. Worker MUST check out the existing branch and continue from the draft PR, not start from scratch."
     },
     {
       "number": 274,
@@ -41,25 +43,16 @@
       "product": "billwatch",
       "branch": "billwatch/issue-274-database-schema",
       "draft_pr": null,
-      "reason": "CRITICAL UNBLOCK — BillWatch deployed (#338 merged, #329 closed). Schema is THE gate for ALL revenue features: #332 (affiliate click tracking), #334 (provider DB with deregulated market data in 18+ states). BillWatch has only 2 PRs merged — needs heavy investment. Independent of all other selections. SELECTED 4th CONSECUTIVE CYCLE — zero worker output for 3 cycles."
-    },
-    {
-      "number": 287,
-      "title": "[scorerebound] Email capture and drip campaign — recover revenue from users who don't convert immediately",
-      "product": "scorerebound",
-      "branch": "scorerebound/issue-287-email-capture-drip",
-      "draft_pr": null,
-      "reason": "PORTFOLIO DIVERSITY — 3rd product (afterloss + billwatch + scorerebound = 3 products). ScoreRebound has 13 PRs merged with deployed features but has received ZERO new work assignments in recent cycles. Email capture adds revenue recovery — users who visit but don't convert immediately get a drip sequence that brings them back. Replaces #330 which now has active PR #339 in review. No dependencies, no blockers."
+      "reason": "P0 — GATES ALL BILLWATCH REVENUE. Deploy fix #340 merged (PR #341), billwatch deploys are fully restored. This DB schema unblocks: #332 (affiliate tracking), #334 (provider DB with energy switching CTA), #331 (EIA API). BillWatch has 6 PRs and zero revenue features — this schema is the foundation everything else builds on. Portfolio diversity: 3rd product (billwatch), ensuring 3 different products progress simultaneously."
     }
   ],
   "housekeeping": {
-    "issues_to_close": [
-      265,
-      289
-    ],
-    "reason": "#265: PR #326 merged but issue not auto-closed — code is live. #289: research deliverables exist (afterloss/docs/revenue-model.md), child issues #302-#304 created — research complete. FLAGGED FOR 4TH CYCLE — needs immediate human action to close.",
-    "pr_339_note": "PR #339 (issue #330) MERGED. Merger fixed state links and metadata duplication directly on the branch.",
-    "issue_111_note": "#111 still OPEN — PR #325 merged partial schema work. Unblocks #253, #304, #256. TOP PRIORITY for next cycle after #254 ships.",
-    "stale_warning": "Issues #254 and #274 selected for 4th consecutive cycle with zero worker output. If workers fail again this cycle, ESCALATE TO HUMAN — systemic worker dispatch failure."
+    "issues_to_close": [],
+    "reason": "#265 and #289 confirmed CLOSED (no longer in open issues list). Previous housekeeping resolved.",
+    "resolved_this_cycle": "#265 CLOSED. #289 CLOSED. All prior housekeeping items resolved.",
+    "stale_escalation": "#254 now selected 7th consecutive cycle BUT has draft PR #343 — partial work exists. This changes the calculus: worker should continue from draft, not start fresh. If worker fails again despite draft PR, root cause is likely issue scope (too large) and issue should be split.",
+    "scorerebound_note": "3 NEW scorerebound issues created by planner: #349 (P0 affiliate recommendations — SELECTED), #350 (P1 servicer guides), #351 (P1 credit-builder comparison). ScoreRebound is back in active development.",
+    "cellscore_note": "5 NEW cellscore issues created: #344-#348. CellScore has scaffold_complete status but 0 PRs merged in metrics. Not selected this cycle — scorerebound/afterloss/billwatch are closer to revenue.",
+    "draft_pr_note": "Draft PR #343 exists for #254 — worker MUST use existing branch and build on partial work."
   }
 }

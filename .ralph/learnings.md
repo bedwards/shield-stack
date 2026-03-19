@@ -246,3 +246,11 @@ Use this variable for both `use.baseURL` and `webServer.url`.
 ## 2026-03-19 | billwatch | SEO guide state tables must link to state guide pages (PR #339)
 **What happened:** Issue #330 explicitly required "[MUST] Include state-specific average bill table... with links to /guides/[state] pages." Worker rendered state names as plain text. Gemini 3.1 Pro caught this as HIGH. Merger fixed it directly: wrapped state names in `<Link>` with `data-testid={state-link-${abbr}}`, added E2E and unit test assertions for the links.
 **Rule:** When issue requirements say "with links to X pages," the table/list cells must render as `<Link>` components, not plain text. Add `data-testid` attributes to links for E2E verification. Merger should fix mechanical issues directly rather than posting yet another blocking review (per learning from 2026-03-18).
+
+## 2026-03-19 | scorerebound | When changing sessionStorage data format, update ALL E2E tests that parse it (PR #353)
+**What happened:** `QuizFunnel.tsx` changed sessionStorage from storing bare `GeneratedPlan` to `{ plan: GeneratedPlan, scoreRange: string }`. The new `affiliate-recommendations.spec.ts` tests worked fine, but the existing `browser-state.spec.ts` test still parsed the old format (`plan.recovery_path` → undefined). CI E2E failed. Merger fixed it directly.
+**Rule:** When modifying the shape of data stored in sessionStorage/localStorage, grep ALL E2E test files (`e2e/**/*.spec.ts`) for the sessionStorage key name (e.g., `plan-`) and update every test that parses it. Use the same backward-compatible extraction pattern as application code: `const plan = parsed.plan ?? parsed;`
+
+## 2026-03-19 | afterloss | Zustand persist stores cause hydration mismatch in Next.js App Router (PR #343)
+**What happened:** `useEstateStore` with Zustand persist returns `null` on server but persisted value on client, causing React hydration error. Gemini 3.1 Pro caught this as HIGH.
+**Rule:** When using Zustand `persist` middleware in Next.js App Router, always add a `mounted` guard to components that read from the store: `const [mounted, setMounted] = useState(false); useEffect(() => setMounted(true), []); if (!mounted) return <Skeleton />;`. This ensures server and client render the same initial content.
