@@ -13,10 +13,10 @@
   },
   "current_branch": "billwatch/issue-333-50-state-seo",
   "current_pr": null,
-  "merger_notes": "PR #369 (afterloss county-level programmatic SEO WIP for #266) merged. Phase 1: 200 counties with probate court data, slug utilities, comprehensive tests, structured data, sitemap integration. Gemini 3.1 Pro APPROVE with 2 LOW findings (unused imports). Zero open PRs remain.",
-  "merger_completed_at": "2026-03-19T11:45:00.000000+00:00",
+  "merger_notes": "PR #370 (afterloss phone script print CSS, closes #292) merged clean — 2 MEDIUM Gemini findings (non-blocking). PR #371 (billwatch electric bill doubled crisis SEO, closes #336) merged after fixing 2 HIGH Gemini findings (breadcrumb JSON-LD URL mismatch, H1/title inconsistency). Both fixes pushed and re-reviewed before merge. Claude passed clean on all runs. Zero open PRs remain.",
+  "merger_completed_at": "2026-03-19T12:30:00.000000+00:00",
   "prs_merged": [
-    325, 326, 328, 338, 339, 341, 342, 343, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369
+    325, 326, 328, 338, 339, 341, 342, 343, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371
   ],
   "prs_blocked": [],
   "halted": false,
