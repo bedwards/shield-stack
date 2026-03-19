@@ -227,6 +227,22 @@ Use this variable for both `use.baseURL` and `webServer.url`.
 **What happened:** PR #301 had a real contamination (commit `843b993` for #290 on a branch with merge base before #290). After 6 blocking reviews, no one fixed it. The merger created a clean branch from `origin/main`, cherry-picked only the relevant commit (`478d2bd`), and opened PR #309 which merged cleanly.
 **Rule:** When a PR has been blocked for contamination through multiple review cycles and the fix is mechanical (cherry-pick relevant commits onto clean branch), the merger should fix it rather than posting yet another blocking review. Command: `git checkout -b {clean-branch} origin/main && git cherry-pick {good-commit} && git push -u origin {clean-branch}`. Close the old PR, open a new one.
 
+## 2026-03-18 | afterloss | Next.js metadata: don't duplicate title/description in openGraph/twitter objects (PR #323)
+**What happened:** `layout.tsx` manually set `title` and `description` in both `openGraph` and `twitter` objects, duplicating the top-level metadata fields. Next.js App Router auto-populates `openGraph.title`, `openGraph.description`, `twitter.title`, and `twitter.description` from the top-level `title` and `description` metadata fields.
+**Rule:** Do NOT duplicate `title`/`description` in `openGraph`/`twitter` objects in metadata exports. Only set these if they differ from the top-level values. Reduces boilerplate and prevents drift.
+
+## 2026-03-18 | afterloss | Gemini Code Assist has stale knowledge cutoff — flags 2026 dates as "future" (PR #322)
+**What happened:** Gemini Code Assist flagged "Last verified: March 2026" as a "future date" and year in URL slug `/guides/protect-identity-after-death-2026` as problematic. Both flags are FALSE POSITIVES — today is March 18, 2026. The Gemini model has a knowledge cutoff before 2026.
+**Rule:** When reviewing Gemini Code Assist bot findings, verify date-related flags manually. The bot may flag current-year dates as "future" due to its training data cutoff. Treat date-related Gemini findings as MEDIUM confidence and verify before blocking.
+
+## 2026-03-18 | scorerebound | Route affiliate links through tracking endpoint, not hardcoded URLs (PR #321)
+**What happened:** ScoreRebound built `/api/affiliate/click?slug=...&referrer=...` to route all affiliate links through a tracking endpoint. This enables: click counting, revenue attribution by page/feature, A/B testing affiliate placements, and future fraud detection. Tests verify no hardcoded affiliate URLs exist in email templates.
+**Rule:** ALL affiliate links across ALL products must go through a tracking endpoint (`/api/affiliate/click`). Never embed raw affiliate URLs directly in components or templates. The tracking endpoint handles redirect, logging, and attribution. Tests should grep for hardcoded affiliate URLs and fail if found.
+
 ## 2026-03-19 | billwatch | Vercel ignoreCommand pathspec must use `.` not product directory name (PR #338)
 **What happened:** `vercel.json` had `"ignoreCommand": "git diff HEAD^ HEAD --quiet -- billwatch/"`. Vercel executes the ignoreCommand from the configured Root Directory (`billwatch/`), so git resolves the pathspec as `billwatch/billwatch/` — which never has changes. Every build would be canceled.
 **Rule:** In `vercel.json` for mono repo products with Root Directory set, always use `-- .` (current directory) in the `ignoreCommand`, not the product directory name. The command already runs from within the product directory.
+
+## 2026-03-19 | billwatch | SEO guide state tables must link to state guide pages (PR #339)
+**What happened:** Issue #330 explicitly required "[MUST] Include state-specific average bill table... with links to /guides/[state] pages." Worker rendered state names as plain text. Gemini 3.1 Pro caught this as HIGH. Merger fixed it directly: wrapped state names in `<Link>` with `data-testid={state-link-${abbr}}`, added E2E and unit test assertions for the links.
+**Rule:** When issue requirements say "with links to X pages," the table/list cells must render as `<Link>` components, not plain text. Add `data-testid` attributes to links for E2E verification. Merger should fix mechanical issues directly rather than posting yet another blocking review (per learning from 2026-03-18).
