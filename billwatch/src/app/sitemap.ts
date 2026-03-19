@@ -27,6 +27,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.95,
     },
+    {
+      url: `${BASE_URL}/guides/bill-doubled`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.9,
+    },
     ...stateGuideEntries,
     {
       url: `${BASE_URL}/dashboard`,
