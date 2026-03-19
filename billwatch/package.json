@@ -20,6 +20,8 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "recharts": "^2.15.3",
+    "server-only": "^0.0.1",
+    "stripe": "^20.4.1",
     "tesseract.js": "^6.0.1"
   },
   "devDependencies": {

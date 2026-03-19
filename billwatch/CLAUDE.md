@@ -217,5 +217,33 @@ Security headers are configured in `next.config.ts`:
 - Vercel Speed Insights — Core Web Vitals monitoring (integrated via `@vercel/speed-insights`)
 - Health check: `GET /api/health` returns `{ "status": "ok" }`
 
+## Stripe Payments Integration
+
+### API Routes
+- `POST /api/stripe/checkout` — Creates a Stripe Checkout Session for premium ($3.99/mo). Requires Bearer auth token.
+- `POST /api/stripe/webhook` — Handles Stripe webhook events (checkout completed, subscription updated/deleted). No auth — uses Stripe signature verification.
+- `POST /api/stripe/portal` — Creates a Stripe Customer Portal session for managing subscriptions. Requires Bearer auth token.
+
+### Feature Gating
+- `src/lib/features.ts` — Defines free vs premium plan limits and feature flags
+- `src/middleware.ts` — Next.js middleware that gates premium routes, redirecting unauthenticated users to `/login` and free-tier users to `/pricing`
+- Premium features: benchmarking, anomaly email alerts, provider comparison, CSV export, rate benchmarking
+- Free features: 1 utility account, 12 months history, basic anomaly detection, bill upload & OCR
+
+### Subscription Flow
+1. User clicks "Start Premium" on `/pricing` → redirected to login
+2. After login, POST to `/api/stripe/checkout` with Bearer token
+3. Redirect to Stripe Checkout hosted page
+4. Stripe webhook fires `checkout.session.completed` → subscription created in DB
+5. `customer.subscription.updated` / `deleted` events keep DB in sync
+6. Middleware checks `subscriptions` table on premium route access
+
+### Environment Variables (Payments)
+- `STRIPE_SECRET_KEY` — Stripe secret API key (server-only)
+- `STRIPE_WEBHOOK_SECRET` — Stripe webhook signing secret (server-only)
+- `STRIPE_PRICE_ID` — Stripe Price ID for the premium plan (server-only)
+- `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` — Stripe publishable key (client-side)
+- `SUPABASE_SERVICE_ROLE_KEY` — Supabase service role key (server-only, bypasses RLS)
+
 ## Version
-0.6.0
+0.7.0
