@@ -151,11 +151,17 @@ export interface Database {
             | "financial"
             | "social_media"
             | "email"
-            | "cloud_storage";
+            | "cloud_storage"
+            | "government";
           cancellation_method: "online" | "phone" | "mail" | "email";
           cancellation_contact: string | null;
           template_text: string | null;
           required_documents: string[];
+          estimated_processing_time: string | null;
+          difficulty_rating: "easy" | "medium" | "hard" | null;
+          /** ISO 8601 date string */
+          last_verified_date: string | null;
+          direct_url: string | null;
         };
         Insert: {
           id?: number;
@@ -168,11 +174,16 @@ export interface Database {
             | "financial"
             | "social_media"
             | "email"
-            | "cloud_storage";
+            | "cloud_storage"
+            | "government";
           cancellation_method: "online" | "phone" | "mail" | "email";
           cancellation_contact?: string | null;
           template_text?: string | null;
           required_documents?: string[];
+          estimated_processing_time?: string | null;
+          difficulty_rating?: "easy" | "medium" | "hard" | null;
+          last_verified_date?: string | null;
+          direct_url?: string | null;
         };
         Update: {
           id?: number;
@@ -185,11 +196,16 @@ export interface Database {
             | "financial"
             | "social_media"
             | "email"
-            | "cloud_storage";
+            | "cloud_storage"
+            | "government";
           cancellation_method?: "online" | "phone" | "mail" | "email";
           cancellation_contact?: string | null;
           template_text?: string | null;
           required_documents?: string[];
+          estimated_processing_time?: string | null;
+          difficulty_rating?: "easy" | "medium" | "hard" | null;
+          last_verified_date?: string | null;
+          direct_url?: string | null;
         };
         Relationships: [];
       };
