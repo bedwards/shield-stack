@@ -1,12 +1,14 @@
 import type { MetadataRoute } from "next";
+import { getAllCompaniesForSitemap } from "@/lib/companies";
+import { getAllBlogSlugs } from "@/lib/blog";
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_APP_URL || "https://ghostboard.pages.dev";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date().toISOString();
 
-  return [
+  const staticPages: MetadataRoute.Sitemap = [
     {
       url: BASE_URL,
       lastModified: now,
@@ -18,6 +20,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: now,
       changeFrequency: "daily",
       priority: 0.9,
+    },
+    {
+      url: `${BASE_URL}/pricing`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
+      url: `${BASE_URL}/blog`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.8,
     },
     {
       url: `${BASE_URL}/report`,
@@ -38,4 +52,24 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.3,
     },
   ];
+
+  // Blog posts
+  const blogSlugs = getAllBlogSlugs();
+  const blogPages: MetadataRoute.Sitemap = blogSlugs.map((slug) => ({
+    url: `${BASE_URL}/blog/${slug}`,
+    lastModified: now,
+    changeFrequency: "monthly" as const,
+    priority: 0.7,
+  }));
+
+  // Company pages from database
+  const companies = await getAllCompaniesForSitemap();
+  const companyPages: MetadataRoute.Sitemap = companies.map((c) => ({
+    url: `${BASE_URL}/company/${c.slug}`,
+    lastModified: c.updated_at,
+    changeFrequency: "weekly" as const,
+    priority: 0.6,
+  }));
+
+  return [...staticPages, ...blogPages, ...companyPages];
 }
