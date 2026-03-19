@@ -5,6 +5,7 @@ import {
   buildEiaUrl,
   clearCache,
   getCacheSize,
+  expireCache,
 } from "./client";
 
 // Mock env module so getEiaApiKey doesn't throw
@@ -136,7 +137,7 @@ describe("getStateRates", () => {
     );
   });
 
-  it("returns stale cache on API error", async () => {
+  it("returns stale cache on API error when cache is expired", async () => {
     // First call succeeds and populates cache
     const mockResponse = makeEiaResponse([
       { period: "2026-01", stateid: "NY", price: 24.3 },
@@ -145,21 +146,20 @@ describe("getStateRates", () => {
       new Response(JSON.stringify(mockResponse), { status: 200 }),
     );
     await getStateRates("NY");
+    expect(getCacheSize()).toBe(1);
 
-    // Expire the cache manually by clearing and re-setting with past expiry
-    // We simulate stale cache by directly manipulating - use the cache module
-    clearCache();
+    // Expire the cache entries so the next call must re-fetch
+    expireCache();
 
-    // Repopulate with expired entry via a fresh fetch, then fail
+    // Second call fails — should fall back to stale cached data
     vi.spyOn(globalThis, "fetch").mockResolvedValueOnce(
-      new Response(JSON.stringify(mockResponse), { status: 200 }),
+      new Response("Service Unavailable", { status: 503, statusText: "Service Unavailable" }),
     );
-    const fresh = await getStateRates("NY");
-    expect(fresh).not.toBeNull();
 
-    // Now the cache is populated and valid — this call should use cache
-    const cached = await getStateRates("NY");
-    expect(cached!.stateCode).toBe("NY");
+    const result = await getStateRates("NY");
+    expect(result).not.toBeNull();
+    expect(result!.stateCode).toBe("NY");
+    expect(result!.currentRate).toBe(24.3);
   });
 
   it("handles unexpected response format", async () => {

@@ -26,6 +26,9 @@ interface CacheEntry<T> {
 /** 24-hour cache TTL in milliseconds — EIA data updates monthly */
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 
+/** Number of rows for all-state bulk fetch: 51 jurisdictions × 12 months */
+const ALL_STATES_ROW_COUNT = 51 * 12;
+
 /** In-memory cache keyed by state code (or "ALL" for all states) */
 const cache = new Map<string, CacheEntry<StateRateData>>();
 
@@ -37,6 +40,13 @@ export function clearCache(): void {
 /** Visible for testing — returns cache size */
 export function getCacheSize(): number {
   return cache.size;
+}
+
+/** Visible for testing — expire all cache entries so the next fetch bypasses cache */
+export function expireCache(): void {
+  for (const [key, entry] of cache) {
+    cache.set(key, { ...entry, expiresAt: 0 });
+  }
 }
 
 /**
@@ -113,12 +123,10 @@ function transformToStateRateData(
 
   const latest = stateRows[0];
 
-  const rateHistory: RateHistoryEntry[] = stateRows
-    .filter((r) => r.price !== null)
-    .map((r) => ({
-      period: r.period,
-      price: r.price as number,
-    }));
+  const rateHistory: RateHistoryEntry[] = stateRows.map((r) => ({
+    period: r.period,
+    price: r.price as number,
+  }));
 
   return {
     stateCode: latest.stateid,
@@ -186,8 +194,7 @@ export async function getStateRates(
  * @throws If the EIA API is unreachable and no cached data exists
  */
 export async function getAllStateRates(): Promise<Map<string, StateRateData>> {
-  // Fetch all states in one call — request enough rows for 51 states × 12 months
-  const url = buildEiaUrl(undefined, 612);
+  const url = buildEiaUrl(undefined, ALL_STATES_ROW_COUNT);
   const rows = await fetchEiaData(url);
 
   // Group rows by state
