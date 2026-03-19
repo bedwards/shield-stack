@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { PHONE_SCRIPTS } from "@/data/phone-scripts";
+import { getAllCompetitorSlugs } from "@/data/competitors";
 import { getAllCountyParams } from "@/lib/county-data/county-slugs";
 
 const BASE_URL =
@@ -117,6 +118,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
     })),
   ];
 
+  const comparisonPages: MetadataRoute.Sitemap = getAllCompetitorSlugs().map(
+    (slug) => ({
+      url: `${BASE_URL}/compare/${slug}`,
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    }),
+  );
+
   const countyPages: MetadataRoute.Sitemap = getAllCountyParams().map(
     ({ state, county }) => ({
       url: `${BASE_URL}/probate/${state}/${county}`,
@@ -126,5 +136,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     }),
   );
 
-  return [...staticPages, ...statePages, ...phoneScriptPages, ...countyPages];
+  return [...staticPages, ...statePages, ...phoneScriptPages, ...comparisonPages, ...countyPages];
 }
