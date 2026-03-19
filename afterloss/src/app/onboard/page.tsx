@@ -336,7 +336,7 @@ export default function OnboardPage() {
         state,
         relationship: relationship as Relationship,
         estateComplexity: complexity as EstateComplexity,
-        dateOfDeath: new Date(dateOfDeath + "T00:00:00").toISOString(),
+        dateOfDeath: dateOfDeath,
         deceasedName: deceasedName.trim() || undefined,
       });
       router.push("/checklist");
