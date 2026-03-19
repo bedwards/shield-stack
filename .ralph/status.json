@@ -1,10 +1,10 @@
 {
   "phase": "orchestrate",
-  "loop_count": 2,
+  "loop_count": 3,
   "last_phase_completed": "monitor",
   "last_error": null,
-  "started_at": "2026-03-19T05:13:20.877244+00:00",
-  "updated_at": "2026-03-19T18:45:00.000000+00:00",
+  "started_at": "2026-03-19T05:30:25.163374+00:00",
+  "updated_at": "2026-03-19T22:30:00.000000+00:00",
   "current_product": "scorerebound",
   "current_issue": {
     "number": 349,
@@ -13,13 +13,13 @@
   },
   "current_branch": "scorerebound/issue-349-affiliate-recommendations",
   "current_pr": null,
-  "merger_notes": "All PRs merged. PR #343 (afterloss checklist engine) and #352 (billwatch DB schema) were previously blocked on false positives — the code already had the fixes. Corrected and merged both. Added learning about verifying actual code before blocking.",
-  "merger_completed_at": "2026-03-19T21:00:00.000000+00:00",
-  "prs_merged": [325, 326, 328, 338, 339, 341, 342, 343, 352, 353],
+  "merger_notes": "Merged 2 PRs: #354 (billwatch DB schema with active seed data and GRANT) and #355 (scorerebound affiliate product recommendations docs + version bump). Both clean — no scope creep, all bot reviews passed. Gemini HIGH on #354 (hardcoded test password in seed.sql) assessed as not blocking — standard Supabase test data pattern. Zero open PRs remain.",
+  "merger_completed_at": "2026-03-19T05:51:00.000000+00:00",
+  "prs_merged": [325, 326, 328, 338, 339, 341, 342, 343, 352, 353, 354, 355],
   "prs_blocked": [],
   "halted": false,
   "halt_reason": null,
-  "review_notes": "2 draft PRs open: #343 (afterloss #254, needs hydration fix) and #352 (billwatch #274, needs seed data + GRANT fix). PR #353 merged partial work for #349.",
+  "review_notes": "No open PRs. All draft PRs (#343, #352, #353) were merged in the last merger cycle. Clean slate for workers.",
   "selected_issues": [
     {
       "number": 349,
@@ -27,32 +27,32 @@
       "product": "scorerebound",
       "branch": "scorerebound/issue-349-affiliate-recommendations",
       "draft_pr": null,
-      "reason": "P0 — FASTEST PATH TO FIRST DOLLAR. PR #353 merged partial work — worker must complete remaining items. ScoreRebound has working quiz funnel, recovery plan generation, and affiliate click tracking endpoint (/api/affiliate/click from PR #321). What remains: finish affiliate product catalog in src/data/affiliate-products.ts, complete AffiliateCard UI component, embed cards in recovery plan results page at /plan/[id]. Zero infrastructure deps. Revenue chain: quiz → recovery plan → contextual affiliate cards → click → commission ($5-300/conversion). Partial work already merged = highest success probability."
+      "reason": "P0 — FASTEST PATH TO FIRST DOLLAR. PR #353 merged partial work to main — worker builds on existing code in main branch. ScoreRebound has working quiz funnel, recovery plan generation, and affiliate click tracking endpoint (/api/affiliate/click from PR #321). What remains: finish affiliate product catalog in src/data/affiliate-products.ts, complete AffiliateCard UI component, embed cards in recovery plan results page at /plan/[id]. Zero infrastructure deps. Revenue chain: quiz → recovery plan → contextual affiliate cards → click → commission ($5-300/conversion). Partial work in main = strongest foundation."
     },
     {
       "number": 254,
       "title": "[afterloss] Build interactive checklist engine with localStorage-first persistence",
       "product": "afterloss",
-      "branch": "afterloss/issue-254-afterloss-build-interactive-checklist-engine",
-      "draft_pr": 343,
-      "reason": "P0 — DRAFT PR #343 EXISTS WITH SPECIFIC FIX NEEDED. 8th consecutive selection. PR #343 has partial work with ALL CI checks passing (Claude review ✅, Gemini review ✅, check-author ✅). SPECIFIC BLOCKER: Zustand persist hydration mismatch — needs a mounted guard (useEffect isMounted pattern to defer hydration of persisted state). Worker MUST: (1) check out existing branch afterloss/issue-254-afterloss-build-interactive-checklist-engine, (2) fix the Zustand hydration issue by wrapping persisted store access in a mounted check, (3) complete any remaining checklist engine work, (4) mark PR as ready for review. DO NOT start from scratch. AfterLoss core product — gates #302 (Phase 1 affiliate links: BetterHelp $10-$150/referral, Trust & Will 20%/sale)."
+      "branch": "afterloss/issue-254-checklist-engine",
+      "draft_pr": null,
+      "reason": "P0 — 9th consecutive selection. FINAL ATTEMPT before splitting. PR #343 merged partial checklist engine work to main — worker builds on existing code, NOT from scratch. Previous blocker was Zustand persist hydration mismatch — may already be fixed in merged code, worker must verify. Worker MUST: (1) read merged checklist code in main, (2) verify/fix Zustand hydration (useEffect isMounted pattern), (3) complete any remaining checklist engine features, (4) push and create PR. ESCALATION: If this worker fails to produce a PR, issue #254 MUST be split into sub-issues in the next orchestration cycle. AfterLoss core product — gates #302 (Phase 1 affiliate links: BetterHelp $10-$150/referral, Trust & Will 20%/sale)."
     },
     {
       "number": 274,
       "title": "[billwatch] Database schema — bills, utility accounts, households, anomalies, benchmarks",
       "product": "billwatch",
-      "branch": "billwatch/issue-274-billwatch-database-schema-bills-utility",
-      "draft_pr": 352,
-      "reason": "P0 — DRAFT PR #352 EXISTS WITH SPECIFIC FIXES NEEDED. PR #352 has partial work with ALL CI checks passing (Claude review ✅, Gemini review ✅, check-author ✅). SPECIFIC BLOCKERS: (1) seed data is commented out — uncomment and verify it runs, (2) materialized view missing GRANT — add appropriate GRANT statements for the anon/authenticated roles. Worker MUST: (1) check out existing branch billwatch/issue-274-billwatch-database-schema-bills-utility, (2) fix the two specific issues, (3) verify migrations apply cleanly, (4) mark PR as ready for review. DO NOT start from scratch. Gates ALL billwatch revenue: #332 (affiliate tracking), #334 (provider DB with energy switching CTA), #331 (EIA API)."
+      "branch": "billwatch/issue-274-database-schema",
+      "draft_pr": null,
+      "reason": "P0 — PR #352 merged partial DB schema work to main — worker builds on existing migrations and schema. Previous blockers: (1) seed data was commented out, (2) materialized view missing GRANT. These may be fixed in merged code — worker must verify. Worker MUST: (1) read merged schema/migration code in main, (2) verify seed data runs, (3) verify GRANT statements exist for materialized views, (4) complete any remaining schema work per issue spec, (5) push and create PR. Gates ALL billwatch revenue: #332 (affiliate tracking), #334 (provider DB), #331 (EIA API)."
     }
   ],
   "housekeeping": {
     "issues_to_close": [],
     "reason": "No issues to close. All previously identified housekeeping resolved.",
-    "stale_escalation": "#254 now at 8th consecutive selection. Draft PR #343 exists with passing CI — the ONLY blocker is a Zustand hydration mismatch. If this worker fails again, the issue MUST be split into smaller sub-issues. Similarly #274 at 2nd selection with draft PR #352 — clear fix instructions provided.",
-    "draft_pr_strategy": "Both #343 and #352 are draft PRs with ALL CI passing. Workers MUST check out existing branches and fix the specific issues identified in merger_notes. Starting from scratch is PROHIBITED — it wastes the salvaged work.",
-    "portfolio_note": "3 different products selected (scorerebound, afterloss, billwatch) — optimal diversity. All 3 have partial work (PR #353 merged for #349, draft PRs #343 and #352 for #254 and #274), maximizing success probability.",
-    "cellscore_note": "CellScore has 5 open issues (#344-#348) and 0 PRs merged. Not selected this cycle — scorerebound/afterloss/billwatch all have partial work closer to completion. CellScore should be considered for slot 3 in next cycle if billwatch #274 ships.",
-    "metrics_snapshot": "afterloss: 36 PRs, scorerebound: 18 PRs, billwatch: 10 PRs, ghostboard: 2 PRs, cellscore: 0 PRs"
+    "stale_escalation": "#254 now at 9th consecutive selection — FINAL ATTEMPT. If this worker fails, the issue MUST be split into sub-issues (e.g., separate Zustand store setup, checklist data model, checklist UI rendering, localStorage persistence). No more retries on the monolithic issue.",
+    "draft_pr_strategy": "NO DRAFT PRs remain — all were merged. Workers start new feature branches from main, which now contains partial work from PRs #343, #352, #353. Workers must READ the existing code in main before implementing to avoid duplicating merged work.",
+    "portfolio_note": "3 different products selected (scorerebound, afterloss, billwatch) — meets diversity mandate. All 3 have partial work ALREADY IN MAIN from merged PRs, giving workers the strongest foundation yet.",
+    "cellscore_note": "CellScore has 5 open issues (#344-#348) and 0 PRs merged. MUST be considered for a slot in the NEXT cycle. If any of the 3 selected issues ships this cycle, swap its slot for CellScore #346 (plan database seed — well-scoped, creates affiliate URLs, scaffold already complete). #344 is MANUAL (affiliate signup) — not suitable for workers.",
+    "metrics_snapshot": "afterloss: 41 PRs, scorerebound: 20 PRs, billwatch: 13 PRs, ghostboard: 2 PRs, cellscore: 0 PRs"
   }
 }
