@@ -346,30 +346,51 @@ export interface Database {
         Row: {
           id: number;
           partner_name: string;
+          slug: string | null;
           category: string;
           url: string;
+          affiliate_url: string | null;
           description: string | null;
           commission_type: string | null;
+          commission_value: string | null;
+          cookie_days: number | null;
+          network: string | null;
           /** Array of checklist step_ids where this partner is shown */
           display_context: string[];
+          is_active: boolean;
+          created_at: string;
         };
         Insert: {
           id?: number;
           partner_name: string;
+          slug?: string | null;
           category: string;
           url: string;
+          affiliate_url?: string | null;
           description?: string | null;
           commission_type?: string | null;
+          commission_value?: string | null;
+          cookie_days?: number | null;
+          network?: string | null;
           display_context?: string[];
+          is_active?: boolean;
+          created_at?: string;
         };
         Update: {
           id?: number;
           partner_name?: string;
+          slug?: string | null;
           category?: string;
           url?: string;
+          affiliate_url?: string | null;
           description?: string | null;
           commission_type?: string | null;
+          commission_value?: string | null;
+          cookie_days?: number | null;
+          network?: string | null;
           display_context?: string[];
+          is_active?: boolean;
+          created_at?: string;
         };
         Relationships: [];
       };
@@ -380,6 +401,8 @@ export interface Database {
           case_id: string | null;
           partner_id: number;
           checklist_step_id: string | null;
+          referrer_page: string | null;
+          user_agent: string | null;
           clicked_at: string;
         };
         Insert: {
@@ -387,6 +410,8 @@ export interface Database {
           case_id?: string | null;
           partner_id: number;
           checklist_step_id?: string | null;
+          referrer_page?: string | null;
+          user_agent?: string | null;
           clicked_at?: string;
         };
         Update: {
@@ -394,6 +419,8 @@ export interface Database {
           case_id?: string | null;
           partner_id?: number;
           checklist_step_id?: string | null;
+          referrer_page?: string | null;
+          user_agent?: string | null;
           clicked_at?: string;
         };
         Relationships: [
