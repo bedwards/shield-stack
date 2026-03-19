@@ -6,12 +6,14 @@
  * the initial value when window is not available.
  */
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 
 export function useLocalStorage<T>(
   key: string,
   initialValue: T,
 ): [T, (value: T | ((prev: T) => T)) => void, () => void] {
+  const removedRef = useRef(false);
+
   // Initialize from localStorage or fall back to initial value.
   // Use a function initializer to avoid reading localStorage on every render.
   const [storedValue, setStoredValue] = useState<T>(() => {
@@ -28,7 +30,7 @@ export function useLocalStorage<T>(
 
   // Persist to localStorage whenever the value changes
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (typeof window === "undefined" || removedRef.current) return;
     try {
       window.localStorage.setItem(key, JSON.stringify(storedValue));
     } catch {
@@ -39,6 +41,7 @@ export function useLocalStorage<T>(
   // Setter that accepts a value or updater function
   const setValue = useCallback(
     (value: T | ((prev: T) => T)) => {
+      removedRef.current = false;
       setStoredValue((prev) => {
         const nextValue =
           value instanceof Function ? value(prev) : value;
@@ -52,6 +55,7 @@ export function useLocalStorage<T>(
   const removeValue = useCallback(() => {
     if (typeof window === "undefined") return;
     try {
+      removedRef.current = true;
       window.localStorage.removeItem(key);
       setStoredValue(initialValue);
     } catch {
