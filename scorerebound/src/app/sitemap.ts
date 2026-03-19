@@ -1,9 +1,12 @@
 import type { MetadataRoute } from "next";
+import { getServicerGuideSlugs } from "@/data/servicers";
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://scorerebound.com";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date().toISOString();
+
+  const servicerGuideSlugs = getServicerGuideSlugs();
 
   return [
     {
@@ -31,7 +34,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.9,
     },
-    // Servicer-specific guides
+    // Servicer-specific recovery guide pages
+    ...servicerGuideSlugs.map((slug) => ({
+      url: `${BASE_URL}/guides/servicer/${slug}`,
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: 0.85,
+    })),
+    // Servicer contact pages (legacy)
     {
       url: `${BASE_URL}/servicers/mohela`,
       lastModified: now,

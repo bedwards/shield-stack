@@ -237,6 +237,20 @@ All UI components MUST follow these conventions:
 - `email-capture-success`, `email-capture-error`
 - `plan-email-section` (wrapper in PlanViewer)
 
+### Existing data-testid Attributes (Servicer Guide Pages — /guides/servicer/[slug])
+- `servicer-page-{slug}` (article wrapper, e.g., `servicer-page-mohela`)
+- `servicer-breadcrumb`, `breadcrumb-home`
+- `servicer-name` (H1), `servicer-overview`, `servicer-last-verified`
+- `servicer-contact-section`, `servicer-phone`, `servicer-portal-link`
+- `servicer-quiz-cta`, `servicer-quiz-cta-bottom`, `servicer-quiz-cta-final`
+- `servicer-ibr-section`, `servicer-rehab-section`, `servicer-consolidation-section`
+- `servicer-link-ibr-guide`, `servicer-link-rehab-guide`, `servicer-link-consolidation-guide`
+- `servicer-faq-section`, `servicer-related-section`, `servicer-recovery-guides`
+- `related-servicer-{slug}` (links to other servicer guides)
+- `related-guide-ibr`, `related-guide-rehabilitation`, `related-guide-consolidation`
+- `servicer-transition-info`, `transition-link-{slug}` (Great Lakes only)
+- `howto-structured-data` (JSON-LD script tag)
+
 ### Testing Requirements
 - `TEST_MODE=true` env var enables test accounts and bypasses rate limits
 - Test user accounts seeded via environment variables
@@ -259,4 +273,4 @@ See `.env.example` for the full list. Key variables:
 
 ## Version
 
-0.7.0
+0.8.0
