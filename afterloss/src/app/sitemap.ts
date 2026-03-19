@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { PHONE_SCRIPTS } from "@/data/phone-scripts";
+import { getAllCountyParams } from "@/lib/county-data/county-slugs";
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_APP_URL || "https://afterloss.pages.dev";
@@ -116,5 +117,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
     })),
   ];
 
-  return [...staticPages, ...statePages, ...phoneScriptPages];
+  const countyPages: MetadataRoute.Sitemap = getAllCountyParams().map(
+    ({ state, county }) => ({
+      url: `${BASE_URL}/probate/${state}/${county}`,
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    }),
+  );
+
+  return [...staticPages, ...statePages, ...phoneScriptPages, ...countyPages];
 }
