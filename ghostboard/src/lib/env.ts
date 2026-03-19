@@ -19,8 +19,16 @@ export function getSupabaseAnonKey(): string {
   return key;
 }
 
+/** @remarks Server-side only */
 export function getStripeSecretKey(): string {
   const key = process.env.STRIPE_SECRET_KEY;
   if (!key) throw new Error("STRIPE_SECRET_KEY is not set");
+  return key;
+}
+
+/** @remarks Server-side only — bypasses RLS */
+export function getSupabaseServiceRoleKey(): string {
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!key) throw new Error("SUPABASE_SERVICE_ROLE_KEY is not set");
   return key;
 }

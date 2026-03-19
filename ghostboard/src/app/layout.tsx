@@ -14,9 +14,6 @@ export const metadata: Metadata = {
     "hiring process transparency",
   ],
   openGraph: {
-    title: "GhostBoard - Employer Ghosting Rate Database",
-    description:
-      "Search any company and see its ghosting rate. Find out if employers actually respond to job applicants before you apply.",
     type: "website",
     siteName: "GhostBoard",
   },
