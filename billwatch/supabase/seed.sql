@@ -3,11 +3,12 @@
 --
 -- Seeds:
 --   1. 20 major US utility providers with realistic service area data
---   2. Sample test user profile, accounts, bills, and anomalies (when TEST_MODE)
+--   2. Test user with profile, accounts, bills, and anomalies
 --
 -- Usage:
 --   psql $DATABASE_URL -f supabase/seed.sql
 --   OR via Supabase Dashboard > SQL Editor
+--   OR automatically via `supabase db reset` (runs after migrations)
 
 -- =============================================================================
 -- PROVIDERS (20 major US utilities)
@@ -83,47 +84,120 @@ VALUES
 ON CONFLICT (id) DO NOTHING;
 
 -- =============================================================================
--- SAMPLE TEST DATA
--- Only used when a test user exists in auth.users.
--- In production, real users create their own data through the app.
+-- TEST USER & SAMPLE DATA
+-- Seeds a test user with profile, utility accounts, 12 months of bills,
+-- and a detected anomaly. Used for development and E2E testing.
+--
+-- The test user is created directly in auth.users (seed.sql runs with
+-- superuser privileges via `supabase db reset`).
 -- =============================================================================
 
--- Note: To seed test user data, first create a test user via Supabase Auth
--- or the /api/test-auth endpoint (when TEST_MODE=true), then run the
--- statements below with the test user's UUID.
---
--- Example (replace with actual test user UUID):
---
--- INSERT INTO user_profiles (id, zip_code, home_sqft, household_size, home_type, heating_type, cooling_type)
--- VALUES ('TEST_USER_UUID', '10001', 1200, 3, 'apartment', 'gas', 'central_ac')
--- ON CONFLICT (id) DO NOTHING;
---
--- INSERT INTO utility_accounts (id, user_id, provider_id, provider_name, account_type, account_nickname, account_number_last4)
--- VALUES
---   ('b0000000-0000-0000-0000-000000000001', 'TEST_USER_UUID', 'a0000000-0000-0000-0000-000000000005', 'Consolidated Edison', 'electric', 'Main Electric', '4567'),
---   ('b0000000-0000-0000-0000-000000000002', 'TEST_USER_UUID', 'a0000000-0000-0000-0000-000000000005', 'Consolidated Edison', 'gas', 'Main Gas', '8901')
--- ON CONFLICT (id) DO NOTHING;
---
--- Sample bills spanning 12 months for anomaly detection testing:
--- INSERT INTO bills (id, account_id, user_id, amount_cents, usage_quantity, usage_unit, rate_per_unit, period_start, period_end)
--- VALUES
---   ('c0000000-0000-0000-0000-000000000001', 'b0000000-0000-0000-0000-000000000001', 'TEST_USER_UUID', 8500, 650, 'kWh', 0.1308, '2025-03-01', '2025-03-31'),
---   ('c0000000-0000-0000-0000-000000000002', 'b0000000-0000-0000-0000-000000000001', 'TEST_USER_UUID', 9200, 710, 'kWh', 0.1296, '2025-04-01', '2025-04-30'),
---   ('c0000000-0000-0000-0000-000000000003', 'b0000000-0000-0000-0000-000000000001', 'TEST_USER_UUID', 12500, 950, 'kWh', 0.1316, '2025-05-01', '2025-05-31'),
---   ('c0000000-0000-0000-0000-000000000004', 'b0000000-0000-0000-0000-000000000001', 'TEST_USER_UUID', 16800, 1280, 'kWh', 0.1313, '2025-06-01', '2025-06-30'),
---   ('c0000000-0000-0000-0000-000000000005', 'b0000000-0000-0000-0000-000000000001', 'TEST_USER_UUID', 19500, 1490, 'kWh', 0.1309, '2025-07-01', '2025-07-31'),
---   ('c0000000-0000-0000-0000-000000000006', 'b0000000-0000-0000-0000-000000000001', 'TEST_USER_UUID', 18200, 1390, 'kWh', 0.1309, '2025-08-01', '2025-08-31'),
---   ('c0000000-0000-0000-0000-000000000007', 'b0000000-0000-0000-0000-000000000001', 'TEST_USER_UUID', 13100, 1000, 'kWh', 0.1310, '2025-09-01', '2025-09-30'),
---   ('c0000000-0000-0000-0000-000000000008', 'b0000000-0000-0000-0000-000000000001', 'TEST_USER_UUID', 9800, 750, 'kWh', 0.1307, '2025-10-01', '2025-10-31'),
---   ('c0000000-0000-0000-0000-000000000009', 'b0000000-0000-0000-0000-000000000001', 'TEST_USER_UUID', 10200, 780, 'kWh', 0.1308, '2025-11-01', '2025-11-30'),
---   ('c0000000-0000-0000-0000-000000000010', 'b0000000-0000-0000-0000-000000000001', 'TEST_USER_UUID', 11500, 880, 'kWh', 0.1307, '2025-12-01', '2025-12-31'),
---   ('c0000000-0000-0000-0000-000000000011', 'b0000000-0000-0000-0000-000000000001', 'TEST_USER_UUID', 10800, 825, 'kWh', 0.1309, '2026-01-01', '2026-01-31'),
---   -- Anomalous bill: sudden spike (z-score > 2)
---   ('c0000000-0000-0000-0000-000000000012', 'b0000000-0000-0000-0000-000000000001', 'TEST_USER_UUID', 28500, 2180, 'kWh', 0.1308, '2026-02-01', '2026-02-28')
--- ON CONFLICT (id) DO NOTHING;
---
--- Sample anomaly for the spike bill:
--- INSERT INTO anomalies (id, bill_id, account_id, user_id, anomaly_type, severity, description, expected_amount_cents, actual_amount_cents, z_score)
--- VALUES
---   ('d0000000-0000-0000-0000-000000000001', 'c0000000-0000-0000-0000-000000000012', 'b0000000-0000-0000-0000-000000000001', 'TEST_USER_UUID', 'usage_spike', 'high', 'Your February electric bill is 163% higher than your 12-month average. Usage jumped from ~900 kWh/mo to 2,180 kWh. This may indicate a faulty appliance, meter error, or unusually heavy heating usage.', 12800, 28500, 3.2)
--- ON CONFLICT (id) DO NOTHING;
+-- Create test user in auth.users
+INSERT INTO auth.users (
+  id,
+  instance_id,
+  email,
+  encrypted_password,
+  email_confirmed_at,
+  aud,
+  role,
+  raw_app_meta_data,
+  raw_user_meta_data,
+  created_at,
+  updated_at,
+  confirmation_token,
+  recovery_token
+)
+VALUES (
+  'e0000000-0000-0000-0000-000000000001',
+  '00000000-0000-0000-0000-000000000000',
+  'testuser@billwatch.test',
+  crypt('testpassword123', gen_salt('bf')),
+  NOW(),
+  'authenticated',
+  'authenticated',
+  '{"provider": "email", "providers": ["email"]}'::jsonb,
+  '{"display_name": "Test User"}'::jsonb,
+  NOW(),
+  NOW(),
+  '',
+  ''
+)
+ON CONFLICT (id) DO NOTHING;
+
+-- Create identity for the test user (required for Supabase Auth login)
+INSERT INTO auth.identities (
+  id,
+  provider_id,
+  user_id,
+  identity_data,
+  provider,
+  last_sign_in_at,
+  created_at,
+  updated_at
+)
+VALUES (
+  'e0000000-0000-0000-0000-000000000001',
+  'e0000000-0000-0000-0000-000000000001',
+  'e0000000-0000-0000-0000-000000000001',
+  '{"sub": "e0000000-0000-0000-0000-000000000001", "email": "testuser@billwatch.test"}'::jsonb,
+  'email',
+  NOW(),
+  NOW(),
+  NOW()
+)
+ON CONFLICT (id, provider) DO NOTHING;
+
+-- Test user profile
+INSERT INTO user_profiles (id, zip_code, home_sqft, household_size, home_type, heating_type, cooling_type)
+VALUES ('e0000000-0000-0000-0000-000000000001', '10001', 1200, 3, 'apartment', 'gas', 'central_ac')
+ON CONFLICT (id) DO NOTHING;
+
+-- Test user utility accounts (electric + gas with Con Edison)
+INSERT INTO utility_accounts (id, user_id, provider_id, provider_name, account_type, account_nickname, account_number_last4)
+VALUES
+  ('b0000000-0000-0000-0000-000000000001', 'e0000000-0000-0000-0000-000000000001', 'a0000000-0000-0000-0000-000000000005', 'Consolidated Edison', 'electric', 'Main Electric', '4567'),
+  ('b0000000-0000-0000-0000-000000000002', 'e0000000-0000-0000-0000-000000000001', 'a0000000-0000-0000-0000-000000000005', 'Consolidated Edison', 'gas', 'Main Gas', '8901')
+ON CONFLICT (id) DO NOTHING;
+
+-- 12 months of electric bills (Mar 2025 – Feb 2026) for anomaly detection testing
+-- Realistic NYC apartment pattern: low spring/fall, high summer (AC), moderate winter
+INSERT INTO bills (id, account_id, user_id, amount_cents, usage_quantity, usage_unit, rate_per_unit, period_start, period_end)
+VALUES
+  ('c0000000-0000-0000-0000-000000000001', 'b0000000-0000-0000-0000-000000000001', 'e0000000-0000-0000-0000-000000000001', 8500, 650, 'kWh', 0.1308, '2025-03-01', '2025-03-31'),
+  ('c0000000-0000-0000-0000-000000000002', 'b0000000-0000-0000-0000-000000000001', 'e0000000-0000-0000-0000-000000000001', 9200, 710, 'kWh', 0.1296, '2025-04-01', '2025-04-30'),
+  ('c0000000-0000-0000-0000-000000000003', 'b0000000-0000-0000-0000-000000000001', 'e0000000-0000-0000-0000-000000000001', 12500, 950, 'kWh', 0.1316, '2025-05-01', '2025-05-31'),
+  ('c0000000-0000-0000-0000-000000000004', 'b0000000-0000-0000-0000-000000000001', 'e0000000-0000-0000-0000-000000000001', 16800, 1280, 'kWh', 0.1313, '2025-06-01', '2025-06-30'),
+  ('c0000000-0000-0000-0000-000000000005', 'b0000000-0000-0000-0000-000000000001', 'e0000000-0000-0000-0000-000000000001', 19500, 1490, 'kWh', 0.1309, '2025-07-01', '2025-07-31'),
+  ('c0000000-0000-0000-0000-000000000006', 'b0000000-0000-0000-0000-000000000001', 'e0000000-0000-0000-0000-000000000001', 18200, 1390, 'kWh', 0.1309, '2025-08-01', '2025-08-31'),
+  ('c0000000-0000-0000-0000-000000000007', 'b0000000-0000-0000-0000-000000000001', 'e0000000-0000-0000-0000-000000000001', 13100, 1000, 'kWh', 0.1310, '2025-09-01', '2025-09-30'),
+  ('c0000000-0000-0000-0000-000000000008', 'b0000000-0000-0000-0000-000000000001', 'e0000000-0000-0000-0000-000000000001', 9800, 750, 'kWh', 0.1307, '2025-10-01', '2025-10-31'),
+  ('c0000000-0000-0000-0000-000000000009', 'b0000000-0000-0000-0000-000000000001', 'e0000000-0000-0000-0000-000000000001', 10200, 780, 'kWh', 0.1308, '2025-11-01', '2025-11-30'),
+  ('c0000000-0000-0000-0000-000000000010', 'b0000000-0000-0000-0000-000000000001', 'e0000000-0000-0000-0000-000000000001', 11500, 880, 'kWh', 0.1307, '2025-12-01', '2025-12-31'),
+  ('c0000000-0000-0000-0000-000000000011', 'b0000000-0000-0000-0000-000000000001', 'e0000000-0000-0000-0000-000000000001', 10800, 825, 'kWh', 0.1309, '2026-01-01', '2026-01-31'),
+  -- Anomalous bill: sudden spike (z-score > 2) — triggers anomaly detection
+  ('c0000000-0000-0000-0000-000000000012', 'b0000000-0000-0000-0000-000000000001', 'e0000000-0000-0000-0000-000000000001', 28500, 2180, 'kWh', 0.1308, '2026-02-01', '2026-02-28')
+ON CONFLICT (id) DO NOTHING;
+
+-- 6 months of gas bills for the gas account
+INSERT INTO bills (id, account_id, user_id, amount_cents, usage_quantity, usage_unit, rate_per_unit, period_start, period_end)
+VALUES
+  ('c0000000-0000-0000-0000-000000000101', 'b0000000-0000-0000-0000-000000000002', 'e0000000-0000-0000-0000-000000000001', 4500, 30, 'therms', 1.50, '2025-09-01', '2025-09-30'),
+  ('c0000000-0000-0000-0000-000000000102', 'b0000000-0000-0000-0000-000000000002', 'e0000000-0000-0000-0000-000000000001', 7200, 48, 'therms', 1.50, '2025-10-01', '2025-10-31'),
+  ('c0000000-0000-0000-0000-000000000103', 'b0000000-0000-0000-0000-000000000002', 'e0000000-0000-0000-0000-000000000001', 10800, 72, 'therms', 1.50, '2025-11-01', '2025-11-30'),
+  ('c0000000-0000-0000-0000-000000000104', 'b0000000-0000-0000-0000-000000000002', 'e0000000-0000-0000-0000-000000000001', 13500, 90, 'therms', 1.50, '2025-12-01', '2025-12-31'),
+  ('c0000000-0000-0000-0000-000000000105', 'b0000000-0000-0000-0000-000000000002', 'e0000000-0000-0000-0000-000000000001', 12000, 80, 'therms', 1.50, '2026-01-01', '2026-01-31'),
+  ('c0000000-0000-0000-0000-000000000106', 'b0000000-0000-0000-0000-000000000002', 'e0000000-0000-0000-0000-000000000001', 9000, 60, 'therms', 1.50, '2026-02-01', '2026-02-28')
+ON CONFLICT (id) DO NOTHING;
+
+-- Sample anomaly for the spike bill (February electric)
+INSERT INTO anomalies (id, bill_id, account_id, user_id, anomaly_type, severity, description, expected_amount_cents, actual_amount_cents, z_score)
+VALUES
+  ('d0000000-0000-0000-0000-000000000001', 'c0000000-0000-0000-0000-000000000012', 'b0000000-0000-0000-0000-000000000001', 'e0000000-0000-0000-0000-000000000001', 'usage_spike', 'high', 'Your February electric bill is 163% higher than your 12-month average. Usage jumped from ~900 kWh/mo to 2,180 kWh. This may indicate a faulty appliance, meter error, or unusually heavy heating usage.', 12800, 28500, 3.2)
+ON CONFLICT (id) DO NOTHING;
+
+-- Test user subscription (free plan)
+INSERT INTO subscriptions (id, user_id, plan, status, current_period_start, current_period_end)
+VALUES
+  ('f0000000-0000-0000-0000-000000000001', 'e0000000-0000-0000-0000-000000000001', 'free', 'active', NOW(), NOW() + INTERVAL '30 days')
+ON CONFLICT (id) DO NOTHING;
