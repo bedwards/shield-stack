@@ -1,10 +1,18 @@
 import type { MetadataRoute } from "next";
+import { STATES } from "@/lib/states/data";
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_APP_URL || "https://billwatch.pages.dev";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date().toISOString();
+
+  const stateGuideEntries: MetadataRoute.Sitemap = STATES.map((s) => ({
+    url: `${BASE_URL}/guides/${s.slug}`,
+    lastModified: now,
+    changeFrequency: "monthly" as const,
+    priority: 0.8,
+  }));
 
   return [
     {
@@ -19,6 +27,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.95,
     },
+    ...stateGuideEntries,
     {
       url: `${BASE_URL}/dashboard`,
       lastModified: now,
