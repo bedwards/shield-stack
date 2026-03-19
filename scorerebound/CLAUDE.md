@@ -216,6 +216,12 @@ All UI components MUST follow these conventions:
 - `footer-link-privacy`, `footer-link-terms`, `footer-copyright`
 - `main-content`
 
+### Existing data-testid Attributes (Email Capture — on Plan Page)
+- `email-capture-section`, `email-capture-title`
+- `email-capture-form`, `email-capture-input`, `email-capture-submit`
+- `email-capture-success`, `email-capture-error`
+- `plan-email-section` (wrapper in PlanViewer)
+
 ### Testing Requirements
 - `TEST_MODE=true` env var enables test accounts and bypasses rate limits
 - Test user accounts seeded via environment variables
@@ -231,6 +237,7 @@ See `.env.example` for the full list. Key variables:
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY` — Supabase anonymous key
 - `STRIPE_SECRET_KEY` — Stripe API secret key
 - `RESEND_API_KEY` — Resend email API key
+- `CRON_SECRET` — Authorization token for `/api/email/drip` cron endpoint
 - `TEST_MODE` — Enable test mode (`true`/`false`)
 
 **NEVER commit secrets.** Use `.env.local` for local development, `.env.example` for templates.
