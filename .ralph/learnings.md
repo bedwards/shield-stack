@@ -226,3 +226,7 @@ Use this variable for both `use.baseURL` and `webServer.url`.
 ## 2026-03-18 | multiple | Merger: fix contaminated PRs by cherry-picking onto clean branches (PR #301 → #309)
 **What happened:** PR #301 had a real contamination (commit `843b993` for #290 on a branch with merge base before #290). After 6 blocking reviews, no one fixed it. The merger created a clean branch from `origin/main`, cherry-picked only the relevant commit (`478d2bd`), and opened PR #309 which merged cleanly.
 **Rule:** When a PR has been blocked for contamination through multiple review cycles and the fix is mechanical (cherry-pick relevant commits onto clean branch), the merger should fix it rather than posting yet another blocking review. Command: `git checkout -b {clean-branch} origin/main && git cherry-pick {good-commit} && git push -u origin {clean-branch}`. Close the old PR, open a new one.
+
+## 2026-03-19 | billwatch | Vercel ignoreCommand pathspec must use `.` not product directory name (PR #338)
+**What happened:** `vercel.json` had `"ignoreCommand": "git diff HEAD^ HEAD --quiet -- billwatch/"`. Vercel executes the ignoreCommand from the configured Root Directory (`billwatch/`), so git resolves the pathspec as `billwatch/billwatch/` — which never has changes. Every build would be canceled.
+**Rule:** In `vercel.json` for mono repo products with Root Directory set, always use `-- .` (current directory) in the `ignoreCommand`, not the product directory name. The command already runs from within the product directory.
