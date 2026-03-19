@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { PHONE_SCRIPTS } from "@/data/phone-scripts";
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_APP_URL || "https://afterloss.pages.dev";
@@ -100,5 +101,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
     }))
   );
 
-  return [...staticPages, ...statePages];
+  const phoneScriptPages: MetadataRoute.Sitemap = [
+    {
+      url: `${BASE_URL}/phone-scripts`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    ...PHONE_SCRIPTS.map((script) => ({
+      url: `${BASE_URL}/phone-scripts/${script.slug}`,
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: 0.8,
+    })),
+  ];
+
+  return [...staticPages, ...statePages, ...phoneScriptPages];
 }
