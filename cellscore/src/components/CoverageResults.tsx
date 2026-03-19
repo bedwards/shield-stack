@@ -1,10 +1,10 @@
 "use client";
 
-import type { MockCoverageResult } from "@/lib/mock-data";
+import type { CarrierCoverage } from "@/lib/fcc-vizmo";
 import { signalStrengthPercent } from "@/lib/coverage";
 
 interface CoverageResultsProps {
-  carriers: MockCoverageResult[];
+  carriers: CarrierCoverage[];
   address: string;
 }
 

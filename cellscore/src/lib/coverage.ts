@@ -1,9 +1,14 @@
 /**
- * Coverage check logic — geocodes address and queries PostGIS for signal data.
+ * Coverage check logic — geocodes address and queries FCC VizMo API for signal data.
  * In TEST_MODE, returns deterministic mock data.
  */
 import { isTestMode } from "./env";
-import { getMockCoverageForAddress, getMockGeocode, type MockCoverageResult } from "./mock-data";
+import { getMockCoverageForAddress, getMockGeocode } from "./mock-data";
+import {
+  queryVizMoCoverage,
+  VizMoApiError,
+  type CarrierCoverage,
+} from "./fcc-vizmo";
 
 export interface GeocodedLocation {
   lat: number;
@@ -14,7 +19,8 @@ export interface GeocodedLocation {
 export interface CoverageCheckResult {
   address: string;
   location: GeocodedLocation;
-  carriers: MockCoverageResult[];
+  carriers: CarrierCoverage[];
+  source: "fcc_vizmo" | "mock" | "none";
 }
 
 export async function geocodeAddress(address: string): Promise<GeocodedLocation> {
@@ -57,17 +63,31 @@ export async function checkCoverage(address: string): Promise<CoverageCheckResul
       address,
       location,
       carriers: getMockCoverageForAddress(address),
+      source: "mock",
     };
   }
 
-  // In production, this would query PostGIS via Supabase
-  // For now, the FCC data import is a separate concern (no FCC data seeded yet)
-  // Return empty array which the UI handles gracefully
-  return {
-    address,
-    location,
-    carriers: [],
-  };
+  // Production: query FCC VizMo API for real coverage data
+  try {
+    const carriers = await queryVizMoCoverage(location.lat, location.lng);
+    return {
+      address,
+      location,
+      carriers,
+      source: carriers.length > 0 ? "fcc_vizmo" : "none",
+    };
+  } catch (error) {
+    // VizMo API may be unavailable — degrade gracefully
+    if (error instanceof VizMoApiError) {
+      console.error(`VizMo API error: ${error.message} (status: ${error.statusCode})`);
+    }
+    return {
+      address,
+      location,
+      carriers: [],
+      source: "none",
+    };
+  }
 }
 
 export function signalStrengthLabel(dbm: number): "excellent" | "good" | "fair" | "poor" {

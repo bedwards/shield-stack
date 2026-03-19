@@ -54,13 +54,14 @@ describe("coverage logic", () => {
   });
 
   describe("checkCoverage in test mode", () => {
-    it("returns mock coverage data", async () => {
+    it("returns mock coverage data with source=mock", async () => {
       vi.stubEnv("TEST_MODE", "true");
       const { checkCoverage } = await import("./coverage");
       const result = await checkCoverage("123 Main St, New York, NY");
       expect(result.carriers.length).toBeGreaterThan(0);
       expect(result.location.lat).toBe(40.7128);
       expect(result.location.lng).toBe(-74.006);
+      expect(result.source).toBe("mock");
     });
   });
 

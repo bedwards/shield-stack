@@ -2,13 +2,13 @@
 
 import { useState } from "react";
 import CoverageResults from "@/components/CoverageResults";
-import type { MockCoverageResult } from "@/lib/mock-data";
+import type { CarrierCoverage } from "@/lib/fcc-vizmo";
 import type { GeocodedLocation } from "@/lib/coverage";
 
 interface CoverageState {
   loading: boolean;
   error: string | null;
-  carriers: MockCoverageResult[] | null;
+  carriers: CarrierCoverage[] | null;
   location: GeocodedLocation | null;
 }
 

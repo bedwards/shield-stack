@@ -48,23 +48,26 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    const plans = (data || []).map((row: Record<string, unknown>) => ({
-      id: row.id,
-      carrier_id: row.carrier_id,
-      carrier_name: row.carriers.name,
-      carrier_slug: row.carriers.slug,
-      plan_name: row.plan_name,
-      monthly_price: Number(row.monthly_price),
-      data_limit_gb: row.data_limit_gb ? Number(row.data_limit_gb) : null,
-      throttle_speed_after: row.throttle_speed_after,
-      hotspot_gb: row.hotspot_gb ? Number(row.hotspot_gb) : null,
-      num_lines_min: row.num_lines_min,
-      num_lines_max: row.num_lines_max,
-      features: row.features || {},
-      data_priority_level: row.data_priority_level,
-      affiliate_url: row.affiliate_url || row.carriers.affiliate_url,
-      last_verified_at: row.last_verified_at,
-    }));
+    const plans = (data || []).map((row: Record<string, unknown>) => {
+      const carriers = row.carriers as Record<string, unknown> | undefined;
+      return {
+        id: row.id,
+        carrier_id: row.carrier_id,
+        carrier_name: carriers?.name,
+        carrier_slug: carriers?.slug,
+        plan_name: row.plan_name,
+        monthly_price: Number(row.monthly_price),
+        data_limit_gb: row.data_limit_gb ? Number(row.data_limit_gb) : null,
+        throttle_speed_after: row.throttle_speed_after,
+        hotspot_gb: row.hotspot_gb ? Number(row.hotspot_gb) : null,
+        num_lines_min: row.num_lines_min,
+        num_lines_max: row.num_lines_max,
+        features: row.features || {},
+        data_priority_level: row.data_priority_level,
+        affiliate_url: row.affiliate_url || carriers?.affiliate_url,
+        last_verified_at: row.last_verified_at,
+      };
+    });
 
     return NextResponse.json({ plans, total: plans.length });
   } catch (error) {
