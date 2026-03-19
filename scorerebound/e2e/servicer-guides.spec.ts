@@ -61,7 +61,7 @@ test.describe("Servicer recovery guide pages — /guides/servicer/[slug]", () =>
   test("quiz CTA links to /quiz", async ({ page }) => {
     await page.goto("/guides/servicer/mohela");
 
-    const ctaButton = page.locator("[data-testid='guide-quiz-cta-button']");
+    const ctaButton = page.locator("[data-testid='guide-quiz-cta-button']").first();
     await expect(ctaButton).toBeVisible();
     await expect(ctaButton).toHaveAttribute("href", "/#quiz");
   });
