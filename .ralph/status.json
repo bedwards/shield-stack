@@ -1,10 +1,10 @@
 {
   "phase": "orchestrate",
-  "loop_count": 18,
+  "loop_count": 20,
   "last_phase_completed": "monitor",
   "last_error": null,
-  "started_at": "2026-03-19T11:20:47.033208+00:00",
-  "updated_at": "2026-03-19T13:15:00.000000+00:00",
+  "started_at": "2026-03-19T12:08:18.243519+00:00",
+  "updated_at": "2026-03-19T16:15:00.000000+00:00",
   "current_product": "billwatch",
   "current_issue": {
     "number": 331,
@@ -13,15 +13,17 @@
   },
   "current_branch": "billwatch/issue-331-eia-api",
   "current_pr": null,
-  "merger_notes": "PR #372 (billwatch EIA API v2 integration, WIP #331) merged — all MEDIUM findings (false positive Next.js 15 params, magic numbers, stale cache test, redundant filter). PR #373 (afterloss county SEO v0.6.0, closes #266) merged — 1 MEDIUM finding (false positive Next.js 15 params). PR #374 (afterloss subscription cancellation templates, WIP #256) merged — all MEDIUM findings (test regex scope, redundant readFileSync, type/const duplication). Zero open PRs remain.",
-  "merger_completed_at": "2026-03-19T14:00:00.000000+00:00",
+  "merger_notes": "PR #375 (WIP billwatch seasonal SEO #337) merged — HIGH findings are unregistered affiliate slugs and incomplete test coverage, all 'features not yet implemented' in undeployed WIP. PR #376 (feat billwatch EIA API v2, closes #331) merged — MEDIUM findings only (getAllStateRates caching optimization, test helper exports). PR #377 (WIP ghostboard DB schema #272) merged — HIGH findings are RLS policy too permissive and materialized view calculation issues, both in undeployed schema. Zero open PRs remain.",
+  "merger_completed_at": "2026-03-19T12:30:00.000000+00:00",
   "prs_merged": [
-    325, 326, 328, 338, 339, 341, 342, 343, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374
+    325, 326, 328, 338, 339, 341, 342, 343, 352, 353, 354, 355, 356, 357,
+    358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371,
+    372, 373, 374, 375, 376, 377
   ],
   "prs_blocked": [],
   "halted": false,
   "halt_reason": null,
-  "review_notes": null,
+  "review_notes": "All 3 PRs (#375, #376, #377) reviewed and merged. #337 and #272 remain open for follow-up (WIP gaps documented in PR review comments).",
   "selected_issues": [
     {
       "number": 331,
@@ -29,15 +31,7 @@
       "product": "billwatch",
       "branch": "billwatch/issue-331-eia-api",
       "draft_pr": null,
-      "reason": "P1 REVENUE ENABLER. BillWatch's 50-state SEO pages (#333) just shipped. Adding real EIA rate data makes them authoritative and enables benchmarking ('your rate is 23% above state average'). Free API, well-scoped integration (typed client + API route + caching). Revenue path: real data → benchmarking → 'you're overpaying' → energy switching affiliate CTAs. This is the next logical step on BillWatch's revenue funnel — without real data, the state pages are informational only."
-    },
-    {
-      "number": 266,
-      "title": "[afterloss] County-level programmatic SEO pages — 3,200+ county probate court guides",
-      "product": "afterloss",
-      "branch": "afterloss/issue-266-county-seo",
-      "draft_pr": null,
-      "reason": "P2 SEO EXPANSION. Unblocked since #258 (state probate pages) completed. 3,200+ county pages = massive long-tail SEO surface area targeting queries like 'probate court [county] [state]'. Phase 1 scopes to top 200 counties by population (~50% of US population). Programmatic content generation is ideal for autonomous workers — templated pages with county-specific data. Can embed Nolo affiliate links directly in county guides. Complements existing state-level pages for comprehensive geographic SEO coverage."
+      "reason": "P1 REVENUE ENABLER — CONTINUE WIP. PR #372 merged partial EIA integration (typed client, caching layer). 50-state SEO pages are live but show only informational content without real rate data. Completing the EIA API integration enables benchmarking ('your rate is 23% above state average') which is the conversion trigger for energy switching affiliate CTAs. Free government API, typed client partially built in main. Revenue path: real data → benchmarking → 'you're overpaying' → energy switching affiliate CTAs. This is BillWatch's shortest path to revenue conversion on existing SEO pages."
     },
     {
       "number": 256,
@@ -45,34 +39,41 @@
       "product": "afterloss",
       "branch": "afterloss/issue-256-cancellation-templates",
       "draft_pr": null,
-      "reason": "P2 REVENUE UNLOCKER. Unblocked since #111 (DB schema) completed. Curating 100+ service cancellation templates is content work well-suited for autonomous workers. CRITICAL: this directly unblocks #293 (cancellation SEO pages, P1), which creates /cancel/{service} pages targeting high-intent searches like 'how to cancel [service] after death'. Each cancellation page can embed affiliate links for identity protection and legal services. Content creation task = high completion probability for autonomous workers."
+      "reason": "P2 REVENUE PIPELINE — CONTINUE WIP. PR #374 merged partial cancellation template work into main. CRITICAL DEPENDENCY: completing this unblocks #293 (cancellation SEO pages, P1), which creates /cancel/{service} pages targeting high-intent searches like 'how to cancel [service] after death'. Each cancellation page embeds affiliate links for identity protection and legal services. Content curation task with high autonomous completion probability. Revenue path: templates → #293 SEO pages → affiliate links → revenue. AfterLoss's clearest non-escalated revenue path."
+    },
+    {
+      "number": 272,
+      "title": "[ghostboard] Database schema — companies, reports, stats, user profiles, subscriptions",
+      "product": "ghostboard",
+      "branch": "ghostboard/issue-272-db-schema",
+      "draft_pr": null,
+      "reason": "P0 SCAFFOLD — FRESH PICK, NEW PRODUCT. GhostBoard has 0 RALPH PRs merged — entirely untouched. This P0 DB schema unblocks ALL ghostboard revenue: #140 (core MVP), #144 (landing page + SEO), #149 (dashboard), #305 (affiliate links), #306 (recruiter signup), #307 (Stripe subscription). GhostBoard targets 10M+ job seekers/yr with 'Does [company] ghost applicants' SEO — massive search intent. DB schema is a well-scoped task (Supabase migrations + types) that autonomous workers handle reliably. PORTFOLIO DIVERSIFICATION: afterloss (28 PRs) and billwatch (18 PRs) are maturing — time to open a third revenue front. Anti-pattern acknowledged: we're not abandoning focus, just planting a seed while the other two products continue on their revenue paths."
     }
   ],
   "housekeeping": {
     "issues_to_close": [],
-    "issues_closed_this_cycle": [333, 292, 336],
+    "issues_closed_this_cycle": [],
     "issues_closed_previously": [
-      349, 274, 111, 346, 350, 351, 253, 258, 333, 292, 336
+      349, 274, 111, 346, 350, 351, 253, 258, 333, 292, 336, 266
     ],
-    "reason": "ORCHESTRATE CYCLE 34 (2026-03-19 13:15 UTC): SUCCESSFUL CYCLE + FRESH PICKS. MAJOR PROGRESS: Both #333 (billwatch 50-state SEO) and #292 (afterloss phone scripts) COMPLETED after 3 cycles — the completion warnings from cycle 33 were unnecessary, workers delivered. #336 (billwatch crisis SEO) also completed. 3 issues closed this cycle = best productivity yet. NEW PICKS: #331 (billwatch EIA API) is the next logical step for BillWatch — real rate data powers benchmarking on the newly-shipped 50-state pages. #266 (county SEO) returns as a fresh pick with high completion probability. #256 (cancellation templates) is a content task that unblocks the P1 cancellation SEO pages (#293). Revenue thesis: #331 adds data authority to BillWatch state pages → conversion. #266 expands AfterLoss SEO surface area 10x. #256 → #293 pipeline creates high-intent cancellation SEO pages with affiliate embedding.",
-    "escalation_254": "ONGOING: #254 (afterloss checklist engine) has 9 consecutive failures. BLOCKS #302 (Phase 1 affiliate links) and #260 (AI document generation). Needs interactive TUI worker or issue splitting. This is the single biggest revenue blocker for AfterLoss.",
-    "escalation_241_332": "ONGOING: #241 (cellscore core MVP) and #332 (billwatch affiliate tracking) failed 4+ consecutive cycles. Both need interactive TUI workers or further issue splitting.",
+    "reason": "ORCHESTRATE CYCLE 36 (2026-03-19 16:15 UTC): 2 WIP CONTINUATIONS + 1 NEW PRODUCT. #331 (billwatch EIA API) and #256 (afterloss cancellation templates) continue as WIP — both had partial PRs merged last cycle and need completion. FRESH PICK: #272 (ghostboard DB schema) opens a third product front. GhostBoard has 0 PRs and targets 10M+ job seekers. DB schema is the P0 blocker for the entire product. NOTE: #337 (seasonal SEO) already has open PR #375 from last cycle's worker — flagged for review, not re-assigned. STRATEGY: 1 billwatch (revenue enabler) + 1 afterloss (pipeline unblock) + 1 ghostboard (new product seed). Both afterloss and billwatch are maturing with comprehensive SEO portfolios — opening ghostboard now is the right portfolio diversification move.",
+    "escalation_254": "ONGOING: #254 (afterloss checklist engine) has 9 consecutive failures. BLOCKS #302 (Phase 1 affiliate links) and #260 (AI document generation). Needs interactive TUI worker or issue splitting. This is the single biggest revenue blocker for AfterLoss. RECOMMENDATION: Split into sub-issues — (1) localStorage persistence layer, (2) checklist UI components, (3) state management, (4) integration tests.",
+    "escalation_241_332": "ONGOING: #241 (cellscore core MVP) and #332 (billwatch affiliate tracking) failed 5+ consecutive cycles. Both need interactive TUI workers or further issue splitting.",
     "escalation_334": "ONGOING: #334 (billwatch provider DB) failed 4 consecutive cycles. Needs interactive TUI worker or issue splitting. Energy switching CTAs for deregulated states remain the #1 revenue opportunity but autonomous workers cannot complete it.",
     "stall_warning": "#304 (afterloss click tracking) and #345 (cellscore FCC data) remain demoted. Revisit after current work ships.",
     "partial_work_in_main": [
+      "#331 (billwatch EIA API) — WIP PR #372 merged cycle 34, CONTINUING",
+      "#256 (afterloss cancellation templates) — WIP PR #374 merged cycle 34, CONTINUING",
       "#334 (billwatch provider DB) — WIP PR #359 merged cycle 28, ESCALATED (4 failures)",
       "#304 (afterloss click tracking) — WIP PR #365 merged cycle 29, DEMOTED",
       "#345 (cellscore FCC data) — WIP PR #366 merged cycle 29, DEMOTED",
       "#241 (cellscore core MVP) — WIP PR #362 merged, 3 known gaps remain, ESCALATED",
       "#332 (billwatch affiliate tracking) — WIP PR #356 merged, endpoint incomplete, ESCALATED"
     ],
-    "completed_since_last_cycle": [
-      "#333 (billwatch 50-state SEO) — COMPLETED after 3 cycles, massive SEO win",
-      "#292 (afterloss phone scripts) — COMPLETED after 3 cycles, HowTo schema SEO pages live",
-      "#336 (billwatch crisis SEO) — COMPLETED, electric bill doubled landing page live"
-    ],
+    "completed_since_last_cycle": [],
+    "open_prs_for_review": [],
     "draft_prs": [],
-    "portfolio_note": "1 billwatch + 2 afterloss. BillWatch gets #331 (EIA API, logical next step after 50-state pages shipped). AfterLoss gets #266 (county SEO expansion, 200+ pages) + #256 (cancellation templates, unblocks #293). Two-product focus remains correct: afterloss and billwatch are the only products at scaffold_complete with clear revenue paths and no escalated blockers on the selected issues.",
+    "portfolio_note": "1 billwatch + 1 afterloss + 1 ghostboard. BillWatch: #331 adds real rate data to 50-state pages (revenue conversion). #337 has open PR #375 awaiting review (seasonal SEO). AfterLoss: #256 templates → unlocks #293 cancellation SEO pages. GhostBoard: #272 DB schema opens the product from zero. NEXT CYCLE: if #256 completes → #293 is top afterloss pick. If #331 completes → consider #332 (affiliate tracking) for interactive TUI. If #272 completes → #140 (core MVP) or #144 (landing page) for ghostboard.",
     "escalated_issues_summary": [
       "#254 (afterloss checklist engine) — 9 failures, blocks affiliate links, needs split",
       "#241 (cellscore core MVP) — 5 failures, needs interactive worker or split",
@@ -81,12 +82,13 @@
     ],
     "next_cycle_candidates": [
       "#293 (afterloss cancellation SEO) — unblocked once #256 completes. P1 SEO with affiliate potential.",
-      "#262 (afterloss deadline tracker) — unblocked, P2, engagement feature using probate_rules data.",
-      "#337 (billwatch seasonal SEO) — P2, seasonal content pages for winter/summer bill spikes.",
+      "#140 (ghostboard core MVP) — unblocked once #272 completes. Core product functionality.",
+      "#144 (ghostboard landing page) — unblocked once #272 completes. SEO + company pages.",
+      "#267 (afterloss comparison pages) — unblocked, /compare/{competitor} SEO pages.",
+      "#262 (afterloss deadline tracker) — unblocked, P2, engagement feature.",
       "#300 (afterloss email capture) — P2, recapture visitors who don't convert.",
-      "#267 (afterloss comparison pages) — unblocked (#255 closed), /compare/{competitor} SEO pages.",
-      "#272 (ghostboard DB schema) — P0 scaffold, unblocks all ghostboard revenue. Consider when afterloss/billwatch stabilize."
+      "#174 (billwatch payments) — P2, Stripe integration once affiliate tracking exists."
     ],
-    "metrics_snapshot": "afterloss: 12 PRs merged (RALPH), billwatch: 8 PRs merged (RALPH), scorerebound: 5 PRs merged (RALPH), cellscore: 3 PRs merged (RALPH), ghostboard: 0 PRs (RALPH)"
+    "metrics_snapshot": "afterloss: 28 PRs merged (total), billwatch: 18 PRs merged (total), scorerebound: 10 PRs merged (total), cellscore: 6 PRs merged (total), ghostboard: 0 PRs (total)"
   }
 }
