@@ -104,4 +104,65 @@ describe("useEstateStore", () => {
     expect(() => new Date(createdAt)).not.toThrow();
     expect(new Date(createdAt).toISOString()).toBe(createdAt);
   });
+
+  describe("toggleItem", () => {
+    beforeEach(() => {
+      useEstateStore.getState().setOnboardingData({
+        state: "CA",
+        relationship: "spouse",
+        estateComplexity: "simple",
+        dateOfDeath: "2026-01-15T00:00:00.000Z",
+      });
+    });
+
+    it("marks an item as completed", () => {
+      useEstateStore.getState().toggleItem("immediate-001");
+      const progress = useEstateStore.getState().currentCase!.checklistProgress;
+      expect(progress["immediate-001"].status).toBe("completed");
+      expect(progress["immediate-001"].completedAt).toBeTruthy();
+    });
+
+    it("toggles a completed item back to pending", () => {
+      useEstateStore.getState().toggleItem("immediate-001");
+      useEstateStore.getState().toggleItem("immediate-001");
+      const progress = useEstateStore.getState().currentCase!.checklistProgress;
+      expect(progress["immediate-001"]).toBeUndefined();
+    });
+
+    it("does nothing if no case exists", () => {
+      useEstateStore.setState({ currentCase: null });
+      useEstateStore.getState().toggleItem("immediate-001");
+      expect(useEstateStore.getState().currentCase).toBeNull();
+    });
+  });
+
+  describe("skipItem", () => {
+    beforeEach(() => {
+      useEstateStore.getState().setOnboardingData({
+        state: "NY",
+        relationship: "child",
+        estateComplexity: "moderate",
+        dateOfDeath: "2026-02-01T00:00:00.000Z",
+      });
+    });
+
+    it("marks an item as skipped", () => {
+      useEstateStore.getState().skipItem("week-001");
+      const progress = useEstateStore.getState().currentCase!.checklistProgress;
+      expect(progress["week-001"].status).toBe("skipped");
+    });
+
+    it("unskips a skipped item", () => {
+      useEstateStore.getState().skipItem("week-001");
+      useEstateStore.getState().skipItem("week-001");
+      const progress = useEstateStore.getState().currentCase!.checklistProgress;
+      expect(progress["week-001"]).toBeUndefined();
+    });
+
+    it("does nothing if no case exists", () => {
+      useEstateStore.setState({ currentCase: null });
+      useEstateStore.getState().skipItem("week-001");
+      expect(useEstateStore.getState().currentCase).toBeNull();
+    });
+  });
 });

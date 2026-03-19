@@ -104,7 +104,7 @@ function StateStep({
         </label>
         <select
           id="state-select"
-          data-testid="state-select"
+          data-testid="onboard-state-select"
           value={value}
           onChange={(e) => onChange(e.target.value)}
           className="w-full rounded-lg border border-border bg-card text-card-foreground px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
@@ -139,7 +139,7 @@ function RelationshipStep({
         </p>
       </div>
       <div
-        data-testid="relationship-select"
+        data-testid="onboard-relationship-select"
         className="max-w-md mx-auto space-y-3"
         role="radiogroup"
         aria-label="Relationship to deceased"
@@ -192,7 +192,7 @@ function ComplexityStep({
         </p>
       </div>
       <div
-        data-testid="complexity-select"
+        data-testid="onboard-complexity-select"
         className="max-w-md mx-auto space-y-3"
         role="radiogroup"
         aria-label="Estate complexity"
@@ -395,7 +395,7 @@ export default function OnboardPage() {
             )}
             <button
               type="button"
-              data-testid="onboard-continue-button"
+              data-testid={step === TOTAL_STEPS ? "onboard-submit" : "onboard-continue-button"}
               onClick={handleContinue}
               className="rounded-lg bg-primary px-8 py-3 text-sm font-medium text-white hover:bg-primary-hover transition-colors shadow-sm"
             >
