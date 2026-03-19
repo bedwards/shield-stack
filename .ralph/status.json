@@ -1,74 +1,79 @@
 {
   "phase": "orchestrate",
-  "loop_count": 5,
+  "loop_count": 8,
   "last_phase_completed": "orchestrate",
   "last_error": null,
-  "started_at": "2026-03-19T05:54:20.401617+00:00",
-  "updated_at": "2026-03-19T23:15:00.000000+00:00",
+  "started_at": "2026-03-19T06:57:56.943095+00:00",
+  "updated_at": "2026-03-19T21:30:00.000000+00:00",
   "current_product": "billwatch",
   "current_issue": {
-    "number": 332,
-    "title": "[billwatch] Affiliate tracking endpoint — energy provider + solar referral click tracking",
+    "number": 334,
+    "title": "[billwatch] Provider database with deregulated market data and energy switching CTA",
     "product": "billwatch"
   },
-  "current_branch": "billwatch/issue-332-affiliate-tracking",
+  "current_branch": "billwatch/issue-334-provider-database",
   "current_pr": null,
-  "merger_notes": "Merged PRs #356, #357, #358. #356 (billwatch affiliate tracking endpoint) — clean, all MEDIUM bot findings. #357 (scorerebound servicer-specific SEO guides) — fixed E2E strict mode violation (guide-quiz-cta-button resolved to 3 elements, used .first()). Gemini false positive on Next.js 15 params-is-Promise pattern ignored per learnings. #358 (cellscore plan database seed) — clean, zero bot findings. CellScore's first merged PR ever. Zero open PRs remain.",
-  "merger_completed_at": "2026-03-19T06:20:00.000000+00:00",
+  "merger_notes": "Merged PR #361 (scorerebound credit-builder comparison page — all reviews clean, all E2E pass). Blocked PR #362 (cellscore core MVP partial work — 3 verified HIGH findings: missing /api/coverage/check route, affiliate links not through tracking endpoint, Mapbox geocoder not integrated). PR #362 remains open for fixes.",
+  "merger_completed_at": "2026-03-19T22:00:00.000000+00:00",
   "prs_merged": [
-    325, 326, 328, 338, 339, 341, 342, 343, 352, 353, 354, 355, 356, 357, 358
+    325, 326, 328, 338, 339, 341, 342, 343, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361
   ],
-  "prs_blocked": [],
+  "prs_blocked": [362],
   "halted": false,
   "halt_reason": null,
   "review_notes": "No open PRs. Clean slate for workers.",
   "selected_issues": [
     {
-      "number": 332,
-      "title": "[billwatch] Affiliate tracking endpoint — energy provider + solar referral click tracking",
+      "number": 334,
+      "title": "[billwatch] Provider database with deregulated market data and energy switching CTA",
       "product": "billwatch",
-      "branch": "billwatch/issue-332-affiliate-tracking",
+      "branch": "billwatch/issue-334-provider-database",
       "draft_pr": null,
-      "reason": "P0 — NEWLY UNBLOCKED. #274 (DB schema) merged as PR #354 last cycle. BillWatch now has tables for bills, utility accounts, households, anomalies, benchmarks. This issue builds the affiliate click tracking endpoint — same pattern as ScoreRebound's /api/affiliate/click (PR #321). Without click tracking, zero billwatch affiliate revenue is measurable. Revenue chain: user uploads bill → anomaly detected → provider switching CTA or solar recommendation → affiliate click tracked → commission. Gates ALL billwatch revenue (#334 provider DB, #335 solar recs). Well-scoped API endpoint work."
+      "reason": "P0 — CONTINUE PARTIAL WORK, REVENUE CONTENT. Partial implementation merged via WIP PR #359. Provider DB with energy switching CTAs is the revenue content users interact with — deregulated market data for 18+ states, provider comparisons, switching CTAs with affiliate links. Revenue chain: user uploads bill → anomaly detected → provider switching CTA → affiliate link → tracked click → commission. BillWatch at 28 PRs merged, actively building toward first dollar. Worker continues from partial work in main."
     },
     {
-      "number": 346,
-      "title": "[cellscore] Plan database seed — 60+ plans from 15+ carriers with affiliate URLs",
-      "product": "cellscore",
-      "branch": "cellscore/issue-346-plan-database-seed",
-      "draft_pr": null,
-      "reason": "P0 — PORTFOLIO DIVERSITY MANDATE. CellScore has 0 PRs merged across 20 RALPH cycles — the only active product with zero progress. Previous cycle explicitly promoted this to P1 and noted it MUST enter the pipeline this cycle. Well-scoped data seeding task: create 60+ plan records from 15+ carriers (T-Mobile, Verizon, AT&T, Mint, Visible, Cricket, etc.) with affiliate URLs. Scaffold is complete (v0.1.0, PostGIS DB). Revenue path: seed plan catalog with affiliate URLs → plan comparison page → user clicks → commission. No external dependencies."
-    },
-    {
-      "number": 350,
-      "title": "[scorerebound] Servicer-specific recovery guide SEO pages — /guides/servicer/{slug}",
+      "number": 351,
+      "title": "[scorerebound] Credit-builder product comparison page — /compare/credit-builders",
       "product": "scorerebound",
-      "branch": "scorerebound/issue-350-servicer-seo-guides",
+      "branch": "scorerebound/issue-351-credit-builder-comparison",
       "draft_pr": null,
-      "reason": "P0 — FEEDS EXISTING REVENUE FUNNEL. ScoreRebound's affiliate recommendation system shipped last cycle (PR #355 closed #349). Revenue chain is complete: quiz → recovery plan → affiliate cards → click → commission. What's missing: organic search traffic. These servicer-specific SEO pages capture high-intent queries like 'MOHELA student loan help', 'Navient credit recovery', 'NELNET default options'. Each page links to the recovery plan quiz → existing affiliate funnel. ScoreRebound has 23 PRs merged and a working product — SEO content is the multiplier that drives traffic to revenue."
+      "reason": "P0 — SEO + AFFILIATE REVENUE PAGE, WORKING FUNNEL. ScoreRebound has working affiliate infrastructure (31 PRs merged, #349 affiliate products shipped, #350 servicer SEO pages now COMPLETE). This comparison page captures high-intent searches ('best credit builder loan', 'best secured credit card bad credit') → authoritative comparison table → affiliate link click → commission ($5-75 per conversion). No dependencies. Well-scoped single-page feature. Most direct path to ScoreRebound's first affiliate dollar."
+    },
+    {
+      "number": 241,
+      "title": "[cellscore] Core MVP — address coverage checker, plan recommender, plan comparison",
+      "product": "cellscore",
+      "branch": "cellscore/issue-241-core-mvp",
+      "draft_pr": null,
+      "reason": "P0 — PORTFOLIO DIVERSITY, BUILD ON COMPLETED FOUNDATION. CellScore has only 2 PRs merged — most underinvested active product. Plan database seed (#346) just COMPLETED this cycle, so the data foundation (60+ plans from 15+ carriers with affiliate URLs) is now in place. This is the natural next step: build the core product experience (address → coverage check → plan recommendation → comparison → affiliate click). Without the core MVP, all that plan data sits unused. Revenue path: core MVP → landing page (#246) → affiliate integration (#250) → commission."
     }
   ],
   "housekeeping": {
     "issues_to_close": [],
-    "issues_closed_this_cycle": [349, 274],
-    "issues_closed_previously": [111],
-    "reason": "#349 closed by PR #355 (scorerebound affiliate recs). #274 closed by PR #354 (billwatch DB schema). #111 (afterloss Supabase schema) also confirmed closed — unblocks #253, #304, #256.",
-    "escalation_254": "CRITICAL: #254 (afterloss checklist engine) has now failed 9 CONSECUTIVE worker assignments with zero PRs produced. Per escalation policy set in cycle 20, this issue MUST BE SPLIT by the planner into sub-issues before another worker attempt. Suggested split: (1) Zustand store setup + hydration fix, (2) Checklist data model + step definitions, (3) Checklist UI rendering + progress tracking, (4) localStorage persistence + sync. DO NOT assign #254 to another worker as-is — the monolithic scope is the root cause of failure.",
-    "newly_unblocked": [
-      "#332 (billwatch affiliate tracking) — unblocked by #274 closure",
-      "#334 (billwatch provider DB) — unblocked by #274 closure",
-      "#253 (afterloss probate DB) — unblocked by #111 closure",
-      "#304 (afterloss click tracking) — unblocked by #111 closure",
-      "#256 (afterloss cancellation templates) — unblocked by #111 closure"
+    "issues_closed_this_cycle": [],
+    "issues_closed_previously": [349, 274, 111, 346, 350],
+    "reason": "KEY CHANGES: #346 (cellscore plan DB seed) and #350 (scorerebound servicer SEO) are now CLOSED/COMPLETED since last cycle. #334, #332, #253 remain open with partial work.",
+    "escalation_254": "ONGOING: #254 (afterloss checklist engine) has 9 consecutive failures. Still awaiting planner to split into sub-issues. DO NOT assign #254 to a worker until split is complete.",
+    "partial_work_in_main": [
+      "#332 (billwatch affiliate tracking) — partial work merged via WIP PR #356, issue still open",
+      "#334 (billwatch provider DB) — partial work merged via WIP PR #359, issue still open, SELECTED THIS CYCLE",
+      "#253 (afterloss probate DB seed) — partial work merged via WIP PR #360, issue still open, deferred this cycle"
     ],
-    "portfolio_note": "3 different products selected (billwatch, cellscore, scorerebound) — meets diversity mandate. CellScore finally enters the pipeline after 0 PRs across 20 cycles. AfterLoss skipped this cycle due to #254 escalation — can re-enter via #253 (probate DB) or #292 (phone script SEO) once #254 is split.",
+    "completed_since_last_cycle": [
+      "#346 (cellscore plan DB seed) — CLOSED/COMPLETED, was selected last cycle",
+      "#350 (scorerebound servicer SEO) — CLOSED/COMPLETED, was selected last cycle"
+    ],
+    "portfolio_note": "3 different products selected (billwatch, scorerebound, cellscore) — meets diversity mandate. ScoreRebound rotated to #351 (credit-builder comparison) now that #350 is complete. CellScore advances to core MVP (#241) now that plan DB seed (#346) is complete. Afterloss deferred again — 57 PRs merged but revenue blocked by #254 escalation. GhostBoard deferred — only 2 PRs but far from revenue, scaffold work (#272) is prerequisite.",
     "next_cycle_candidates": [
-      "#334 (billwatch provider DB) — newly unblocked, revenue-critical, pair with #332",
-      "#253 (afterloss probate DB) — newly unblocked, enables 150+ SEO pages",
-      "#351 (scorerebound credit-builder comparison) — SEO + affiliate comparison page",
+      "#253 (afterloss probate DB seed) — partial work in main, deferred 2 cycles, continue next",
+      "#332 (billwatch affiliate tracking) — partial work in main, unblocks #335 (solar recs)",
+      "#304 (afterloss click tracking) — unblocked, revenue measurement",
       "#292 (afterloss phone script SEO) — no deps, content work",
-      "#304 (afterloss click tracking) — newly unblocked"
+      "#331 (billwatch EIA API) — powers benchmarking and 50-state SEO pages",
+      "#333 (billwatch 50-state SEO) — 51 indexed pages, massive long-tail SEO",
+      "#335 (billwatch solar recs) — blocked by #332, unblocks when #332 closes",
+      "#246 (cellscore landing page + SEO) — needs core MVP first"
     ],
-    "metrics_snapshot": "afterloss: 46 PRs, scorerebound: 24 PRs, billwatch: 18 PRs, ghostboard: 2 PRs, cellscore: 1 PR"
+    "metrics_snapshot": "afterloss: 57 PRs, scorerebound: 31 PRs, billwatch: 28 PRs, ghostboard: 2 PRs, cellscore: 2 PRs"
   }
 }
