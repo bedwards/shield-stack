@@ -102,6 +102,7 @@ export default function AccountPage() {
     const supabase = createClient();
     await supabase
       .from("profiles")
+      // @ts-expect-error — Supabase SSR generic threading issue with update()
       .update({
         notification_prefs: { email: notifEmail, push: false },
       })

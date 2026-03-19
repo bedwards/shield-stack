@@ -67,34 +67,34 @@ export default function RootLayout({
               ScoreRebound
             </Link>
             <div className="flex items-center gap-6">
-              <a
+              <Link
                 href="/#how-it-works"
                 data-testid="nav-how-it-works"
                 className="hidden text-sm font-medium text-gray-600 hover:text-emerald-700 sm:block"
               >
                 How It Works
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/#recovery-paths"
                 data-testid="nav-recovery-paths"
                 className="hidden text-sm font-medium text-gray-600 hover:text-emerald-700 sm:block"
               >
                 Recovery Paths
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/#faq"
                 data-testid="nav-faq"
                 className="hidden text-sm font-medium text-gray-600 hover:text-emerald-700 sm:block"
               >
                 FAQ
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/#quiz"
                 data-testid="nav-cta"
                 className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
               >
                 Get My Free Plan
-              </a>
+              </Link>
               <NavAuth />
             </div>
           </nav>
