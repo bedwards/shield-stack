@@ -50,8 +50,9 @@ test.describe("Browser state — sessionStorage during quiz flow", () => {
 
     expect(storedPlan).toBeTruthy();
 
-    // Parse and verify plan structure
-    const plan = JSON.parse(storedPlan!);
+    // Parse and verify plan structure — supports new { plan, scoreRange } and legacy format
+    const parsed = JSON.parse(storedPlan!);
+    const plan = parsed.plan ?? parsed;
     expect(plan.recovery_path).toBeTruthy();
     expect(plan.estimated_months).toBeGreaterThan(0);
     expect(plan.steps).toBeDefined();

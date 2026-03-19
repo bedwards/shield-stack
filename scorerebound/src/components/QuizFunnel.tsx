@@ -92,11 +92,16 @@ export default function QuizFunnel() {
       const data = await res.json();
 
       if (data.plan_id) {
+        // Store scoreRange in sessionStorage so the plan page can use it for affiliate matching
+        sessionStorage.setItem(`score-${data.plan_id}`, quiz.current_score_range!);
         router.push(`/plan/${data.plan_id}`);
       } else {
-        // No DB — store plan in sessionStorage and navigate with a local ID
+        // No DB — store plan + scoreRange in sessionStorage and navigate with a local ID
         const localId = `local-${Date.now()}`;
-        sessionStorage.setItem(`plan-${localId}`, JSON.stringify(data.plan));
+        sessionStorage.setItem(
+          `plan-${localId}`,
+          JSON.stringify({ plan: data.plan, scoreRange: quiz.current_score_range }),
+        );
         router.push(`/plan/${localId}`);
       }
     } catch (err) {
