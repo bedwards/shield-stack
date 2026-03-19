@@ -22,6 +22,24 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1.0,
     },
     {
+      url: `${BASE_URL}/faq`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.9,
+    },
+    {
+      url: `${BASE_URL}/providers`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.9,
+    },
+    {
+      url: `${BASE_URL}/pricing`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.85,
+    },
+    {
       url: `${BASE_URL}/guides/electric-bill-high`,
       lastModified: now,
       changeFrequency: "monthly",
@@ -50,7 +68,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${BASE_URL}/dashboard`,
       lastModified: now,
       changeFrequency: "daily",
-      priority: 0.9,
+      priority: 0.7,
     },
     {
       url: `${BASE_URL}/privacy`,
