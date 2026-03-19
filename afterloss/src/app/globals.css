@@ -40,3 +40,32 @@ body {
   color: var(--foreground);
   background: var(--background);
 }
+
+@media print {
+  body {
+    background: white;
+    color: black;
+  }
+
+  nav[aria-label="Breadcrumb"],
+  section[data-testid="phone-script-cta"],
+  section[data-testid="phone-scripts-cta"],
+  section[data-testid="phone-script-related"],
+  section[data-testid="phone-script-grief-support"],
+  section[data-testid="phone-scripts-grief-support"],
+  [data-testid="back-to-phone-scripts"],
+  header nav,
+  footer {
+    display: none !important;
+  }
+
+  a {
+    color: black;
+    text-decoration: none;
+  }
+
+  .rounded-lg,
+  .rounded-md {
+    border-color: #999 !important;
+  }
+}
