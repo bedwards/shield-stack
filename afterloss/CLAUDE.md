@@ -280,4 +280,4 @@ Security headers are configured in `next.config.ts`:
 7. Deploy
 
 ## Version
-0.5.1
+0.6.0
