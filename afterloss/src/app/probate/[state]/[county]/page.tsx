@@ -49,8 +49,6 @@ export async function generateMetadata({
     title,
     description,
     openGraph: {
-      title,
-      description,
       url: `${BASE_URL}/probate/${stateSlug}/${countySlug}`,
     },
     alternates: {
