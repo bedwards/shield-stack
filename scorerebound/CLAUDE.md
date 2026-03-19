@@ -251,6 +251,23 @@ All UI components MUST follow these conventions:
 - `servicer-transition-info`, `transition-link-{slug}` (Great Lakes only)
 - `howto-structured-data` (JSON-LD script tag)
 
+### Existing data-testid Attributes (Credit-Builder Comparison — /compare/credit-builders)
+- `comparison-page` (page wrapper)
+- `comparison-title` (H1)
+- `comparison-disclosure` (FTC disclosure banner wrapper)
+- `comparison-toc` (table of contents nav)
+- `toc-table`, `toc-how-it-works`, `toc-{product-slug}`, `toc-quiz` (TOC links)
+- `comparison-table` (sortable comparison table wrapper)
+- `sort-{column}` (sort buttons: name, type, monthly_cost, credit_bureaus_reported, min_credit_score, time_to_build_credit)
+- `table-row-{slug}`, `table-link-{slug}`, `table-cta-{slug}` (table row elements)
+- `product-card-{slug}` (detailed product card, e.g., `product-card-self`)
+- `product-cta-{slug}` (product card CTA link)
+- `editors-pick-{slug}` (editor's pick badge)
+- `how-credit-builders-work` (explainer section)
+- `comparison-quiz-cta` (quiz CTA section), `quiz-cta-button` (quiz link button)
+- `related-link-ibr`, `related-link-rehabilitation`, `related-link-consolidation` (related resource links)
+- `product-structured-data` (JSON-LD script tag)
+
 ### Testing Requirements
 - `TEST_MODE=true` env var enables test accounts and bypasses rate limits
 - Test user accounts seeded via environment variables
@@ -273,4 +290,4 @@ See `.env.example` for the full list. Key variables:
 
 ## Version
 
-0.8.0
+0.9.0

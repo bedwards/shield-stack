@@ -15,6 +15,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 1.0,
     },
+    // Credit-builder comparison page
+    {
+      url: `${BASE_URL}/compare/credit-builders`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.9,
+    },
     // Recovery path guides
     {
       url: `${BASE_URL}/guides/ibr-enrollment`,
