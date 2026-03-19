@@ -69,16 +69,20 @@ describe("Electric Bill High Guide", () => {
     expect(screen.getByTestId("table-lowest-states")).toBeInTheDocument();
   });
 
-  it("renders highest-state table with Hawaii at $203/mo", () => {
+  it("renders highest-state table with Hawaii linking to /guides/hawaii", () => {
     const table = screen.getByTestId("table-highest-states");
     expect(table.textContent).toContain("Hawaii");
     expect(table.textContent).toContain("$203/mo");
+    const hawaiiLink = screen.getByTestId("state-link-hi");
+    expect(hawaiiLink).toHaveAttribute("href", "/guides/hawaii");
   });
 
-  it("renders lowest-state table with Utah at $99/mo", () => {
+  it("renders lowest-state table with Utah linking to /guides/utah", () => {
     const table = screen.getByTestId("table-lowest-states");
     expect(table.textContent).toContain("Utah");
     expect(table.textContent).toContain("$99/mo");
+    const utahLink = screen.getByTestId("state-link-ut");
+    expect(utahLink).toHaveAttribute("href", "/guides/utah");
   });
 
   it("renders how-to-diagnose section with 6 steps", () => {

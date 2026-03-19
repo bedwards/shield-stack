@@ -21,18 +21,12 @@ export const metadata: Metadata = {
     canonical: `${BASE_URL}/guides/electric-bill-high`,
   },
   openGraph: {
-    title: "Why Is My Electric Bill So High? [2026 Guide]",
-    description:
-      "Average US electric bills hit $163/month in 2026 — up 35% since 2021. Learn the 5 real reasons your bill is rising and what you can do about it.",
     type: "article",
     url: `${BASE_URL}/guides/electric-bill-high`,
     siteName: "BillWatch",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Why Is My Electric Bill So High? [2026 Guide]",
-    description:
-      "Average US electric bills hit $163/month in 2026 — up 35% since 2021. Learn the 5 real reasons your bill is rising.",
   },
 };
 
@@ -312,8 +306,14 @@ function StateTable({
                 key={row.abbr}
                 className="border-b border-[var(--border)] hover:bg-[var(--secondary)] transition-colors"
               >
-                <td className="py-3 px-4 text-[var(--foreground)]">
-                  {row.state}
+                <td className="py-3 px-4">
+                  <Link
+                    href={`/guides/${row.state.toLowerCase().replace(/\s+/g, "-")}`}
+                    data-testid={`state-link-${row.abbr.toLowerCase()}`}
+                    className="text-[var(--primary)] hover:underline"
+                  >
+                    {row.state}
+                  </Link>
                 </td>
                 <td className="py-3 px-4 text-right font-medium text-[var(--foreground)]">
                   ${row.avg}/mo

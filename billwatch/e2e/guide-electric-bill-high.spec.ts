@@ -48,12 +48,17 @@ test.describe("Electric Bill High Guide", () => {
     await expect(page.getByTestId("cause-infrastructure-investment")).toBeVisible();
   });
 
-  test("renders state average tables", async ({ page }) => {
+  test("renders state average tables with links to state guides", async ({ page }) => {
     await expect(page.getByTestId("state-averages-section")).toBeVisible();
     await expect(page.getByTestId("table-highest-states")).toBeVisible();
     await expect(page.getByTestId("table-lowest-states")).toBeVisible();
-    await expect(page.getByTestId("table-highest-states")).toContainText("Hawaii");
-    await expect(page.getByTestId("table-lowest-states")).toContainText("Utah");
+    // State names are links to /guides/[state] pages
+    const hawaiiLink = page.getByTestId("state-link-hi");
+    await expect(hawaiiLink).toBeVisible();
+    await expect(hawaiiLink).toHaveAttribute("href", "/guides/hawaii");
+    const utahLink = page.getByTestId("state-link-ut");
+    await expect(utahLink).toBeVisible();
+    await expect(utahLink).toHaveAttribute("href", "/guides/utah");
   });
 
   test("renders FAQ section", async ({ page }) => {
