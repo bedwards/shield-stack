@@ -9,6 +9,7 @@ import {
   getBillComparison,
   type StateData,
 } from "@/lib/states/data";
+import ProviderComparison from "@/components/ProviderComparison";
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_APP_URL || "https://billwatch.pages.dev";
@@ -560,6 +561,12 @@ export default async function StateGuidePage({
 
         {/* Compare Providers (deregulated states only) */}
         <CompareProvidersSection state={state} />
+
+        {/* Provider comparison with affiliate switching CTAs (deregulated states only) */}
+        <ProviderComparison
+          stateCode={state.code}
+          referrer={`/guides/${state.slug}`}
+        />
 
         {/* FAQ */}
         <FaqSection state={state} />
