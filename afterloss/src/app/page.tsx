@@ -5,6 +5,7 @@ import HowItWorksSection from "@/components/landing/HowItWorksSection";
 import TrustSection from "@/components/landing/TrustSection";
 import FaqSection, { faqs } from "@/components/landing/FaqSection";
 import CtaSection from "@/components/landing/CtaSection";
+import EmailCapture from "@/components/EmailCapture";
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_APP_URL || "https://afterloss.pages.dev";
@@ -109,6 +110,9 @@ export default function Home() {
       <TrustSection />
       <FaqSection />
       <CtaSection />
+      <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+        <EmailCapture sourcePage="landing" />
+      </div>
     </div>
   );
 }

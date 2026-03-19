@@ -456,6 +456,43 @@ export interface Database {
           },
         ];
       };
+      email_subscribers: {
+        Row: {
+          id: string;
+          email: string;
+          source_page: string | null;
+          /** ISO 8601 date string */
+          subscribed_at: string;
+          /** ISO 8601 date string — null if still subscribed */
+          unsubscribed_at: string | null;
+          /** ISO 8601 date string — null if not yet confirmed (double opt-in) */
+          confirmed_at: string | null;
+          drip_step: number;
+          /** ISO 8601 date string */
+          last_drip_sent_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          email: string;
+          source_page?: string | null;
+          subscribed_at?: string;
+          unsubscribed_at?: string | null;
+          confirmed_at?: string | null;
+          drip_step?: number;
+          last_drip_sent_at?: string | null;
+        };
+        Update: {
+          id?: string;
+          email?: string;
+          source_page?: string | null;
+          subscribed_at?: string;
+          unsubscribed_at?: string | null;
+          confirmed_at?: string | null;
+          drip_step?: number;
+          last_drip_sent_at?: string | null;
+        };
+        Relationships: [];
+      };
       deadline_reminders: {
         Row: {
           id: string;

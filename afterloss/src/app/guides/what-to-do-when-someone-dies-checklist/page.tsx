@@ -12,6 +12,7 @@ import {
 } from "@/components/guides/TimelineSection";
 import { FaqSection, guideFaqs } from "@/components/guides/FaqSection";
 import { GuideCtaSection } from "@/components/guides/GuideCtaSection";
+import EmailCapture from "@/components/EmailCapture";
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_APP_URL || "https://afterloss.pages.dev";
@@ -629,6 +630,10 @@ export default function WhatToDoWhenSomeoneDiesGuide() {
         <FaqSection />
 
         <GuideCtaSection />
+
+        <div className="mt-12">
+          <EmailCapture sourcePage="guide-what-to-do-2026" />
+        </div>
       </article>
     </div>
   );

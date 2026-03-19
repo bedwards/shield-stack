@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { JsonLd } from "@/components/JsonLd";
 import { generateFaqPageSchema } from "@/lib/structured-data";
+import EmailCapture from "@/components/EmailCapture";
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_APP_URL || "https://afterloss.pages.dev";
@@ -701,6 +702,10 @@ export default function LifeInsuranceAfterLossPage() {
             Start the Full Guide — Free
           </Link>
         </section>
+
+        <div className="mt-12">
+          <EmailCapture sourcePage="life-insurance" />
+        </div>
       </article>
     </div>
   );
