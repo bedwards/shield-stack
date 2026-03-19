@@ -5,7 +5,10 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "BillWatch - Utility Bill Anomaly Detection",
+  title: {
+    default: "BillWatch — Utility Bill Anomaly Detection",
+    template: "%s | BillWatch",
+  },
   description:
     "Upload your utility bills and instantly detect overcharges, anomalies, and rate spikes. Track your electric, gas, and water costs over time.",
   keywords: [
@@ -17,9 +20,6 @@ export const metadata: Metadata = {
     "high electric bill",
   ],
   openGraph: {
-    title: "BillWatch - Utility Bill Anomaly Detection",
-    description:
-      "Upload your utility bills and instantly detect overcharges, anomalies, and rate spikes. Track your electric, gas, and water costs over time.",
     type: "website",
     siteName: "BillWatch",
   },
@@ -51,13 +51,20 @@ export default function RootLayout({
                   BillWatch
                 </Link>
               </div>
-              <div className="flex items-center gap-4">
+              <div className="hidden sm:flex items-center gap-4">
                 <Link
                   href="/dashboard"
                   data-testid="nav-dashboard"
                   className="text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
                 >
                   Dashboard
+                </Link>
+                <Link
+                  href="/providers"
+                  data-testid="nav-providers"
+                  className="text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+                >
+                  Providers
                 </Link>
                 <Link
                   href="/upload"
@@ -69,6 +76,23 @@ export default function RootLayout({
                 <Link
                   href="/login"
                   data-testid="nav-login"
+                  className="rounded-md bg-[var(--primary)] px-3 py-2 text-sm font-medium text-white hover:bg-[var(--primary-hover)] transition-colors"
+                >
+                  Sign In
+                </Link>
+              </div>
+              {/* Mobile nav */}
+              <div className="flex sm:hidden items-center gap-3">
+                <Link
+                  href="/upload"
+                  data-testid="nav-upload-mobile"
+                  className="text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+                >
+                  Upload
+                </Link>
+                <Link
+                  href="/login"
+                  data-testid="nav-login-mobile"
                   className="rounded-md bg-[var(--primary)] px-3 py-2 text-sm font-medium text-white hover:bg-[var(--primary-hover)] transition-colors"
                 >
                   Sign In
@@ -92,7 +116,21 @@ export default function RootLayout({
                 &copy; {new Date().getFullYear()} BillWatch. All rights
                 reserved.
               </p>
-              <div className="flex gap-6">
+              <div className="flex flex-wrap gap-6">
+                <Link
+                  href="/faq"
+                  data-testid="footer-faq"
+                  className="text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+                >
+                  FAQ
+                </Link>
+                <Link
+                  href="/providers"
+                  data-testid="footer-providers"
+                  className="text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+                >
+                  Providers
+                </Link>
                 <Link
                   href="/privacy"
                   data-testid="footer-privacy"
