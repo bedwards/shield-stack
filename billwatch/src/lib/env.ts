@@ -24,3 +24,10 @@ export function getStripeSecretKey(): string {
   if (!key) throw new Error("STRIPE_SECRET_KEY is not set");
   return key;
 }
+
+/** @remarks Server-side only — EIA API key for electricity rate data */
+export function getEiaApiKey(): string {
+  const key = process.env.EIA_API_KEY;
+  if (!key) throw new Error("EIA_API_KEY is not set");
+  return key;
+}
