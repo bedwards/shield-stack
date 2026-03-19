@@ -68,4 +68,26 @@ body {
   .rounded-md {
     border-color: #999 !important;
   }
+
+  [data-testid="deadline-tracker"] {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  [data-testid="deadline-filters"] {
+    display: none !important;
+  }
+
+  [data-testid^="deadline-item-"] {
+    border: 1px solid #ccc !important;
+    background: white !important;
+    opacity: 1 !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+    margin-bottom: 8px;
+  }
+
+  [data-testid^="deadline-complete-"] {
+    display: none !important;
+  }
 }

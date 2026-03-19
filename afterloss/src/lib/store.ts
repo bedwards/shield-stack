@@ -1,5 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import type { Deadline } from "@/types";
+import { computeDeadlines } from "@/lib/deadlines";
 
 export type Relationship = "spouse" | "child" | "sibling" | "parent" | "other";
 export type EstateComplexity = "simple" | "moderate" | "complex";
@@ -26,12 +28,7 @@ export interface LocalEstateCase {
     generatedAt: string;
     content: string;
   }[];
-  deadlines: {
-    id: string;
-    title: string;
-    dueDate: string;
-    completed: boolean;
-  }[];
+  deadlines: Deadline[];
 }
 
 interface OnboardingData {
@@ -47,6 +44,7 @@ interface EstateStoreState {
   setOnboardingData: (data: OnboardingData) => void;
   toggleItem: (itemId: string) => void;
   skipItem: (itemId: string) => void;
+  toggleDeadline: (deadlineId: string) => void;
   resetCase: () => void;
   getCase: () => LocalEstateCase | null;
 }
@@ -67,7 +65,7 @@ export const useEstateStore = create<EstateStoreState>()(
           createdAt: new Date().toISOString(),
           checklistProgress: {},
           generatedDocuments: [],
-          deadlines: [],
+          deadlines: computeDeadlines(data.state, data.dateOfDeath),
         };
         set({ currentCase: newCase });
       },
@@ -92,6 +90,19 @@ export const useEstateStore = create<EstateStoreState>()(
 
         set({
           currentCase: { ...currentCase, checklistProgress: progress },
+        });
+      },
+
+      toggleDeadline: (deadlineId: string) => {
+        const currentCase = get().currentCase;
+        if (!currentCase) return;
+
+        const deadlines = currentCase.deadlines.map((d) =>
+          d.id === deadlineId ? { ...d, completed: !d.completed } : d,
+        );
+
+        set({
+          currentCase: { ...currentCase, deadlines },
         });
       },
 
