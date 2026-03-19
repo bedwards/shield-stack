@@ -141,4 +141,4 @@ See `.env.example` for required variables:
 - `NEXT_PUBLIC_APP_URL` -- Public app URL
 
 ## Version
-0.1.0
+0.2.0
