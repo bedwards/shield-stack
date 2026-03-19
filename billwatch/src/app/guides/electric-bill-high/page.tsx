@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import ProviderComparison from "@/components/ProviderComparison";
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_APP_URL || "https://billwatch.pages.dev";
@@ -665,10 +666,16 @@ export default function ElectricBillHighGuide() {
               </span>
             ))}
           </div>
-          <p className="text-[var(--muted)] leading-relaxed">
+          <p className="text-[var(--muted)] leading-relaxed mb-6">
             Upload your bill to BillWatch and we&apos;ll show you what
             competitive rates are available in your area.
           </p>
+
+          {/* Texas provider comparison — largest deregulated market */}
+          <ProviderComparison
+            stateCode="TX"
+            referrer="/guides/electric-bill-high"
+          />
         </section>
 
         {/* FAQ Section */}

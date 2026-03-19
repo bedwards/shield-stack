@@ -152,6 +152,15 @@ All interactive elements include `data-testid` attributes for Playwright testing
 - `data-testid="cta-section"` -- Bottom CTA section
 - `data-testid="cta-start-button"` -- Get started button
 
+### ProviderComparison Component
+- `data-testid="provider-comparison"` -- Provider comparison section (renders only for deregulated states)
+- `data-testid="provider-comparison-title"` -- Section title
+- `data-testid="provider-list"` -- Provider cards container
+- `data-testid="provider-card-{id}"` -- Individual provider card (e.g., `provider-card-tx-txu-energy`)
+- `data-testid="switching-partners"` -- Affiliate switching partners container
+- `data-testid="cta-switch-provider"` -- Primary "Compare & Switch" CTA
+- `data-testid="affiliate-link-{slug}"` -- Affiliate link (e.g., `affiliate-link-chooseenergy`)
+
 Convention: All new interactive elements MUST include a `data-testid` attribute.
 
 ## Environment Variables
@@ -218,4 +227,4 @@ Security headers are configured in `next.config.ts`:
 - Health check: `GET /api/health` returns `{ "status": "ok" }`
 
 ## Version
-0.4.0
+0.5.0

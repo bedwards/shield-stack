@@ -99,6 +99,14 @@ describe("Electric Bill High Guide", () => {
     expect(screen.getByTestId("deregulated-states-list").textContent).toContain("Ohio");
   });
 
+  it("renders ProviderComparison for Texas in deregulated section", () => {
+    expect(screen.getByTestId("provider-comparison")).toBeInTheDocument();
+    expect(screen.getByTestId("provider-comparison-title")).toHaveTextContent(
+      "Switch and Save on Your Electric Bill"
+    );
+    expect(screen.getByTestId("cta-switch-provider")).toBeInTheDocument();
+  });
+
   it("renders FAQ section with 7 items", () => {
     expect(screen.getByTestId("faq-section")).toBeInTheDocument();
     for (let i = 0; i < 7; i++) {
