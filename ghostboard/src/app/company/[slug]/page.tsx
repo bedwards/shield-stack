@@ -1,20 +1,52 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import {
-  getCompanyBySlug,
-  getAllCompanySlugs,
-} from "@/lib/companies";
+import GhostingStats from "@/components/GhostingStats";
+import StatusDistribution from "@/components/StatusDistribution";
+import ReportForm from "@/components/ReportForm";
 
-/** ISR: revalidate every 24 hours */
-export const revalidate = 86400;
+interface CompanyData {
+  company: {
+    id: string;
+    slug: string;
+    name: string;
+    domain: string | null;
+    industry: string | null;
+    company_size: string | null;
+    headquarters: string | null;
+    is_claimed: boolean;
+  };
+  stats: {
+    total_reports: number;
+    ghosting_rate: number | null;
+    avg_response_days: number | null;
+    interview_to_offer_ratio: number | null;
+  };
+  recent_reports: Array<{
+    id: string;
+    status: string;
+    applied_date: string;
+    response_date: string | null;
+    response_days: number | null;
+    role_level: string | null;
+    application_method: string | null;
+    created_at: string;
+  }>;
+  status_distribution: Record<string, number>;
+  has_enough_reports: boolean;
+}
 
-/** Allow on-demand ISR for slugs not in generateStaticParams */
-export const dynamicParams = true;
-
-export async function generateStaticParams() {
-  const slugs = await getAllCompanySlugs();
-  return slugs.map((slug) => ({ slug }));
+async function getCompany(slug: string): Promise<CompanyData | null> {
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  try {
+    const res = await fetch(`${baseUrl}/api/companies/${slug}`, {
+      next: { revalidate: 3600 },
+    });
+    if (!res.ok) return null;
+    return res.json();
+  } catch {
+    return null;
+  }
 }
 
 export async function generateMetadata({
@@ -23,35 +55,28 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const company = await getCompanyBySlug(slug);
-  const displayName = company?.name ?? formatSlugAsName(slug);
+  const data = await getCompany(slug);
+  if (!data) return { title: "Company Not Found - GhostBoard" };
+
+  const { company, stats, has_enough_reports } = data;
+  const description = has_enough_reports
+    ? `${company.name} has a ${stats.ghosting_rate}% ghosting rate based on ${stats.total_reports} reports. See if they respond to applicants.`
+    : `Does ${company.name} ghost applicants? See reports from job seekers on GhostBoard.`;
 
   return {
-    title: `Does ${displayName} Ghost Applicants? | GhostBoard`,
-    description: `See ${displayName}'s ghosting rate, average response time, and interview-to-offer ratio. Real data from real job seekers on GhostBoard.`,
-    openGraph: {
-      type: "website",
-      siteName: "GhostBoard",
-    },
+    title: `Does ${company.name} Ghost Applicants? - GhostBoard`,
+    description,
   };
 }
 
-function formatSlugAsName(slug: string): string {
-  return slug
-    .split("-")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
-}
-
-function formatPercent(value: number | null): string {
-  if (value === null) return "--";
-  return `${Math.round(value * 100)}%`;
-}
-
-function formatDays(value: number | null): string {
-  if (value === null) return "--";
-  return `${Math.round(value)} days`;
-}
+const STATUS_LABELS: Record<string, string> = {
+  ghosted: "Ghosted",
+  heard_back: "Heard Back",
+  interviewed: "Interviewed",
+  offered: "Offered",
+  rejected: "Rejected",
+  applied: "Applied",
+};
 
 export default async function CompanyPage({
   params,
@@ -59,172 +84,133 @@ export default async function CompanyPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const company = await getCompanyBySlug(slug);
+  const data = await getCompany(slug);
 
-  if (!company) {
-    notFound();
-  }
+  if (!data) notFound();
 
-  const stats = company.stats;
-  const hasStats = stats && stats.total_reports >= 5;
-
-  const schemaOrg = {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    name: company.name,
-    url: company.domain ? `https://${company.domain}` : undefined,
-    ...(hasStats
-      ? {
-          aggregateRating: {
-            "@type": "AggregateRating",
-            ratingValue: stats.ghosting_rate !== null
-              ? Math.round((1 - stats.ghosting_rate) * 5 * 10) / 10
-              : undefined,
-            bestRating: 5,
-            worstRating: 1,
-            ratingCount: stats.total_reports,
-          },
-        }
-      : {}),
-  };
+  const { company, stats, recent_reports, status_distribution, has_enough_reports } = data;
 
   return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaOrg) }}
-      />
-
-      <div data-testid="company-page" className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
-        {/* Company Header */}
-        <div data-testid="company-header" className="mb-8">
-          <div className="flex items-start gap-4">
-            <div
-              data-testid="company-avatar"
-              className="flex h-16 w-16 items-center justify-center rounded-xl bg-primary text-2xl font-bold text-white"
-            >
-              {company.name.charAt(0)}
-            </div>
-            <div className="flex-1">
-              <h1
-                data-testid="company-name"
-                className="text-3xl font-bold text-foreground"
-              >
-                {company.name}
-              </h1>
-              <div className="mt-1 flex flex-wrap gap-3 text-sm text-muted">
-                {company.industry && (
-                  <span data-testid="company-industry">{company.industry}</span>
-                )}
-                {company.company_size && (
-                  <span data-testid="company-size">
-                    {company.company_size} employees
-                  </span>
-                )}
-                {company.headquarters && (
-                  <span data-testid="company-location">
-                    {company.headquarters}
-                  </span>
-                )}
-              </div>
-              {company.domain && (
-                <p className="mt-1 text-sm text-muted">{company.domain}</p>
-              )}
-            </div>
+    <div data-testid="company-page" className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+      {/* Company Header */}
+      <div data-testid="company-header" className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1
+            data-testid="company-page-title"
+            className="text-3xl font-bold text-foreground"
+          >
+            {company.name}
+          </h1>
+          <div className="mt-1 flex flex-wrap gap-2 text-sm text-muted">
+            {company.industry && <span data-testid="company-industry">{company.industry}</span>}
+            {company.industry && company.headquarters && <span>·</span>}
+            {company.headquarters && <span data-testid="company-headquarters">{company.headquarters}</span>}
+            {company.company_size && (
+              <>
+                <span>·</span>
+                <span data-testid="company-size">{company.company_size}</span>
+              </>
+            )}
           </div>
+          {company.domain && (
+            <p className="mt-1 text-sm text-primary" data-testid="company-domain">
+              {company.domain}
+            </p>
+          )}
         </div>
-
-        {/* Stats Grid */}
-        <div
-          data-testid="company-stats"
-          className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3"
-        >
-          <div
-            data-testid="stat-ghosting-rate"
-            className="rounded-xl border border-border bg-secondary p-6 text-center"
-          >
-            <p className="text-3xl font-bold text-destructive">
-              {hasStats ? formatPercent(stats.ghosting_rate) : "--"}
-            </p>
-            <p className="mt-1 text-sm text-muted">Ghosting Rate</p>
-          </div>
-          <div
-            data-testid="stat-response-time"
-            className="rounded-xl border border-border bg-secondary p-6 text-center"
-          >
-            <p className="text-3xl font-bold text-primary">
-              {hasStats ? formatDays(stats.avg_response_days) : "--"}
-            </p>
-            <p className="mt-1 text-sm text-muted">Avg Response Time</p>
-          </div>
-          <div
-            data-testid="stat-offer-ratio"
-            className="rounded-xl border border-border bg-secondary p-6 text-center"
-          >
-            <p className="text-3xl font-bold text-accent">
-              {hasStats ? formatPercent(stats.interview_to_offer_ratio) : "--"}
-            </p>
-            <p className="mt-1 text-sm text-muted">Interview-to-Offer</p>
-          </div>
-        </div>
-
-        {/* Minimum reports notice */}
-        {stats && stats.total_reports < 5 && stats.total_reports > 0 && (
-          <div
-            data-testid="insufficient-data"
-            className="mb-8 rounded-lg border border-accent/30 bg-accent/10 p-4 text-center text-sm text-muted"
-          >
-            {stats.total_reports} report{stats.total_reports !== 1 ? "s" : ""}{" "}
-            submitted. Stats will be shown after 5 reports for accuracy.
-          </div>
-        )}
-
-        {(!stats || stats.total_reports === 0) && (
-          <div
-            data-testid="no-reports"
-            className="mb-8 rounded-lg border border-border bg-secondary p-8 text-center"
-          >
-            <p className="text-lg font-semibold text-foreground">
-              No reports yet for {company.name}
-            </p>
-            <p className="mt-2 text-sm text-muted">
-              Be the first to report your application experience with this
-              company.
-            </p>
-          </div>
-        )}
-
-        {/* CTA */}
-        <div
-          data-testid="company-cta"
-          className="rounded-xl border border-border bg-secondary p-8 text-center"
-        >
-          <h2 className="text-xl font-bold text-foreground">
-            Applied to {company.name}?
-          </h2>
-          <p className="mt-2 text-sm text-muted">
-            Share your experience to help other job seekers.
-          </p>
+        <div className="flex gap-2">
           <Link
-            href="/report"
-            data-testid="report-button"
-            className="mt-4 inline-block rounded-lg bg-primary px-6 py-3 font-medium text-white hover:bg-primary-hover transition-colors"
+            href={`/compare?companies=${company.slug}`}
+            data-testid="compare-button"
+            className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground hover:bg-secondary transition-colors"
           >
-            Submit a Report
-          </Link>
-        </div>
-
-        {/* Breadcrumb / Back */}
-        <div className="mt-8">
-          <Link
-            href="/"
-            data-testid="back-home"
-            className="text-sm text-primary hover:underline"
-          >
-            &larr; Back to GhostBoard
+            Compare
           </Link>
         </div>
       </div>
-    </>
+
+      {/* Stats */}
+      <div className="mt-8">
+        <GhostingStats
+          ghostingRate={stats.ghosting_rate}
+          avgResponseDays={stats.avg_response_days}
+          interviewToOfferRatio={stats.interview_to_offer_ratio}
+          totalReports={stats.total_reports}
+          hasEnoughReports={has_enough_reports}
+        />
+      </div>
+
+      <div className="mt-12 grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Left column: Distribution + Recent Reports */}
+        <div className="lg:col-span-2 space-y-8">
+          {/* Status Distribution */}
+          {has_enough_reports && (
+            <div className="rounded-lg border border-border p-6">
+              <StatusDistribution
+                distribution={status_distribution}
+                totalReports={stats.total_reports}
+              />
+            </div>
+          )}
+
+          {/* Recent Reports */}
+          <div>
+            <h3 className="text-lg font-semibold text-foreground">Recent Reports</h3>
+            {recent_reports.length > 0 ? (
+              <div className="mt-4 space-y-3">
+                {recent_reports.map((report) => (
+                  <div
+                    key={report.id}
+                    data-testid={`report-item-${report.id}`}
+                    className="rounded-lg border border-border p-4"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span
+                        className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                          report.status === "ghosted"
+                            ? "bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300"
+                            : report.status === "offered"
+                              ? "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"
+                              : "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300"
+                        }`}
+                      >
+                        {STATUS_LABELS[report.status] || report.status}
+                      </span>
+                      <span className="text-xs text-muted">
+                        Applied {new Date(report.applied_date).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <div className="mt-2 flex gap-4 text-xs text-muted">
+                      {report.role_level && <span>Level: {report.role_level}</span>}
+                      {report.application_method && <span>Via: {report.application_method}</span>}
+                      {report.response_days !== null && <span>Response: {report.response_days} days</span>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p data-testid="no-reports" className="mt-4 text-sm text-muted">
+                No reports yet. Be the first to share your experience!
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* Right column: Report Form */}
+        <div>
+          <div className="sticky top-4 rounded-lg border border-border p-6">
+            <h3 className="text-lg font-semibold text-foreground">
+              Share Your Experience
+            </h3>
+            <p className="mt-1 text-sm text-muted">
+              Applied to {company.name}? Let others know what happened.
+            </p>
+            <div className="mt-4">
+              <ReportForm companyId={company.id} companyName={company.name} />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

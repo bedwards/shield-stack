@@ -4,6 +4,7 @@ import {
   getSupabaseUrl,
   getSupabaseAnonKey,
   getStripeSecretKey,
+  getSupabaseServiceRoleKey,
 } from "./env";
 
 describe("env helpers", () => {
@@ -62,6 +63,19 @@ describe("env helpers", () => {
     it("throws when STRIPE_SECRET_KEY is not set", () => {
       expect(() => getStripeSecretKey()).toThrow(
         "STRIPE_SECRET_KEY is not set",
+      );
+    });
+  });
+
+  describe("getSupabaseServiceRoleKey", () => {
+    it("returns the key when set", () => {
+      vi.stubEnv("SUPABASE_SERVICE_ROLE_KEY", "service-role-key-123");
+      expect(getSupabaseServiceRoleKey()).toBe("service-role-key-123");
+    });
+
+    it("throws when SUPABASE_SERVICE_ROLE_KEY is not set", () => {
+      expect(() => getSupabaseServiceRoleKey()).toThrow(
+        "SUPABASE_SERVICE_ROLE_KEY is not set",
       );
     });
   });
