@@ -15,6 +15,10 @@ import {
   formatDollars,
   getCurrentYear,
 } from "@/lib/probate/state-slugs";
+import {
+  getCountiesByStateSlug,
+  countyNameToSlug,
+} from "@/lib/county-data/county-slugs";
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_APP_URL || "https://afterloss.pages.dev";
@@ -306,6 +310,41 @@ export default async function ProbatePage({
           for the most current requirements and forms.
         </p>
       </section>
+
+      {/* County Probate Courts */}
+      {(() => {
+        const counties = getCountiesByStateSlug(slug);
+        if (counties.length === 0) return null;
+        return (
+          <section data-testid="probate-counties" className="mb-10">
+            <h2 className="text-2xl font-bold text-foreground mb-4">
+              {state.stateName} County Probate Courts
+            </h2>
+            <p className="text-muted mb-4">
+              Find your local probate court. Each county guide includes the court
+              address, phone number, filing fees, and step-by-step instructions.
+            </p>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {counties.map((c) => (
+                <Link
+                  key={c.fips_code}
+                  href={`/probate/${slug}/${countyNameToSlug(c.county_name)}`}
+                  data-testid={`county-link-${countyNameToSlug(c.county_name)}`}
+                  className="rounded-lg border border-border p-3 hover:shadow-md transition-shadow block"
+                >
+                  <h3 className="font-semibold text-foreground text-sm">
+                    {c.county_name} County
+                  </h3>
+                  <p className="text-xs text-muted mt-1">
+                    Pop. {c.population.toLocaleString("en-US")}
+                    {c.filing_fees ? ` · $${c.filing_fees} filing fee` : ""}
+                  </p>
+                </Link>
+              ))}
+            </div>
+          </section>
+        );
+      })()}
 
       {/* Related guides */}
       <section data-testid="probate-related" className="mb-10">

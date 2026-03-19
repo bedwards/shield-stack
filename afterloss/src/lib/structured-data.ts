@@ -123,3 +123,43 @@ export function generateBreadcrumbSchema(
     })),
   };
 }
+
+export interface GovernmentOfficeSchema {
+  "@context": "https://schema.org";
+  "@type": "GovernmentOffice";
+  name: string;
+  description: string;
+  address: {
+    "@type": "PostalAddress";
+    streetAddress: string;
+    addressLocality: string;
+    addressRegion: string;
+  };
+  telephone: string;
+  url?: string;
+}
+
+export function generateGovernmentOfficeSchema(params: {
+  name: string;
+  description: string;
+  streetAddress: string;
+  city: string;
+  stateCode: string;
+  phone: string;
+  url?: string;
+}): GovernmentOfficeSchema {
+  return {
+    "@context": "https://schema.org",
+    "@type": "GovernmentOffice",
+    name: params.name,
+    description: params.description,
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: params.streetAddress,
+      addressLocality: params.city,
+      addressRegion: params.stateCode,
+    },
+    telephone: params.phone,
+    ...(params.url ? { url: params.url } : {}),
+  };
+}
