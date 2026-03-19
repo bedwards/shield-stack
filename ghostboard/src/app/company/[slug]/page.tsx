@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import GhostingStats from "@/components/GhostingStats";
 import StatusDistribution from "@/components/StatusDistribution";
+import GhostingTrend from "@/components/GhostingTrend";
 import ReportForm from "@/components/ReportForm";
 
 interface CompanyData {
@@ -151,6 +152,11 @@ export default async function CompanyPage({
                 totalReports={stats.total_reports}
               />
             </div>
+          )}
+
+          {/* Ghosting Rate Trend Chart */}
+          {recent_reports.length > 0 && (
+            <GhostingTrend reports={recent_reports} />
           )}
 
           {/* Recent Reports */}

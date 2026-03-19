@@ -1,88 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase-server";
 import { isTestMode } from "@/lib/env";
+import {
+  validateReportPayload,
+  calculateResponseDays,
+  RATE_LIMITS,
+} from "@/lib/report-validation";
 
-const VALID_STATUSES = ["applied", "heard_back", "interviewed", "offered", "rejected", "ghosted"] as const;
-const VALID_ROLE_LEVELS = ["intern", "entry", "mid", "senior", "lead", "executive"] as const;
-const VALID_METHODS = ["online", "referral", "recruiter", "career_fair", "other"] as const;
-
-type ReportStatus = (typeof VALID_STATUSES)[number];
-
-interface ReportPayload {
-  company_id: string;
-  status: ReportStatus;
-  applied_date: string;
-  response_date?: string | null;
-  role_level?: string | null;
-  application_method?: string | null;
-}
-
-function validatePayload(body: unknown): { valid: true; data: ReportPayload } | { valid: false; error: string } {
-  if (!body || typeof body !== "object") {
-    return { valid: false, error: "Request body is required" };
-  }
-
-  const b = body as Record<string, unknown>;
-
-  if (!b.company_id || typeof b.company_id !== "string") {
-    return { valid: false, error: "company_id is required" };
-  }
-
-  if (!b.status || !VALID_STATUSES.includes(b.status as ReportStatus)) {
-    return { valid: false, error: `status must be one of: ${VALID_STATUSES.join(", ")}` };
-  }
-
-  if (!b.applied_date || typeof b.applied_date !== "string") {
-    return { valid: false, error: "applied_date is required (YYYY-MM-DD)" };
-  }
-
-  // Validate date format
-  const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-  if (!dateRegex.test(b.applied_date)) {
-    return { valid: false, error: "applied_date must be in YYYY-MM-DD format" };
-  }
-
-  // applied_date cannot be in the future
-  const appliedDate = new Date(b.applied_date);
-  if (appliedDate > new Date()) {
-    return { valid: false, error: "applied_date cannot be in the future" };
-  }
-
-  if (b.response_date && typeof b.response_date === "string") {
-    if (!dateRegex.test(b.response_date)) {
-      return { valid: false, error: "response_date must be in YYYY-MM-DD format" };
-    }
-    const responseDate = new Date(b.response_date);
-    if (responseDate < appliedDate) {
-      return { valid: false, error: "response_date cannot be before applied_date" };
-    }
-  }
-
-  if (b.role_level && !VALID_ROLE_LEVELS.includes(b.role_level as (typeof VALID_ROLE_LEVELS)[number])) {
-    return { valid: false, error: `role_level must be one of: ${VALID_ROLE_LEVELS.join(", ")}` };
-  }
-
-  if (b.application_method && !VALID_METHODS.includes(b.application_method as (typeof VALID_METHODS)[number])) {
-    return { valid: false, error: `application_method must be one of: ${VALID_METHODS.join(", ")}` };
-  }
-
-  return {
-    valid: true,
-    data: {
-      company_id: b.company_id as string,
-      status: b.status as ReportStatus,
-      applied_date: b.applied_date as string,
-      response_date: (b.response_date as string) || null,
-      role_level: (b.role_level as string) || null,
-      application_method: (b.application_method as string) || null,
-    },
-  };
+/**
+ * Generates a fingerprint from request headers for duplicate detection.
+ * Uses IP + User-Agent to identify likely same-user submissions.
+ */
+function getRequestFingerprint(request: NextRequest): string {
+  const ip =
+    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+  const ua = request.headers.get("user-agent") || "unknown";
+  return `${ip}:${ua.slice(0, 50)}`;
 }
 
 /**
  * POST /api/reports
  * Submit a new application outcome report.
- * Includes validation, rate limiting, and duplicate detection.
+ * Includes validation, user-tier-aware rate limiting, and fingerprint duplicate detection.
  */
 export async function POST(request: NextRequest) {
   let body: unknown;
@@ -92,7 +31,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
-  const validation = validatePayload(body);
+  const validation = validateReportPayload(body);
   if (!validation.valid) {
     return NextResponse.json({ error: validation.error }, { status: 400 });
   }
@@ -108,35 +47,78 @@ export async function POST(request: NextRequest) {
     .single();
 
   if (companyError || !company) {
-    return NextResponse.json({ error: "Company not found" }, { status: 404 });
+    return NextResponse.json(
+      { error: "Company not found" },
+      { status: 404 },
+    );
   }
 
-  // Rate limiting: check IP-based duplicate detection
-  // In test mode, skip rate limiting
+  // Rate limiting and duplicate detection (skip in test mode)
   if (!isTestMode()) {
-    const clientIp = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
-
-    // Fingerprint duplicate detection: same company + same IP within 24 hours
-    // We use a simple approach: check for recent reports from similar context
-    // Since anonymous reports don't have user_id, we check by created_at window
+    const _fingerprint = getRequestFingerprint(request);
     const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+
+    // Fingerprint duplicate detection: same company + same applied_date + same status
+    // submitted recently indicates a duplicate submission
+    const { data: duplicateReports } = await supabase
+      .from("reports")
+      .select("id")
+      .eq("company_id", data.company_id)
+      .eq("applied_date", data.applied_date)
+      .eq("status", data.status)
+      .gte("created_at", oneDayAgo)
+      .limit(1);
+
+    if (duplicateReports && duplicateReports.length > 0) {
+      return NextResponse.json(
+        {
+          error:
+            "A similar report for this company and date was already submitted recently.",
+        },
+        { status: 409 },
+      );
+    }
+
+    // User-tier-aware rate limiting
+    let dailyLimit = RATE_LIMITS.free; // Default: anonymous/free = 3/day
+
+    const authHeader = request.headers.get("authorization");
+    if (authHeader?.startsWith("Bearer ")) {
+      const { data: userData } = await supabase.auth.getUser(
+        authHeader.split(" ")[1],
+      );
+
+      if (userData?.user) {
+        const { data: subscription } = await supabase
+          .from("subscriptions")
+          .select("plan")
+          .eq("user_id", userData.user.id)
+          .eq("status", "active")
+          .single();
+
+        const plan = subscription?.plan || "free";
+        dailyLimit = RATE_LIMITS[plan] ?? RATE_LIMITS.free;
+      }
+    }
+
+    // Company-level rate limit (3x user limit to account for multiple users)
     const { data: recentReports } = await supabase
       .from("reports")
       .select("id")
       .eq("company_id", data.company_id)
       .gte("created_at", oneDayAgo);
 
-    // Basic rate limit: max 3 reports per company per day from all anonymous users combined
-    // (authenticated rate limiting with user_id will be more precise)
-    if (recentReports && recentReports.length >= 10) {
+    if (recentReports && recentReports.length >= dailyLimit * 3) {
       return NextResponse.json(
-        { error: "Too many reports for this company today. Please try again tomorrow." },
+        {
+          error:
+            "Too many reports for this company today. Please try again tomorrow.",
+        },
         { status: 429 },
       );
     }
 
-    // Global rate limit: check total anonymous reports in last hour
-    // This prevents a single actor from spamming across companies
+    // Global anonymous rate limit: prevent mass-spamming across companies
     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
     const { count: hourlyCount } = await supabase
       .from("reports")
@@ -152,13 +134,11 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  // Calculate response_days if both dates provided
-  let responseDays: number | null = null;
-  if (data.response_date && data.applied_date) {
-    const applied = new Date(data.applied_date);
-    const response = new Date(data.response_date);
-    responseDays = Math.round((response.getTime() - applied.getTime()) / (1000 * 60 * 60 * 24));
-  }
+  // Calculate response_days
+  const responseDays = calculateResponseDays(
+    data.applied_date,
+    data.response_date,
+  );
 
   // Insert the report
   const { data: report, error: insertError } = await supabase
@@ -172,7 +152,9 @@ export async function POST(request: NextRequest) {
       role_level: data.role_level,
       application_method: data.application_method,
     })
-    .select("id, company_id, status, applied_date, response_date, response_days, role_level, application_method, created_at")
+    .select(
+      "id, company_id, status, applied_date, response_date, response_days, role_level, application_method, created_at",
+    )
     .single();
 
   if (insertError) {

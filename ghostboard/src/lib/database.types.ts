@@ -266,6 +266,26 @@ export type Database = {
         Args: Record<string, never>;
         Returns: undefined;
       };
+      search_companies: {
+        Args: {
+          search_query: string;
+          result_limit?: number;
+        };
+        Returns: Array<{
+          id: string;
+          slug: string;
+          name: string;
+          domain: string | null;
+          industry: string | null;
+          company_size: string | null;
+          headquarters: string | null;
+          similarity_score: number;
+          total_reports: number | null;
+          ghosting_rate: number | null;
+          avg_response_days: number | null;
+          interview_to_offer_ratio: number | null;
+        }>;
+      };
     };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;
