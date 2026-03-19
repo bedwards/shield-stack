@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Link from "next/link";
+import AuthProvider from "@/components/auth/AuthProvider";
+import NavAuth from "@/components/auth/NavAuth";
 import "./globals.css";
 
 const inter = Inter({
@@ -31,6 +33,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.variable}>
       <body className="min-h-screen flex flex-col bg-white text-gray-900 antialiased">
+        <AuthProvider>
         <header
           data-testid="header"
           className="sticky top-0 z-50 border-b border-gray-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60"
@@ -64,34 +67,35 @@ export default function RootLayout({
               ScoreRebound
             </Link>
             <div className="flex items-center gap-6">
-              <a
-                href="#how-it-works"
+              <Link
+                href="/#how-it-works"
                 data-testid="nav-how-it-works"
                 className="hidden text-sm font-medium text-gray-600 hover:text-emerald-700 sm:block"
               >
                 How It Works
-              </a>
-              <a
-                href="#recovery-paths"
+              </Link>
+              <Link
+                href="/#recovery-paths"
                 data-testid="nav-recovery-paths"
                 className="hidden text-sm font-medium text-gray-600 hover:text-emerald-700 sm:block"
               >
                 Recovery Paths
-              </a>
-              <a
-                href="#faq"
+              </Link>
+              <Link
+                href="/#faq"
                 data-testid="nav-faq"
                 className="hidden text-sm font-medium text-gray-600 hover:text-emerald-700 sm:block"
               >
                 FAQ
-              </a>
-              <a
-                href="#quiz"
+              </Link>
+              <Link
+                href="/#quiz"
                 data-testid="nav-cta"
                 className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
               >
                 Get My Free Plan
-              </a>
+              </Link>
+              <NavAuth />
             </div>
           </nav>
         </header>
@@ -211,6 +215,7 @@ export default function RootLayout({
             </div>
           </div>
         </footer>
+        </AuthProvider>
       </body>
     </html>
   );

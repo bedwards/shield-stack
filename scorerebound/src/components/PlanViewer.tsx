@@ -7,6 +7,7 @@ import { RECOVERY_PATHS } from "@/lib/recovery-paths";
 import { getAffiliateRecommendations } from "@/lib/affiliates";
 import AffiliateCard, { AffiliateDisclosure } from "./AffiliateCard";
 import EmailCapture from "./EmailCapture";
+import SavePlanCTA from "./auth/SavePlanCTA";
 import type { ScoreRange } from "@/lib/database.types";
 
 interface PlanViewerProps {
@@ -237,18 +238,8 @@ export default function PlanViewer({ plan, planId, scoreRange }: PlanViewerProps
         />
       </div>
 
-      {/* CTA */}
-      <div data-testid="plan-cta" className="mt-10 text-center">
-        <p className="text-gray-600 mb-4">
-          Want to save your plan and track your progress?
-        </p>
-        <button
-          data-testid="plan-save-cta"
-          className="rounded-lg bg-emerald-600 px-6 py-3 text-base font-semibold text-white shadow-sm hover:bg-emerald-500 transition-colors"
-        >
-          Create Free Account to Save Plan
-        </button>
-      </div>
+      {/* CTA — Save Plan (triggers auth modal for anonymous users) */}
+      <SavePlanCTA planId={planId} />
     </div>
   );
 }
