@@ -216,6 +216,21 @@ All UI components MUST follow these conventions:
 - `footer-link-privacy`, `footer-link-terms`, `footer-copyright`
 - `main-content`
 
+### Existing data-testid Attributes (Plan Page — PlanViewer)
+- `plan-viewer`, `plan-header`, `plan-path-badge`, `plan-timeline-badge`
+- `plan-title`, `plan-summary`, `plan-score-estimate`, `plan-score-improvement`
+- `plan-warnings`, `plan-warning-{i}`
+- `plan-steps`, `plan-step-{n}`, `plan-step-toggle-{n}`, `plan-step-detail-{n}`, `plan-step-link-{n}`
+- `plan-path-details`, `plan-cta`, `plan-save-cta`
+
+### Existing data-testid Attributes (Affiliate Recommendations — on Plan Page)
+- `plan-affiliate-section` (wrapper in PlanViewer)
+- `affiliate-card-{slug}` (card container, e.g., `affiliate-card-self`)
+- `affiliate-name-{slug}`, `affiliate-description-{slug}`, `affiliate-why-{slug}`
+- `affiliate-category-{slug}` (category badge)
+- `affiliate-cta-{slug}` (CTA link — routes through `/api/affiliate/click`)
+- `affiliate-disclosure` (FTC disclosure banner)
+
 ### Existing data-testid Attributes (Email Capture — on Plan Page)
 - `email-capture-section`, `email-capture-title`
 - `email-capture-form`, `email-capture-input`, `email-capture-submit`
@@ -244,4 +259,4 @@ See `.env.example` for the full list. Key variables:
 
 ## Version
 
-0.1.0
+0.7.0
