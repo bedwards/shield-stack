@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { JsonLd } from "@/components/JsonLd";
 import { generateFaqPageSchema, generateBreadcrumbSchema } from "@/lib/structured-data";
+import EmailCapture from "@/components/EmailCapture";
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_APP_URL || "https://afterloss.pages.dev";
@@ -625,6 +626,10 @@ export default function GriefCounselingPage() {
           </div>
         </div>
       </section>
+
+      <div className="mx-auto max-w-4xl px-4 pb-16 sm:px-6 lg:px-8">
+        <EmailCapture sourcePage="grief-counseling" />
+      </div>
     </div>
   );
 }
