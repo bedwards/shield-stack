@@ -13,6 +13,7 @@ import {
   CATEGORY_ORDER,
   type ChecklistCategory,
 } from "@/lib/checklist/data";
+import { DeadlineTracker } from "@/components/DeadlineTracker";
 
 function ProgressBar({
   completed,
@@ -386,6 +387,11 @@ export default function ChecklistPage() {
           />
           <MilestoneMessage completed={progress.completed} />
           <SavePrompt completed={progress.completed} />
+        </div>
+
+        {/* Deadline Tracker */}
+        <div className="mb-8">
+          <DeadlineTracker />
         </div>
 
         {/* Checklist Sections */}
