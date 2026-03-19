@@ -234,7 +234,7 @@ function breadcrumbJsonLd() {
         "@type": "ListItem",
         position: 2,
         name: "Guides",
-        item: `${BASE_URL}/guides`,
+        item: `${BASE_URL}/guides/electric-bill-high`,
       },
       {
         "@type": "ListItem",
@@ -343,7 +343,7 @@ export default function BillDoubledGuide() {
         >
           Electric Bill Doubled?{" "}
           <span className="text-[var(--primary)]">
-            Here&apos;s What&apos;s Happening [2026]
+            Here&apos;s What&apos;s Happening and How to Fix It [2026]
           </span>
         </h1>
         <p
