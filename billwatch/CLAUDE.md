@@ -218,4 +218,4 @@ Security headers are configured in `next.config.ts`:
 - Health check: `GET /api/health` returns `{ "status": "ok" }`
 
 ## Version
-0.2.0
+0.3.0
