@@ -10,7 +10,7 @@ describe("useEstateStore", () => {
     expect(useEstateStore.getState().currentCase).toBeNull();
   });
 
-  it("sets onboarding data and creates a case", () => {
+  it("sets onboarding data and creates a case with computed deadlines", () => {
     useEstateStore.getState().setOnboardingData({
       state: "CA",
       relationship: "spouse",
@@ -28,7 +28,17 @@ describe("useEstateStore", () => {
     expect(currentCase!.createdAt).toBeTruthy();
     expect(currentCase!.checklistProgress).toEqual({});
     expect(currentCase!.generatedDocuments).toEqual([]);
-    expect(currentCase!.deadlines).toEqual([]);
+    // Deadlines are now computed from state + dateOfDeath
+    expect(currentCase!.deadlines.length).toBeGreaterThan(0);
+    // Should include both universal and CA-specific deadlines
+    expect(
+      currentCase!.deadlines.some((d) => d.id === "state-probate-filing-ca"),
+    ).toBe(true);
+    expect(
+      currentCase!.deadlines.some(
+        (d) => d.id === "universal-cobra-enrollment",
+      ),
+    ).toBe(true);
   });
 
   it("sets optional deceased name", () => {
@@ -132,6 +142,44 @@ describe("useEstateStore", () => {
     it("does nothing if no case exists", () => {
       useEstateStore.setState({ currentCase: null });
       useEstateStore.getState().toggleItem("immediate-001");
+      expect(useEstateStore.getState().currentCase).toBeNull();
+    });
+  });
+
+  describe("toggleDeadline", () => {
+    beforeEach(() => {
+      useEstateStore.getState().setOnboardingData({
+        state: "CA",
+        relationship: "spouse",
+        estateComplexity: "simple",
+        dateOfDeath: "2026-01-15T00:00:00.000Z",
+      });
+    });
+
+    it("marks a deadline as completed", () => {
+      const deadlineId =
+        useEstateStore.getState().currentCase!.deadlines[0].id;
+      useEstateStore.getState().toggleDeadline(deadlineId);
+      const deadline = useEstateStore
+        .getState()
+        .currentCase!.deadlines.find((d) => d.id === deadlineId);
+      expect(deadline!.completed).toBe(true);
+    });
+
+    it("toggles a completed deadline back to incomplete", () => {
+      const deadlineId =
+        useEstateStore.getState().currentCase!.deadlines[0].id;
+      useEstateStore.getState().toggleDeadline(deadlineId);
+      useEstateStore.getState().toggleDeadline(deadlineId);
+      const deadline = useEstateStore
+        .getState()
+        .currentCase!.deadlines.find((d) => d.id === deadlineId);
+      expect(deadline!.completed).toBe(false);
+    });
+
+    it("does nothing if no case exists", () => {
+      useEstateStore.setState({ currentCase: null });
+      useEstateStore.getState().toggleDeadline("nonexistent");
       expect(useEstateStore.getState().currentCase).toBeNull();
     });
   });

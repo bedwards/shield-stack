@@ -48,3 +48,22 @@ export interface DeceasedProfile {
   estimatedEstateValue: string | null;
   createdAt: string;
 }
+
+export type DeadlineCategory =
+  | "probate"
+  | "tax"
+  | "insurance"
+  | "benefits"
+  | "notification";
+
+export interface Deadline {
+  id: string;
+  title: string;
+  /** ISO 8601 date string */
+  dueDate: string;
+  category: DeadlineCategory;
+  description: string;
+  consequence: string;
+  completed: boolean;
+  stateSpecific: boolean;
+}
