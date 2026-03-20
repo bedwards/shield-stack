@@ -44,13 +44,13 @@ test.describe("About page", () => {
     );
     await expect(page.getByTestId("about-mission")).toBeVisible();
     await expect(page.getByTestId("about-how-it-works")).toBeVisible();
-    await expect(page.getByTestId("about-free")).toBeVisible();
+    await expect(page.getByTestId("about-revenue")).toBeVisible();
     await expect(page.getByTestId("about-disclaimer")).toBeVisible();
   });
 
   test("about page has CTA to quiz", async ({ page }) => {
     await expect(page.getByTestId("about-cta")).toBeVisible();
-    await expect(page.getByTestId("about-cta-link")).toHaveAttribute(
+    await expect(page.getByTestId("about-cta-button")).toHaveAttribute(
       "href",
       "/quiz",
     );

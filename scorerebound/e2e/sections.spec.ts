@@ -59,7 +59,7 @@ test.describe("Section content verification", () => {
     await expect(consol).toContainText("Combine multiple loans");
   });
 
-  test("FAQ section is visible with accordion items", async ({ page }) => {
+  test("FAQ section is visible with FAQ items", async ({ page }) => {
     const section = page.getByTestId("faq-section");
     await expect(section).toBeVisible();
     await expect(section).toContainText("Frequently Asked Questions");
@@ -67,8 +67,8 @@ test.describe("Section content verification", () => {
     const firstItem = page.getByTestId("faq-item-0");
     await expect(firstItem).toBeVisible();
 
-    // Click to expand
-    await page.getByTestId("faq-toggle-0").click();
+    // FAQ items are rendered directly (not as accordion) on landing page
+    await expect(page.getByTestId("faq-question-0")).toBeVisible();
     await expect(page.getByTestId("faq-answer-0")).toBeVisible();
   });
 
