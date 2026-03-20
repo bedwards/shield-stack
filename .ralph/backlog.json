@@ -1,103 +1,144 @@
 {
   "issues": [
     {
-      "number": 252,
-      "title": "[afterloss] Fix scaffold learnings violations from PR #213 reviews",
-      "product": "afterloss",
+      "number": 28,
+      "title": "[ScoreRebound] Auth + user management — Supabase Auth, profiles, anonymous-first UX",
+      "product": "scorerebound",
       "priority": "P0",
-      "type": "bug",
+      "type": "enhancement",
       "blocked_by": [],
-      "status": "ready"
+      "status": "selected",
+      "note": "SELECTED cycle 47. 1589 lines WIP in main from PR #385. Gemini found 1 CRITICAL (claimPlan before email confirm) + 3 HIGH. Worker must fix findings and complete auth. Unblocks #94 (dashboard). ScoreRebound is wave=right_now, closest to revenue."
     },
     {
-      "number": 127,
-      "title": "[afterloss] Create CI/CD pipeline and E2E tests",
-      "product": "afterloss",
+      "number": 88,
+      "title": "[scorerebound] Landing page with SEO optimization",
+      "product": "scorerebound",
+      "priority": "P0",
+      "type": "seo",
+      "blocked_by": [],
+      "status": "completed_on_branch",
+      "note": "COMPLETED on branch origin/scorerebound/issue-88-landing-page-seo. Feat commit 'closes #88' + version bump to 0.4.0. NO PR created — SALVAGE NEEDED. HIGHEST PRIORITY merger task. Once merged → ScoreRebound has landing page + plan pages for organic funnel."
+    },
+    {
+      "number": 172,
+      "title": "[billwatch] Landing page and SEO",
+      "product": "billwatch",
       "priority": "P1",
-      "type": "ci-cd",
-      "blocked_by": [252],
-      "status": "blocked"
+      "type": "seo",
+      "blocked_by": [],
+      "status": "selected",
+      "note": "SELECTED cycle 47 (PROMOTED to #2). 1481 lines WIP in main from PR #388 (landing/FAQ/providers pages). Gemini found 3 HIGH issues. Highest completion probability of all 3 selections. Completing enables #173 (user accounts) revenue path."
     },
     {
-      "number": 111,
-      "title": "[afterloss] Create Supabase database schema and migrations",
-      "product": "afterloss",
-      "priority": "P1",
-      "type": "scaffold",
-      "blocked_by": [252],
-      "status": "blocked"
-    },
-    {
-      "number": 253,
-      "title": "[afterloss] Curate and seed 50-state probate rules database",
-      "product": "afterloss",
-      "priority": "P1",
-      "type": "enhancement",
-      "blocked_by": [111],
-      "status": "blocked"
-    },
-    {
-      "number": 255,
-      "title": "[afterloss] Redesign landing page with empathetic bereavement UX",
-      "product": "afterloss",
+      "number": 140,
+      "title": "[ghostboard] Core MVP — Company search, report submission, and ghosting stats",
+      "product": "ghostboard",
       "priority": "P1",
       "type": "enhancement",
-      "blocked_by": [252],
-      "status": "blocked"
+      "blocked_by": [],
+      "status": "selected",
+      "note": "SELECTED cycle 47 — FINAL AUTONOMOUS ATTEMPT. Cycles 44-45 produced no PR, PR #383 WIP in main. If this fails → escalate to interactive TUI. Unblocks #305 (affiliate links), #306 (recruiter signup), #307 (Stripe)."
     },
     {
-      "number": 259,
-      "title": "[afterloss] Onboarding flow — state selection, relationship, estate complexity intake",
-      "product": "afterloss",
+      "number": 94,
+      "title": "[scorerebound] User dashboard and progress tracking",
+      "product": "scorerebound",
       "priority": "P1",
       "type": "enhancement",
-      "blocked_by": [252],
-      "status": "blocked"
+      "blocked_by": [28],
+      "status": "blocked",
+      "note": "Blocked by #28 (auth, selected cycle 47). TOP CANDIDATE for cycle 48 once #28 ships. Dashboard adds retention + progress tracking + affiliate visibility."
     },
     {
-      "number": 254,
-      "title": "[afterloss] Build interactive checklist engine with localStorage-first persistence",
-      "product": "afterloss",
+      "number": 305,
+      "title": "[ghostboard] Affiliate link integration on company pages — ZipRecruiter + Indeed job listings",
+      "product": "ghostboard",
       "priority": "P1",
-      "type": "enhancement",
-      "blocked_by": [259],
-      "status": "blocked"
+      "type": "revenue",
+      "blocked_by": [140],
+      "status": "blocked",
+      "note": "Blocked by #140 (core MVP, selected cycle 47 FINAL). DIRECT REVENUE via affiliate links. Top candidate once #140 completes."
     },
     {
-      "number": 261,
-      "title": "[afterloss] SEO infrastructure — sitemap.ts, robots.ts, JSON-LD structured data",
-      "product": "afterloss",
+      "number": 173,
+      "title": "[billwatch] User accounts and alerts",
+      "product": "billwatch",
       "priority": "P1",
       "type": "enhancement",
-      "blocked_by": [252],
-      "status": "blocked"
+      "blocked_by": [],
+      "status": "ready",
+      "note": "Next for BillWatch after #172 (landing page) ships. Enables #174 (payments) revenue path. Candidate for cycle 48."
     },
     {
-      "number": 277,
-      "title": "[afterloss] Definitive \"What to Do When Someone Dies\" 2026 guide — head-term SEO content page",
+      "number": 300,
+      "title": "[afterloss] Email capture and gentle drip sequence — convert visitors who aren't ready to start",
       "product": "afterloss",
-      "priority": "P1",
-      "type": "enhancement",
-      "blocked_by": [252, 255],
-      "status": "blocked"
+      "priority": "P2",
+      "type": "revenue",
+      "blocked_by": [],
+      "status": "ready",
+      "note": "NOT SELECTED cycle 47 — deprioritized after 2 cycles of WIP-only output. WIP from PR #387 in main. AfterLoss's only unblocked revenue path. Re-attempt candidate for cycle 48."
     },
     {
-      "number": 258,
-      "title": "[afterloss] Build programmatic SEO pages for 50 states (probate, small-estate, death-certificate)",
+      "number": 267,
+      "title": "[afterloss] Comparison page SEO strategy — /compare/{competitor} pages",
       "product": "afterloss",
-      "priority": "P1",
-      "type": "enhancement",
-      "blocked_by": [253, 111],
-      "status": "blocked"
+      "priority": "P2",
+      "type": "seo",
+      "blocked_by": [],
+      "status": "completed_on_branch",
+      "note": "COMPLETED on branch. Feat commit 'closes #267'. SALVAGE NEEDED — merger must create PR."
     },
     {
-      "number": 265,
-      "title": "[afterloss] Phone scripts library — pre-written call scripts for SSA, banks, insurance, subscriptions",
+      "number": 256,
+      "title": "[afterloss] Curate subscription cancellation templates (100+ services)",
+      "product": "afterloss",
+      "priority": "P2",
+      "type": "enhancement",
+      "blocked_by": [],
+      "status": "completed_on_branch",
+      "note": "COMPLETED on branch (feat commit 'closes #256'). SALVAGE NEEDED — merger must create PR. If valid → #293 UNBLOCKS."
+    },
+    {
+      "number": 293,
+      "title": "[afterloss] Service-specific subscription cancellation SEO pages — /cancel/{service} for 50+ services",
       "product": "afterloss",
       "priority": "P1",
-      "type": "enhancement",
-      "blocked_by": [252],
-      "status": "blocked"
+      "type": "seo",
+      "blocked_by": [256],
+      "status": "blocked",
+      "note": "Blocked by #256 (completed on branch, needs salvage). Unblocks if #256 salvage succeeds."
+    },
+    {
+      "number": 306,
+      "title": "[ghostboard] Recruiter signup flow — company claim + email domain verification",
+      "product": "ghostboard",
+      "priority": "P1",
+      "type": "revenue",
+      "blocked_by": [140],
+      "status": "blocked",
+      "note": "Blocked by #140 (core MVP, selected cycle 47). Ready once core functionality ships."
+    },
+    {
+      "number": 307,
+      "title": "[ghostboard] Stripe subscription for recruiter tier — $49/mo Recruiter + $199/mo Enterprise",
+      "product": "ghostboard",
+      "priority": "P1",
+      "type": "revenue",
+      "blocked_by": [306],
+      "status": "blocked",
+      "note": "Blocked by #306 (recruiter signup). Ghostboard revenue chain: #140 → #306 → #307."
+    },
+    {
+      "number": 302,
+      "title": "[afterloss] Embed Phase 1 affiliate links — BetterHelp, Trust & Will, Nolo, Ever Loved in checklist steps",
+      "product": "afterloss",
+      "priority": "P1",
+      "type": "revenue",
+      "blocked_by": [254],
+      "status": "blocked",
+      "note": "Blocked by #254 (checklist engine, ESCALATED 9 failures). Direct revenue but cannot proceed."
     },
     {
       "number": 260,
@@ -106,54 +147,121 @@
       "priority": "P1",
       "type": "enhancement",
       "blocked_by": [254],
-      "status": "blocked"
+      "status": "blocked",
+      "note": "Blocked by #254 (checklist engine, ESCALATED)."
     },
     {
-      "number": 256,
-      "title": "[afterloss] Curate subscription cancellation templates (150+ services)",
+      "number": 303,
+      "title": "[afterloss] Embed Phase 2 affiliate links — Online-Therapy.com, Rocket Lawyer, Bestow, Ladder Life",
       "product": "afterloss",
       "priority": "P2",
-      "type": "enhancement",
-      "blocked_by": [111],
-      "status": "blocked"
+      "type": "revenue",
+      "blocked_by": [302],
+      "status": "blocked",
+      "note": "Blocked by #302."
     },
     {
-      "number": 262,
-      "title": "[afterloss] Deadline tracker — state-specific filing deadlines and reminder UI",
+      "number": 234,
+      "title": "[cellscore] Database schema — carriers, plans, FCC coverage, crowdsource reports",
+      "product": "cellscore",
+      "priority": "P2",
+      "type": "scaffold",
+      "blocked_by": [],
+      "status": "ready",
+      "note": "Scaffold for cellscore. Low priority relative to revenue-proximate work on scorerebound/ghostboard/billwatch."
+    },
+    {
+      "number": 335,
+      "title": "[billwatch] Solar recommendation engine — EnergySage + SunPower affiliate for high-bill users",
+      "product": "billwatch",
+      "priority": "P2",
+      "type": "revenue",
+      "blocked_by": [334],
+      "status": "blocked",
+      "note": "Blocked by #334 (provider DB, ESCALATED)."
+    },
+    {
+      "number": 174,
+      "title": "[billwatch] Payments and affiliate integration",
+      "product": "billwatch",
+      "priority": "P1",
+      "type": "revenue",
+      "blocked_by": [],
+      "status": "escalated",
+      "note": "ESCALATED. 3 consecutive silent failures. WIP on branch. Needs interactive TUI worker."
+    },
+    {
+      "number": 304,
+      "title": "[afterloss] Affiliate click tracking infrastructure and analytics dashboard",
       "product": "afterloss",
       "priority": "P2",
-      "type": "enhancement",
-      "blocked_by": [253],
-      "status": "blocked"
+      "type": "revenue",
+      "blocked_by": [],
+      "status": "demoted",
+      "note": "DEMOTED. WIP PR #365 merged cycle 29. Revisit after current work ships."
     },
     {
-      "number": 266,
-      "title": "[afterloss] County-level programmatic SEO pages — 3,200+ county probate court guides",
-      "product": "afterloss",
+      "number": 345,
+      "title": "[cellscore] FCC coverage data integration — VizMo API + BDC bulk import",
+      "product": "cellscore",
       "priority": "P2",
       "type": "enhancement",
-      "blocked_by": [258],
-      "status": "blocked"
+      "blocked_by": [],
+      "status": "demoted",
+      "note": "DEMOTED. WIP PR #366 merged cycle 29. Revisit after current work ships."
     },
     {
-      "number": 267,
-      "title": "[afterloss] Comparison page SEO strategy — /compare/{competitor} pages",
+      "number": 254,
+      "title": "[afterloss] Build interactive checklist engine with localStorage-first persistence",
       "product": "afterloss",
-      "priority": "P3",
+      "priority": "P1",
       "type": "enhancement",
-      "blocked_by": [255],
-      "status": "blocked"
+      "blocked_by": [],
+      "status": "escalated",
+      "note": "ESCALATED. 9 consecutive failures. Blocks #302, #260. Needs interactive TUI worker or split into sub-issues."
     },
     {
-      "number": 124,
-      "title": "[afterloss] Set up tasteful affiliate revenue integration",
-      "product": "afterloss",
-      "priority": "P3",
+      "number": 241,
+      "title": "[cellscore] Core MVP — address coverage checker, plan recommender, plan comparison",
+      "product": "cellscore",
+      "priority": "P1",
       "type": "enhancement",
-      "blocked_by": [254],
-      "status": "blocked"
+      "blocked_by": [],
+      "status": "escalated",
+      "note": "ESCALATED. 5 failures. WIP PR #362 merged with 3 known gaps."
+    },
+    {
+      "number": 332,
+      "title": "[billwatch] Affiliate tracking endpoint — energy provider + solar referral click tracking",
+      "product": "billwatch",
+      "priority": "P1",
+      "type": "revenue",
+      "blocked_by": [],
+      "status": "escalated",
+      "note": "ESCALATED. 5 failures. WIP PR #356 merged, endpoint incomplete."
+    },
+    {
+      "number": 334,
+      "title": "[billwatch] Provider database with deregulated market data and energy switching CTA",
+      "product": "billwatch",
+      "priority": "P1",
+      "type": "revenue",
+      "blocked_by": [],
+      "status": "escalated",
+      "note": "ESCALATED. 4 failures. WIP PR #359 merged cycle 28."
+    },
+    {
+      "number": 144,
+      "title": "[ghostboard] Landing page and SEO — SSG company pages",
+      "product": "ghostboard",
+      "priority": "P1",
+      "type": "seo",
+      "blocked_by": [],
+      "status": "escalated",
+      "note": "ESCALATED. 5 consecutive failures (cycles 39-43). Pivoted to #140 (core MVP). Needs interactive TUI."
     }
   ],
-  "priority_order": [252, 127, 111, 253, 255, 259, 254, 261, 277, 258, 265, 260, 256, 262, 266, 267, 124],
-  "last_groomed_at": "2026-03-17T14:00:00Z"
+  "priority_order": [28, 88, 172, 140, 94, 305, 173, 300, 267, 256, 293, 306, 307, 302, 260, 303, 234, 335, 304, 345, 144, 174, 254, 241, 332, 334],
+  "last_groomed_at": "2026-03-19T17:30:00Z",
+  "grooming_notes": "Cycle 47 grooming. REAFFIRMING TOP 3 with updated guidance. Same issues remain highest priority — all have substantial WIP in main and no open PRs. KEY CHANGES: (1) #172 PROMOTED to #2 (was #3) — highest completion probability due to 1481 lines WIP and landing pages being the highest-success-rate task type. (2) #140 marked FINAL AUTONOMOUS ATTEMPT — if cycle 47 produces no complete PR, escalate to interactive TUI. Worker instructions strengthened with anti-recreation guidance. (3) #88 PROMOTED to P0 — still needs salvage (merger task), ScoreRebound landing page completes the organic funnel. (4) AfterLoss remains deprioritized (no workers assigned). SALVAGE BRANCHES CONFIRMED: #88, #267, #256 still on remote, unmerged. MERGER must process these. PORTFOLIO: scorerebound + billwatch + ghostboard (3 different products)."
 }

@@ -1,39 +1,43 @@
 {
-  "total_loops": 2,
+  "total_loops": 476,
   "total_issues_created": 1,
-  "total_prs_created": 0,
-  "total_prs_merged": 33,
-  "total_errors": 5,
+  "total_prs_created": 1,
+  "total_prs_merged": 298,
+  "total_errors": 8,
   "consecutive_errors": 0,
   "last_rate_limit_at": null,
   "backoff_until": null,
   "phases_completed": {
     "research": 1,
     "plan": 1,
-    "orchestrate": 1,
-    "work": 7,
+    "orchestrate": 14,
+    "work": 46,
     "review": 0,
     "verify": 0,
-    "monitor": 1
+    "monitor": 15
   },
   "per_product": {
     "afterloss": {
       "issues_created": 1,
       "issues_respecified": 3,
       "prs_created": 0,
-      "prs_merged": 14,
+      "prs_merged": 122,
       "last_planned_at": "2026-03-17T14:05:00Z"
     },
     "billwatch": {
-      "prs_merged": 9
+      "prs_merged": 91
     },
     "scorerebound": {
-      "prs_merged": 5
+      "prs_merged": 41
     },
     "cellscore": {
-      "prs_merged": 3
+      "prs_merged": 24
+    },
+    "ghostboard": {
+      "prs_merged": 18
     }
   },
-  "total_silent_failures": 3,
-  "total_prs_salvaged": 3
+  "total_silent_failures": 38,
+  "total_prs_salvaged": 19,
+  "prs_created_scorerebound": 1
 }
