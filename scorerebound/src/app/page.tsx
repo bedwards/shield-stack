@@ -199,7 +199,7 @@ export default function Home() {
                 federal loans.
               </p>
               <Link
-                href="/recovery/ibr"
+                href="/guides/ibr-enrollment"
                 data-testid="path-ibr-link"
                 className="mt-4 inline-block text-sm font-medium text-emerald-600 hover:text-emerald-500"
               >
@@ -218,7 +218,7 @@ export default function Home() {
                 report. One-time opportunity.
               </p>
               <Link
-                href="/recovery/rehabilitation"
+                href="/guides/loan-rehabilitation"
                 data-testid="path-rehabilitation-link"
                 className="mt-4 inline-block text-sm font-medium text-emerald-600 hover:text-emerald-500"
               >
@@ -237,7 +237,7 @@ export default function Home() {
                 Brings loans current immediately.
               </p>
               <Link
-                href="/recovery/consolidation"
+                href="/guides/loan-consolidation"
                 data-testid="path-consolidation-link"
                 className="mt-4 inline-block text-sm font-medium text-emerald-600 hover:text-emerald-500"
               >

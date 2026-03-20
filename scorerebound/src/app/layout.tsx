@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Link from "next/link";
+import AuthProvider from "@/components/auth/AuthProvider";
+import NavAuth from "@/components/auth/NavAuth";
 import "./globals.css";
 
 const inter = Inter({
@@ -52,6 +54,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.variable}>
       <body className="min-h-screen flex flex-col bg-white text-gray-900 antialiased">
+        <AuthProvider>
         <header
           data-testid="header"
           className="sticky top-0 z-50 border-b border-gray-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60"
@@ -113,6 +116,7 @@ export default function RootLayout({
               >
                 Get My Free Plan
               </Link>
+              <NavAuth />
             </div>
           </nav>
         </header>
@@ -241,6 +245,7 @@ export default function RootLayout({
             </div>
           </div>
         </footer>
+        </AuthProvider>
       </body>
     </html>
   );

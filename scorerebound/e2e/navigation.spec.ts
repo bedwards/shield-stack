@@ -35,20 +35,20 @@ test.describe("Navigation & anchor links", () => {
     );
   });
 
-  test("recovery path Learn more links navigate to subpages", async ({
+  test("recovery path Learn more links navigate to guide pages", async ({
     page,
   }) => {
     await expect(page.getByTestId("path-ibr-link")).toHaveAttribute(
       "href",
-      "/recovery/ibr"
+      "/guides/ibr-enrollment"
     );
     await expect(page.getByTestId("path-rehabilitation-link")).toHaveAttribute(
       "href",
-      "/recovery/rehabilitation"
+      "/guides/loan-rehabilitation"
     );
     await expect(page.getByTestId("path-consolidation-link")).toHaveAttribute(
       "href",
-      "/recovery/consolidation"
+      "/guides/loan-consolidation"
     );
   });
 
