@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Link from "next/link";
-import AuthProvider from "@/components/auth/AuthProvider";
-import NavAuth from "@/components/auth/NavAuth";
 import "./globals.css";
 
 const inter = Inter({
@@ -13,45 +11,36 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default:
-      "ScoreRebound — Student Loan Credit Score Dropped? Free Recovery Plan",
+    default: "ScoreRebound — Student Loan Credit Score Recovery Planner",
     template: "%s | ScoreRebound",
   },
   description:
-    "Student loan credit score dropped? Get a free personalized recovery plan. Step-by-step guidance for IBR enrollment, rehabilitation, consolidation, and credit building after student loan delinquency.",
+    "Free personalized plan to recover your credit score after student loan delinquency. Get step-by-step guidance for IBR enrollment, rehabilitation, consolidation, and credit building.",
   keywords: [
     "student loan credit score dropped what to do",
-    "student loan credit score dropped",
-    "student loan credit score recovery",
-    "student loan default credit score",
-    "how to fix credit score after student loan default",
-    "student loan rehabilitation vs consolidation",
+    "student loan credit score",
+    "credit score recovery",
+    "student loan default",
+    "student loan rehabilitation",
     "IBR enrollment",
-    "loan rehabilitation",
+    "credit score dropped",
+    "student loan delinquency",
+    "student loan forbearance",
   ],
   openGraph: {
-    title: "ScoreRebound — Free Student Loan Credit Score Recovery Plan",
-    description:
-      "Student loan credit score dropped? Take a free 2-minute quiz and get a personalized recovery plan with IBR, rehabilitation, and consolidation guidance.",
     type: "website",
     siteName: "ScoreRebound",
+    locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: "ScoreRebound — Free Student Loan Credit Score Recovery Plan",
-    description:
-      "Student loan credit score dropped? Take a free 2-minute quiz and get a personalized recovery plan.",
   },
   robots: {
     index: true,
     follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-    },
+  },
+  alternates: {
+    canonical: "https://scorerebound.com",
   },
 };
 
@@ -63,7 +52,6 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.variable}>
       <body className="min-h-screen flex flex-col bg-white text-gray-900 antialiased">
-        <AuthProvider>
         <header
           data-testid="header"
           className="sticky top-0 z-50 border-b border-gray-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60"
@@ -112,20 +100,19 @@ export default function RootLayout({
                 Recovery Paths
               </Link>
               <Link
-                href="/#faq"
+                href="/faq"
                 data-testid="nav-faq"
                 className="hidden text-sm font-medium text-gray-600 hover:text-emerald-700 sm:block"
               >
                 FAQ
               </Link>
               <Link
-                href="/#quiz"
+                href="/quiz"
                 data-testid="nav-cta"
                 className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
               >
                 Get My Free Plan
               </Link>
-              <NavAuth />
             </div>
           </nav>
         </header>
@@ -151,12 +138,12 @@ export default function RootLayout({
               </div>
               <div>
                 <h3 className="text-sm font-semibold text-gray-900">
-                  Recovery Paths
+                  Recovery Guides
                 </h3>
                 <ul className="mt-2 space-y-2">
                   <li>
                     <Link
-                      href="/guide/ibr"
+                      href="/guides/ibr-enrollment"
                       data-testid="footer-link-ibr"
                       className="text-sm text-gray-600 hover:text-emerald-700"
                     >
@@ -165,7 +152,7 @@ export default function RootLayout({
                   </li>
                   <li>
                     <Link
-                      href="/guide/rehabilitation"
+                      href="/guides/loan-rehabilitation"
                       data-testid="footer-link-rehabilitation"
                       className="text-sm text-gray-600 hover:text-emerald-700"
                     >
@@ -174,7 +161,7 @@ export default function RootLayout({
                   </li>
                   <li>
                     <Link
-                      href="/guide/consolidation"
+                      href="/guides/loan-consolidation"
                       data-testid="footer-link-consolidation"
                       className="text-sm text-gray-600 hover:text-emerald-700"
                     >
@@ -188,6 +175,15 @@ export default function RootLayout({
                   Resources
                 </h3>
                 <ul className="mt-2 space-y-2">
+                  <li>
+                    <Link
+                      href="/compare/credit-builders"
+                      data-testid="footer-link-credit-building"
+                      className="text-sm text-gray-600 hover:text-emerald-700"
+                    >
+                      Credit Builder Comparison
+                    </Link>
+                  </li>
                   <li>
                     <Link
                       href="/faq"
@@ -204,15 +200,6 @@ export default function RootLayout({
                       className="text-sm text-gray-600 hover:text-emerald-700"
                     >
                       About
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="/servicer/mohela"
-                      data-testid="footer-link-servicers"
-                      className="text-sm text-gray-600 hover:text-emerald-700"
-                    >
-                      Servicer Guides
                     </Link>
                   </li>
                 </ul>
@@ -254,7 +241,6 @@ export default function RootLayout({
             </div>
           </div>
         </footer>
-        </AuthProvider>
       </body>
     </html>
   );

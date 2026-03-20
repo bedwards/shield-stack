@@ -3,45 +3,73 @@ import QuizFunnel from "@/components/QuizFunnel";
 
 export const metadata: Metadata = {
   title:
-    "Credit Score Recovery Quiz — ScoreRebound",
+    "Student Loan Credit Score Recovery Quiz — Free Personalized Plan | ScoreRebound",
   description:
-    "Take a free 2-minute quiz to get your personalized student loan credit score recovery plan. Find out if IBR, rehabilitation, or consolidation is right for you.",
+    "Take our free 2-minute quiz to get a personalized credit score recovery plan. Answer 5 questions about your loan type, servicer, and situation to find the best path forward.",
   openGraph: {
-    title: "Credit Score Recovery Quiz — ScoreRebound",
+    title: "Student Loan Credit Score Recovery Quiz — Get Your Free Plan",
     description:
-      "Take a free 2-minute quiz to get your personalized student loan credit score recovery plan.",
+      "Answer 5 quick questions and get a personalized, step-by-step plan to recover your credit score after student loan delinquency.",
     type: "website",
+    siteName: "ScoreRebound",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Credit Score Recovery Quiz — ScoreRebound",
-    description:
-      "Free 2-minute quiz for a personalized student loan credit score recovery plan.",
   },
 };
 
 export default function QuizPage() {
   return (
-    <div
-      data-testid="quiz-page"
-      className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8"
-    >
-      <div className="mx-auto max-w-2xl text-center mb-12">
-        <h1
-          data-testid="quiz-page-title"
-          className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl"
-        >
-          Student Loan Credit Score Recovery Quiz
-        </h1>
-        <p
-          data-testid="quiz-page-description"
-          className="mt-4 text-lg text-gray-600"
-        >
-          Answer 5 quick questions about your situation and get a personalized,
-          step-by-step plan to recover your credit score. No signup required.
-        </p>
+    <div data-testid="quiz-page" className="min-h-[80vh] bg-white py-16">
+      <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+        <div className="mb-12 text-center">
+          <h1
+            data-testid="quiz-page-title"
+            className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl lg:text-5xl"
+          >
+            Your Credit Score Recovery Starts Here
+          </h1>
+          <p
+            data-testid="quiz-page-description"
+            className="mt-6 text-lg leading-8 text-gray-600"
+          >
+            Answer 5 quick questions about your student loans and get a
+            personalized, step-by-step recovery plan. No signup required — your
+            plan is generated instantly.
+          </p>
+        </div>
+
+        <QuizFunnel />
+
+        <div className="mt-12 rounded-xl border border-gray-200 bg-gray-50 p-6">
+          <h2
+            data-testid="quiz-page-trust"
+            className="text-sm font-semibold text-gray-900"
+          >
+            Why trust ScoreRebound?
+          </h2>
+          <ul className="mt-3 space-y-2 text-sm text-gray-600">
+            <li className="flex gap-2">
+              <span className="text-emerald-600">&#10003;</span>
+              <span>100% free — no hidden fees, no credit card required</span>
+            </li>
+            <li className="flex gap-2">
+              <span className="text-emerald-600">&#10003;</span>
+              <span>Based on official federal student loan programs</span>
+            </li>
+            <li className="flex gap-2">
+              <span className="text-emerald-600">&#10003;</span>
+              <span>No signup required to get your recovery plan</span>
+            </li>
+            <li className="flex gap-2">
+              <span className="text-emerald-600">&#10003;</span>
+              <span>
+                Personalized recommendations for your specific situation
+              </span>
+            </li>
+          </ul>
+        </div>
       </div>
-      <QuizFunnel />
     </div>
   );
 }

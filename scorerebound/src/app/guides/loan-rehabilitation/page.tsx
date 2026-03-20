@@ -55,9 +55,60 @@ const faqs: FAQItem[] = [
   },
 ];
 
+function HowToSchema() {
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    name: "How to Rehabilitate Your Student Loans",
+    description:
+      "Step-by-step guide to student loan rehabilitation. Make 9 affordable payments to remove the default notation from your credit report.",
+    step: [
+      {
+        "@type": "HowToStep",
+        position: 1,
+        name: "Find your loan holder",
+        text: "Log into studentaid.gov to see your current loan holder, or call the Default Resolution Group at 1-800-621-3115.",
+      },
+      {
+        "@type": "HowToStep",
+        position: 2,
+        name: "Request a rehabilitation agreement",
+        text: "Contact your loan holder and request rehabilitation. They will calculate your monthly payment based on your income. The minimum payment is $5 per month.",
+      },
+      {
+        "@type": "HowToStep",
+        position: 3,
+        name: "Make 9 on-time payments within 10 months",
+        text: "Payments must be voluntary, made within 20 days of the due date, and for the full agreed-upon amount. You have 10 consecutive months to make 9 qualifying payments.",
+      },
+      {
+        "@type": "HowToStep",
+        position: 4,
+        name: "Loan transferred to new servicer",
+        text: "After completing rehabilitation, your loan is transferred from the default holder back to a regular federal loan servicer. The default notation is removed from your credit report.",
+      },
+      {
+        "@type": "HowToStep",
+        position: 5,
+        name: "Enroll in an income-driven repayment plan",
+        text: "Immediately enroll in IBR or another income-driven plan with your new servicer to keep payments affordable and avoid defaulting again.",
+      },
+    ],
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      data-testid="howto-structured-data"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
+  );
+}
+
 export default function LoanRehabilitationGuide() {
   return (
     <>
+      <HowToSchema />
       <FAQSchema faqs={faqs} />
 
       <article className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">

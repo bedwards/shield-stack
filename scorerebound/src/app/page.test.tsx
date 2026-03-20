@@ -45,10 +45,19 @@ describe("Home page", () => {
     expect(screen.getByTestId("path-consolidation")).toBeInTheDocument();
   });
 
-  it("renders the FAQ section", () => {
+  it("renders the FAQ section with questions", () => {
     expect(screen.getByTestId("faq-section")).toBeInTheDocument();
-    expect(screen.getByTestId("faq-list")).toBeInTheDocument();
     expect(screen.getByTestId("faq-item-0")).toBeInTheDocument();
+    expect(screen.getByTestId("faq-question-0")).toBeInTheDocument();
+    expect(screen.getByTestId("faq-answer-0")).toBeInTheDocument();
+    // Should have multiple FAQ items
+    expect(screen.getByTestId("faq-item-5")).toBeInTheDocument();
+  });
+
+  it("renders the view all FAQs link", () => {
+    const link = screen.getByTestId("faq-view-all");
+    expect(link).toBeInTheDocument();
+    expect(link).toHaveAttribute("href", "/faq");
   });
 
   it("renders the quiz funnel in CTA section", () => {
@@ -56,15 +65,12 @@ describe("Home page", () => {
     expect(screen.getByTestId("quiz-funnel")).toBeInTheDocument();
   });
 
-  it("includes FAQ schema structured data", () => {
-    const scripts = document.querySelectorAll(
+  it("renders FAQ structured data script", () => {
+    const script = document.querySelector(
       'script[type="application/ld+json"]',
     );
-    const faqScript = Array.from(scripts).find((s) =>
-      s.textContent?.includes("FAQPage"),
-    );
-    expect(faqScript).toBeTruthy();
-    const data = JSON.parse(faqScript!.textContent!);
+    expect(script).toBeTruthy();
+    const data = JSON.parse(script!.textContent!);
     expect(data["@type"]).toBe("FAQPage");
     expect(data.mainEntity.length).toBeGreaterThan(0);
   });

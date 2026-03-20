@@ -50,6 +50,16 @@ test.describe("Landing page — all sections render", () => {
     ).toBeVisible();
   });
 
+  test("FAQ section shows questions and answers", async ({ page }) => {
+    const section = page.locator("[data-testid='faq-section']");
+    await expect(section).toBeVisible();
+    await expect(page.locator("[data-testid='faq-item-0']")).toBeVisible();
+    await expect(page.locator("[data-testid='faq-question-0']")).toBeVisible();
+    await expect(page.locator("[data-testid='faq-answer-0']")).toBeVisible();
+    // Check "View all FAQs" link
+    await expect(page.locator("[data-testid='faq-view-all']")).toBeVisible();
+  });
+
   test("footer has all expected links", async ({ page }) => {
     const footer = page.locator("[data-testid='footer']");
     await expect(footer).toBeVisible();
@@ -58,9 +68,9 @@ test.describe("Landing page — all sections render", () => {
       "footer-link-ibr",
       "footer-link-rehabilitation",
       "footer-link-consolidation",
+      "footer-link-credit-building",
       "footer-link-faq",
       "footer-link-about",
-      "footer-link-servicers",
       "footer-link-privacy",
       "footer-link-terms",
     ];
@@ -107,21 +117,21 @@ test.describe("Landing page — anchor navigation", () => {
     await expect(cta).toHaveAttribute("href", "#how-it-works");
   });
 
-  test("nav links have correct anchor hrefs", async ({ page }) => {
+  test("nav links have correct hrefs", async ({ page }) => {
     await page.goto("/");
     await expect(
       page.locator("[data-testid='nav-how-it-works']"),
-    ).toHaveAttribute("href", "#how-it-works");
+    ).toHaveAttribute("href", "/#how-it-works");
     await expect(
       page.locator("[data-testid='nav-recovery-paths']"),
-    ).toHaveAttribute("href", "#recovery-paths");
+    ).toHaveAttribute("href", "/#recovery-paths");
     await expect(page.locator("[data-testid='nav-faq']")).toHaveAttribute(
       "href",
-      "#faq",
+      "/faq",
     );
     await expect(page.locator("[data-testid='nav-cta']")).toHaveAttribute(
       "href",
-      "#quiz",
+      "/quiz",
     );
   });
 });
