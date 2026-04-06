@@ -1806,7 +1806,11 @@ def main():
             "pid_alive": alive,
             "last_heartbeat": last_hb,
             "stale_seconds": stale_seconds,
-            "verdict": "ALIVE" if (alive and stale_seconds is not None and stale_seconds < 300) else "DEAD",
+            # Threshold = 1800s (30 min) to cover the longest phase timeout
+            # (research/merger run up to 1200s) plus margin. If pid is alive
+            # but heartbeat is older than 30 min, the loop is wedged inside a
+            # claude call that exceeded its own timeout — that IS dead.
+            "verdict": "ALIVE" if (alive and stale_seconds is not None and stale_seconds < 1800) else "DEAD",
         }
         print(json.dumps({"liveness": liveness, "status": status, "metrics": metrics}, indent=2))
         return
