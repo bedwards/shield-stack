@@ -152,7 +152,7 @@ The estate settlement space has exploded — 12+ competitors now exist. AfterLos
 **Note:** Caily (caily.com) was previously listed as "subscription cancellation guides" — this was incorrect. Caily is a HIPAA-compliant messaging platform for senior living communities. It is not a competitor.
 
 ### AfterLoss Differentiation
-1. **100% free, forever** — Beats Atticus ($15/mo), EverSettled ($1,499), SwiftProbate ($39)
+1. **100% free, forever** — Beats Atticus ($15/mo), EverSettled ($199 base), SwiftProbate ($39)
 2. **No account required** — localStorage-first. Full functionality without signup. No competitor does this (Elayne's free tier still requires account).
 3. **Web-first, no download** — Works instantly in browser. Beats Atticus (iOS-only) and Sunset (app download required)
 4. **AI-generated personalized documents** — Claude API writes actual letters/forms, not just templates or guides
