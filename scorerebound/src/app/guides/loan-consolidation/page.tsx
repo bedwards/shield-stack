@@ -51,9 +51,60 @@ const faqs: FAQItem[] = [
   },
 ];
 
+function HowToSchema() {
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    name: "How to Consolidate Your Student Loans",
+    description:
+      "Step-by-step guide to Direct Consolidation Loans. Combine multiple federal loans, get out of default immediately, and access income-driven repayment plans.",
+    step: [
+      {
+        "@type": "HowToStep",
+        position: 1,
+        name: "Check which loans to consolidate",
+        text: "Log into studentaid.gov to see all your federal loans, their servicers, balances, and statuses. You can choose to consolidate all or some. Private loans cannot be included.",
+      },
+      {
+        "@type": "HowToStep",
+        position: 2,
+        name: "Submit the consolidation application",
+        text: "Apply online at studentaid.gov/consolidation. During the application, select an income-driven repayment plan if your loans are in default.",
+      },
+      {
+        "@type": "HowToStep",
+        position: 3,
+        name: "Continue payments during processing",
+        text: "Processing takes 30-60 days. Continue making payments on existing loans during this time to avoid additional delinquency.",
+      },
+      {
+        "@type": "HowToStep",
+        position: 4,
+        name: "Set up autopay with your new servicer",
+        text: "Once your consolidation loan is active, enroll in autopay for on-time payments and a 0.25% interest rate reduction.",
+      },
+      {
+        "@type": "HowToStep",
+        position: 5,
+        name: "Start building positive credit history",
+        text: "Pair consolidation with a credit-building strategy — a secured credit card or credit-builder loan adds positive payment history that accelerates score recovery.",
+      },
+    ],
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      data-testid="howto-structured-data"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
+  );
+}
+
 export default function LoanConsolidationGuide() {
   return (
     <>
+      <HowToSchema />
       <FAQSchema faqs={faqs} />
 
       <article className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">

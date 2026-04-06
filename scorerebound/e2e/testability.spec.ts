@@ -44,6 +44,12 @@ const REQUIRED_TEST_IDS = [
   "path-rehabilitation-link",
   "path-consolidation",
   "path-consolidation-link",
+  // FAQ
+  "faq-section",
+  "faq-item-0",
+  "faq-question-0",
+  "faq-answer-0",
+  "faq-view-all",
   // CTA / Quiz
   "cta-section",
   "quiz-funnel",
@@ -53,7 +59,8 @@ const REQUIRED_TEST_IDS = [
   "footer-link-rehabilitation",
   "footer-link-consolidation",
   "footer-link-credit-building",
-  "footer-link-servicers",
+  "footer-link-faq",
+  "footer-link-about",
   "footer-link-privacy",
   "footer-link-terms",
   "footer-copyright",

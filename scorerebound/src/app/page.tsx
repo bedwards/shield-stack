@@ -1,9 +1,46 @@
 import Link from "next/link";
 import QuizFunnel from "@/components/QuizFunnel";
+import FAQSchema, { type FAQItem } from "@/components/FAQSchema";
+
+const landingFAQs: FAQItem[] = [
+  {
+    question:
+      "What happened to student loan credit scores after forbearance ended?",
+    answer:
+      "When the COVID-era student loan forbearance ended in late 2024, over 2.2 million borrowers who had fallen behind on payments saw delinquencies reported to credit bureaus for the first time. Many experienced credit score drops of 100 points or more, affecting their ability to qualify for mortgages, auto loans, and apartments.",
+  },
+  {
+    question: "How long does it take to recover my credit score?",
+    answer:
+      "Recovery timelines depend on your situation and chosen recovery path. With Income-Based Repayment (IBR), most borrowers see 30-80 points of improvement within 3-9 months of consistent on-time payments. Loan rehabilitation takes 9-10 months but removes the default notation entirely, potentially improving your score by 50-150 points. Consolidation is the fastest path, bringing loans current in 30-60 days.",
+  },
+  {
+    question: "Is ScoreRebound really free?",
+    answer:
+      "Yes, ScoreRebound is completely free for all borrowers. Our recovery quiz, personalized plan, and all educational guides are free to use with no signup required. We earn revenue through affiliate partnerships with credit-building products that we recommend as part of your recovery plan — you are never charged for using ScoreRebound itself.",
+  },
+  {
+    question: "What recovery paths are available to me?",
+    answer:
+      "The three main federal recovery paths are: (1) Income-Based Repayment (IBR) — lowers your monthly payment to 10-15% of discretionary income, (2) Loan Rehabilitation — make 9 affordable payments to remove default from your credit report, and (3) Consolidation — combine loans into one and get current immediately. Our quiz recommends the best path based on your specific loan type, servicer, and situation.",
+  },
+  {
+    question: "Do I need to sign up to use ScoreRebound?",
+    answer:
+      "No. You can take our recovery quiz and receive a personalized plan without creating an account. If you want to save your plan and track your progress over time, you can optionally create a free account. We believe in an anonymous-first experience — get value immediately, no barriers.",
+  },
+  {
+    question: "Will my credit score recover fully?",
+    answer:
+      "In most cases, yes — with time and consistent action. Late payment records become less impactful over time and fall off your credit report after 7 years. By enrolling in an affordable repayment plan and making on-time payments, you build positive credit history that gradually outweighs past delinquencies. Many borrowers return to their pre-delinquency score range within 12-24 months.",
+  },
+];
 
 export default function Home() {
   return (
     <>
+      <FAQSchema faqs={landingFAQs} />
+
       {/* Hero Section */}
       <section
         data-testid="hero-section"
@@ -162,7 +199,7 @@ export default function Home() {
                 federal loans.
               </p>
               <Link
-                href="/recovery/ibr"
+                href="/guides/ibr-enrollment"
                 data-testid="path-ibr-link"
                 className="mt-4 inline-block text-sm font-medium text-emerald-600 hover:text-emerald-500"
               >
@@ -181,7 +218,7 @@ export default function Home() {
                 report. One-time opportunity.
               </p>
               <Link
-                href="/recovery/rehabilitation"
+                href="/guides/loan-rehabilitation"
                 data-testid="path-rehabilitation-link"
                 className="mt-4 inline-block text-sm font-medium text-emerald-600 hover:text-emerald-500"
               >
@@ -200,7 +237,7 @@ export default function Home() {
                 Brings loans current immediately.
               </p>
               <Link
-                href="/recovery/consolidation"
+                href="/guides/loan-consolidation"
                 data-testid="path-consolidation-link"
                 className="mt-4 inline-block text-sm font-medium text-emerald-600 hover:text-emerald-500"
               >
@@ -211,11 +248,60 @@ export default function Home() {
         </div>
       </section>
 
+      {/* FAQ Section */}
+      <section
+        id="faq"
+        data-testid="faq-section"
+        className="bg-gray-50 py-24"
+      >
+        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold tracking-tight text-gray-900">
+              Frequently Asked Questions
+            </h2>
+            <p className="mt-4 text-lg text-gray-600">
+              Answers to common questions about student loan credit score recovery
+            </p>
+          </div>
+          <div className="mt-12 divide-y divide-gray-200">
+            {landingFAQs.map((faq, index) => (
+              <div
+                key={index}
+                data-testid={`faq-item-${index}`}
+                className="py-6"
+              >
+                <h3
+                  data-testid={`faq-question-${index}`}
+                  className="text-lg font-semibold text-gray-900"
+                >
+                  {faq.question}
+                </h3>
+                <p
+                  data-testid={`faq-answer-${index}`}
+                  className="mt-3 text-gray-600 leading-7"
+                >
+                  {faq.answer}
+                </p>
+              </div>
+            ))}
+          </div>
+          <div className="mt-8 text-center">
+            <Link
+              href="/faq"
+              data-testid="faq-view-all"
+              className="text-base font-semibold text-emerald-600 hover:text-emerald-500"
+            >
+              View all FAQs &rarr;
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* Quiz Section */}
       <section
         id="quiz"
         data-testid="cta-section"
-        className="bg-gray-50 py-24"
+        className="bg-white py-24"
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-2xl text-center mb-12">

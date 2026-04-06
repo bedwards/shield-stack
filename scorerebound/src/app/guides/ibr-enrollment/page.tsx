@@ -50,9 +50,60 @@ const faqs: FAQItem[] = [
   },
 ];
 
+function HowToSchema() {
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    name: "How to Enroll in Income-Based Repayment (IBR)",
+    description:
+      "Step-by-step guide to enrolling in Income-Based Repayment for federal student loans to lower your monthly payment and recover your credit score.",
+    step: [
+      {
+        "@type": "HowToStep",
+        position: 1,
+        name: "Gather your documents",
+        text: "Collect your most recent federal tax return or tax transcript and current pay stubs. If married and filing jointly, your spouse's income will also be considered.",
+      },
+      {
+        "@type": "HowToStep",
+        position: 2,
+        name: "Submit the IDR application on studentaid.gov",
+        text: "Go to studentaid.gov and complete the Income-Driven Repayment application. Select IBR as your preferred plan or let the system recommend the best plan. Takes about 10 minutes.",
+      },
+      {
+        "@type": "HowToStep",
+        position: 3,
+        name: "Request forbearance while your application processes",
+        text: "Call your servicer and ask for administrative forbearance during the processing period to prevent additional late payments. Processing typically takes 1-2 weeks.",
+      },
+      {
+        "@type": "HowToStep",
+        position: 4,
+        name: "Set up automatic payments",
+        text: "Once approved, enroll in autopay with your servicer. Autopay ensures you never miss a payment and most servicers offer a 0.25% interest rate reduction.",
+      },
+      {
+        "@type": "HowToStep",
+        position: 5,
+        name: "Recertify your income annually",
+        text: "IBR requires annual income recertification. Set a calendar reminder 60 days before your recertification date to avoid payment increases.",
+      },
+    ],
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      data-testid="howto-structured-data"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
+  );
+}
+
 export default function IBREnrollmentGuide() {
   return (
     <>
+      <HowToSchema />
       <FAQSchema faqs={faqs} />
 
       <article className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">

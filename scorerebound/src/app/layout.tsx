@@ -12,17 +12,38 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "ScoreRebound — Student Loan Credit Score Recovery Planner",
+  title: {
+    default: "ScoreRebound — Student Loan Credit Score Recovery Planner",
+    template: "%s | ScoreRebound",
+  },
   description:
     "Free personalized plan to recover your credit score after student loan delinquency. Get step-by-step guidance for IBR enrollment, rehabilitation, consolidation, and credit building.",
   keywords: [
+    "student loan credit score dropped what to do",
     "student loan credit score",
     "credit score recovery",
     "student loan default",
     "student loan rehabilitation",
     "IBR enrollment",
     "credit score dropped",
+    "student loan delinquency",
+    "student loan forbearance",
   ],
+  openGraph: {
+    type: "website",
+    siteName: "ScoreRebound",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  alternates: {
+    canonical: "https://scorerebound.com",
+  },
 };
 
 export default function RootLayout({
@@ -82,14 +103,14 @@ export default function RootLayout({
                 Recovery Paths
               </Link>
               <Link
-                href="/#faq"
+                href="/faq"
                 data-testid="nav-faq"
                 className="hidden text-sm font-medium text-gray-600 hover:text-emerald-700 sm:block"
               >
                 FAQ
               </Link>
               <Link
-                href="/#quiz"
+                href="/quiz"
                 data-testid="nav-cta"
                 className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
               >
@@ -121,12 +142,12 @@ export default function RootLayout({
               </div>
               <div>
                 <h3 className="text-sm font-semibold text-gray-900">
-                  Recovery Paths
+                  Recovery Guides
                 </h3>
                 <ul className="mt-2 space-y-2">
                   <li>
                     <Link
-                      href="/recovery/ibr"
+                      href="/guides/ibr-enrollment"
                       data-testid="footer-link-ibr"
                       className="text-sm text-gray-600 hover:text-emerald-700"
                     >
@@ -135,7 +156,7 @@ export default function RootLayout({
                   </li>
                   <li>
                     <Link
-                      href="/recovery/rehabilitation"
+                      href="/guides/loan-rehabilitation"
                       data-testid="footer-link-rehabilitation"
                       className="text-sm text-gray-600 hover:text-emerald-700"
                     >
@@ -144,7 +165,7 @@ export default function RootLayout({
                   </li>
                   <li>
                     <Link
-                      href="/recovery/consolidation"
+                      href="/guides/loan-consolidation"
                       data-testid="footer-link-consolidation"
                       className="text-sm text-gray-600 hover:text-emerald-700"
                     >
@@ -160,20 +181,29 @@ export default function RootLayout({
                 <ul className="mt-2 space-y-2">
                   <li>
                     <Link
-                      href="/resources/credit-building"
+                      href="/compare/credit-builders"
                       data-testid="footer-link-credit-building"
                       className="text-sm text-gray-600 hover:text-emerald-700"
                     >
-                      Credit Building Guide
+                      Credit Builder Comparison
                     </Link>
                   </li>
                   <li>
                     <Link
-                      href="/resources/servicer-contacts"
-                      data-testid="footer-link-servicers"
+                      href="/faq"
+                      data-testid="footer-link-faq"
                       className="text-sm text-gray-600 hover:text-emerald-700"
                     >
-                      Servicer Contacts
+                      FAQ
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/about"
+                      data-testid="footer-link-about"
+                      className="text-sm text-gray-600 hover:text-emerald-700"
+                    >
+                      About
                     </Link>
                   </li>
                 </ul>
