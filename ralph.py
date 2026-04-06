@@ -248,7 +248,68 @@ def update_worker_state(worker_id, **kwargs):
 # Claude Code CLI runner
 # ---------------------------------------------------------------------------
 
-def run_claude(prompt, max_turns=None, timeout=600, cwd=None):
+CLAUDE_RUN_LOG_DIR = os.path.join(RALPH_DIR, "logs", "claude")
+
+
+def _persist_claude_run(phase_hint, prompt, stdout, stderr, exit_code, duration_s):
+    """Write a full record of every claude -p run to disk for postmortem.
+
+    Files: .ralph/logs/claude/<ts>-<phase>-exit<code>.log
+    Includes the FULL prompt and FULL stdout/stderr — never truncate on disk.
+    """
+    try:
+        os.makedirs(CLAUDE_RUN_LOG_DIR, exist_ok=True)
+        ts = datetime.datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
+        path = os.path.join(
+            CLAUDE_RUN_LOG_DIR,
+            f"{ts}-{phase_hint or 'unknown'}-exit{exit_code}.log",
+        )
+        with open(path, "w") as f:
+            f.write(f"=== claude -p run @ {ts} ===\n")
+            f.write(f"phase_hint: {phase_hint}\n")
+            f.write(f"exit_code: {exit_code}\n")
+            f.write(f"duration_s: {duration_s:.2f}\n")
+            f.write(f"prompt_chars: {len(prompt)}\n")
+            f.write("=" * 60 + "\n")
+            f.write("--- PROMPT ---\n")
+            f.write(prompt)
+            f.write("\n" + "=" * 60 + "\n")
+            f.write("--- STDOUT ---\n")
+            f.write(stdout or "(empty)")
+            f.write("\n" + "=" * 60 + "\n")
+            f.write("--- STDERR ---\n")
+            f.write(stderr or "(empty)")
+            f.write("\n")
+        return path
+    except Exception as e:
+        log(f"Failed to persist claude run log: {e}", "WARN")
+        return None
+
+
+def _classify_claude_failure(stdout, stderr, exit_code):
+    """Decide if a failure is retryable, rate-limited, or fatal.
+
+    Returns one of: "rate_limit", "transient", "fatal".
+    """
+    combined = ((stdout or "") + " " + (stderr or "")).lower()
+    rate_limit_markers = [
+        "rate limit", "429", "overloaded", "too many requests",
+        "quota exceeded", "capacity", "usage limit",
+    ]
+    if any(m in combined for m in rate_limit_markers):
+        return "rate_limit"
+    transient_markers = [
+        "connection reset", "timeout", "timed out", "econnrefused",
+        "network error", "temporary failure", "503", "502", "504",
+        "eai_again", "socket hang up",
+    ]
+    if any(m in combined for m in transient_markers):
+        return "transient"
+    return "fatal"
+
+
+def run_claude(prompt, max_turns=None, timeout=600, cwd=None,
+               phase_hint=None, max_retries=3):
     """
     Run a single-shot Claude Code CLI instance.
     Always uses Claude Opus 4.6 with max effort.
@@ -256,6 +317,17 @@ def run_claude(prompt, max_turns=None, timeout=600, cwd=None):
     Workers communicate via FILES ON DISK, not stdout.
     Each phase tells Claude which files to read and write.
     After Claude exits, ralph.py reads those files to determine outcome.
+
+    Diagnostics + resilience contract:
+      - Every run's full prompt + stdout + stderr is persisted to
+        .ralph/logs/claude/ — never truncated. No silent death.
+      - On rate limit: exponential backoff (60s, 240s, 960s) up to max_retries.
+      - On transient network failure: linear backoff (15s, 30s, 60s).
+      - On fatal failure: log full stdout + stderr (truncated tail in console,
+        full record on disk), return False with exit code.
+      - The constitution is prepended to the prompt by load_prompt_template,
+        not here — phases that build raw prompts must call build_prompt() to
+        get constitutional framing.
 
     Returns (success: bool, exit_code: int)
     """
@@ -265,56 +337,128 @@ def run_claude(prompt, max_turns=None, timeout=600, cwd=None):
     cmd.extend(["--dangerously-skip-permissions"])
     cmd.extend(["--max-turns", str(max_turns or CLAUDE_MAX_TURNS)])
 
-    log(f"Running: claude -p '<prompt>' --model {CLAUDE_MODEL} "
-        f"--effort max --max-turns {max_turns or CLAUDE_MAX_TURNS}")
+    log(f"Running: claude -p '<{len(prompt)} chars>' --model {CLAUDE_MODEL} "
+        f"--effort max --max-turns {max_turns or CLAUDE_MAX_TURNS} "
+        f"phase={phase_hint or '?'}")
 
-    try:
-        result = subprocess.run(
-            cmd,
-            cwd=cwd or PROJECT_DIR,
-            capture_output=True,
-            text=True,
-            timeout=timeout,
+    attempt = 0
+    while True:
+        attempt += 1
+        start_t = time.time()
+        try:
+            result = subprocess.run(
+                cmd,
+                cwd=cwd or PROJECT_DIR,
+                capture_output=True,
+                text=True,
+                timeout=timeout,
+            )
+        except subprocess.TimeoutExpired as e:
+            duration = time.time() - start_t
+            stdout = e.stdout.decode() if isinstance(e.stdout, bytes) else (e.stdout or "")
+            stderr = e.stderr.decode() if isinstance(e.stderr, bytes) else (e.stderr or "")
+            log_path = _persist_claude_run(phase_hint, prompt, stdout, stderr, -1, duration)
+            log(f"Claude timed out after {timeout}s (attempt {attempt}). "
+                f"Full log: {log_path}", "ERROR")
+            if attempt < max_retries:
+                backoff = 30 * attempt
+                log(f"Retrying after {backoff}s (timeout/transient)", "WARN")
+                time.sleep(backoff)
+                continue
+            return False, -1
+        except FileNotFoundError:
+            log(f"Claude CLI not found at {CLAUDE_CMD}. Halting.", "FATAL")
+            update_status(halted=True, halt_reason="claude CLI missing")
+            sys.exit(1)
+
+        duration = time.time() - start_t
+        stdout = result.stdout or ""
+        stderr = result.stderr or ""
+        log_path = _persist_claude_run(
+            phase_hint, prompt, stdout, stderr, result.returncode, duration
         )
 
-        stderr = result.stderr.strip()
-        if stderr:
-            for line in stderr.split("\n")[:10]:
-                log(f"  stderr: {line}", "WARN")
+        if result.returncode == 0:
+            log(f"Claude OK in {duration:.1f}s (attempt {attempt}). Log: {log_path}")
+            return True, 0
 
-        # Check for rate limiting
-        if result.returncode != 0:
-            combined = (result.stdout + " " + stderr).lower()
-            if any(x in combined for x in [
-                "rate limit", "429", "overloaded", "too many requests",
-                "quota exceeded", "capacity"
-            ]):
-                log("Rate limit detected!", "WARN")
-                update_metrics(last_rate_limit_at=now_iso())
-                return False, result.returncode
+        # Failure path — log meaningful diagnostics from BOTH streams
+        kind = _classify_claude_failure(stdout, stderr, result.returncode)
+        log(f"Claude exited code={result.returncode} kind={kind} "
+            f"duration={duration:.1f}s attempt={attempt} log={log_path}", "ERROR")
 
-        if result.returncode != 0:
-            log(f"Claude exited with code {result.returncode}", "ERROR")
+        # Tail of stdout (where claude -p actually writes errors)
+        if stdout.strip():
+            tail = stdout.strip().split("\n")[-15:]
+            for line in tail:
+                log(f"  stdout: {line}", "ERROR")
+        # Tail of stderr
+        if stderr.strip():
+            tail = stderr.strip().split("\n")[-15:]
+            for line in tail:
+                log(f"  stderr: {line}", "ERROR")
+
+        if kind == "rate_limit":
+            update_metrics(last_rate_limit_at=now_iso())
+            if attempt < max_retries:
+                backoff = 60 * (4 ** (attempt - 1))  # 60s, 240s, 960s
+                log(f"Rate limited — backing off {backoff}s before retry", "WARN")
+                update_metrics(backoff_until=now_iso())
+                time.sleep(backoff)
+                continue
+            log("Rate limit retries exhausted", "ERROR")
             return False, result.returncode
 
-        return True, 0
+        if kind == "transient" and attempt < max_retries:
+            backoff = 15 * attempt
+            log(f"Transient failure — retrying in {backoff}s", "WARN")
+            time.sleep(backoff)
+            continue
 
-    except subprocess.TimeoutExpired:
-        log(f"Claude timed out after {timeout}s", "ERROR")
-        return False, -1
-    except FileNotFoundError:
-        log("Claude CLI not found. Is it installed and on PATH?", "FATAL")
-        sys.exit(1)
+        # Fatal — record last_error so the loop and humans can see it
+        last_err = (stdout.strip().split("\n")[-1] if stdout.strip()
+                    else (stderr.strip().split("\n")[-1] if stderr.strip()
+                          else f"exit {result.returncode}"))
+        update_status(last_error=f"claude {phase_hint or ''}: {last_err}"[:500])
+        return False, result.returncode
 
 
 # ---------------------------------------------------------------------------
 # Prompt builders
 # ---------------------------------------------------------------------------
 
+_CONSTITUTION_CACHE = None
+
+
+def load_constitution():
+    """Load the immutable constitutional preamble. Cached after first read."""
+    global _CONSTITUTION_CACHE
+    if _CONSTITUTION_CACHE is None:
+        path = os.path.join(PROMPTS_DIR, "_constitution.md")
+        try:
+            with open(path, "r") as f:
+                _CONSTITUTION_CACHE = f.read()
+        except FileNotFoundError:
+            log("WARNING: _constitution.md missing — phases will run without "
+                "constitutional framing. This violates the durability rule.", "WARN")
+            _CONSTITUTION_CACHE = ""
+    return _CONSTITUTION_CACHE
+
+
 def load_prompt_template(name):
+    """Load a phase prompt template with the constitution prepended.
+
+    The constitution is immutable framing that overrides any conflicting
+    phase-specific instructions: mission (make money), equal-attention rule,
+    reality rule, durability rule, root-cause rule.
+    """
     path = os.path.join(PROMPTS_DIR, f"{name}.md")
     with open(path, "r") as f:
-        return f.read()
+        body = f.read()
+    constitution = load_constitution()
+    if constitution:
+        return constitution + "\n\n---\n\n# Phase: " + name + "\n\n" + body
+    return body
 
 
 def pick_underserved_product():
@@ -657,7 +801,7 @@ def phase_research(dry_run=False, product_slug=None):
         log_phase("research", f"[DRY RUN] Would run researcher ({len(prompt)} chars)")
         return True
 
-    success, _ = run_claude(prompt, max_turns=20, timeout=1200)
+    success, _ = run_claude(prompt, max_turns=20, timeout=1200, phase_hint="research")
 
     if not success:
         log_phase("research", "Research phase completed with non-zero exit (may have partial results)")
@@ -701,7 +845,7 @@ def phase_plan(dry_run=False, product_slug=None):
     except Exception:
         pass
 
-    success, _ = run_claude(prompt, max_turns=40, timeout=900)
+    success, _ = run_claude(prompt, max_turns=40, timeout=900, phase_hint="plan")
 
     if not success:
         log_phase("plan", "Planning phase failed")
@@ -756,7 +900,7 @@ def phase_orchestrate(dry_run=False):
         log_phase("orchestrate", "[DRY RUN] Would run orchestrator")
         return True
 
-    success, _ = run_claude(prompt, max_turns=15, timeout=600)
+    success, _ = run_claude(prompt, max_turns=15, timeout=600, phase_hint="orchestrate")
 
     if not success:
         log_phase("orchestrate", "Orchestration failed")
@@ -832,6 +976,7 @@ def phase_work(dry_run=False):
         max_turns=CLAUDE_MAX_TURNS,
         timeout=900,
         cwd=wt_path,
+        phase_hint=f"work-{issue_number}",
     )
 
     # Detect PR from git state (Claude creates it, we find it)
@@ -919,7 +1064,7 @@ def phase_review(dry_run=False):
     if bots_with_reviews:
         prompt += f"\nRead and address findings from: {', '.join(bots_with_reviews)}\n"
 
-    success, _ = run_claude(prompt, max_turns=40, timeout=900)
+    success, _ = run_claude(prompt, max_turns=40, timeout=900, phase_hint="review")
 
     # Determine what happened by checking PR state (not stdout)
     try:
@@ -1003,7 +1148,7 @@ def phase_verify(dry_run=False):
         update_status(last_phase_completed="verify")
         return True
 
-    success, _ = run_claude(prompt, max_turns=20, timeout=600)
+    success, _ = run_claude(prompt, max_turns=20, timeout=600, phase_hint="verify")
 
     if not success:
         log_phase("verify", "Verification phase failed (Claude exited non-zero)")
@@ -1057,7 +1202,7 @@ def phase_monitor(dry_run=False):
         log_phase("monitor", "[DRY RUN] Would run health checks")
         return True
 
-    success, _ = run_claude(prompt, max_turns=10, timeout=300)
+    success, _ = run_claude(prompt, max_turns=10, timeout=300, phase_hint="monitor")
 
     if not success:
         log_phase("monitor", "Monitor phase failed (Claude exited non-zero)")
@@ -1120,7 +1265,7 @@ def run_merger():
     try:
         log_phase("merger", "Starting merger — handling all open PRs")
         prompt = build_merger_prompt()
-        success, _ = run_claude(prompt, max_turns=50, timeout=1200)
+        success, _ = run_claude(prompt, max_turns=50, timeout=1200, phase_hint="merger")
 
         if success:
             log_phase("merger", "Merger completed")
@@ -1141,9 +1286,46 @@ def run_merger():
 # Parallel worker launcher
 # ---------------------------------------------------------------------------
 
+def rank_products_by_underservice():
+    """Return products ranked from most-underserved to most-served.
+
+    Underservice score = (PRs merged, deployed?, last activity).
+    Lower score = more underserved = higher priority for the equal-attention slot.
+
+    Returns list of dicts: [{slug, prs_merged, deployed, score}, ...]
+    """
+    products = load_products()
+    metrics = read_json(METRICS_FILE)
+    per_product = metrics.get("per_product", {})
+    ranked = []
+    for p in products:
+        slug = p["slug"]
+        prs_merged = per_product.get(slug, {}).get("prs_merged", 0)
+        deployed = bool(p.get("production_url"))
+        # Lower score = more underserved. Deployed adds a strong constant.
+        score = prs_merged + (1000 if deployed else 0)
+        ranked.append({
+            "slug": slug,
+            "prs_merged": prs_merged,
+            "deployed": deployed,
+            "score": score,
+        })
+    ranked.sort(key=lambda r: r["score"])
+    return ranked
+
+
 def select_issues(num_workers, dry_run=False):
     """Use the orchestrator to select N issues for parallel work.
-    Returns list of {number, title, product, branch} dicts."""
+
+    Equal-attention enforcement (constitutional, non-negotiable):
+      The most-underserved product is RESERVED a worker slot every cycle.
+      The orchestrator chooses from issues belonging to that product for
+      the reserved slot. The remaining N-1 slots follow normal priority.
+      This guarantees laggards get lifted up every cycle without ever
+      delaying or regressing the leaders.
+
+    Returns list of {number, title, product, branch} dicts.
+    """
     log_phase("orchestrate", f"Selecting {num_workers} issues for parallel work")
     update_status(phase="orchestrate")
 
@@ -1151,21 +1333,52 @@ def select_issues(num_workers, dry_run=False):
         log_phase("orchestrate", f"[DRY RUN] Would select {num_workers} issues")
         return []
 
-    # Build an orchestrator prompt that selects N issues
+    # Compute the underservice ranking and pin the most-underserved product
+    # for the equal-attention reserved slot.
+    ranked = rank_products_by_underservice()
+    underserved = ranked[0] if ranked else None
+    underserved_slug = underserved["slug"] if underserved else None
+    if underserved_slug:
+        log_phase("orchestrate",
+                  f"Equal-attention reserved slot: {underserved_slug} "
+                  f"(prs_merged={underserved['prs_merged']}, "
+                  f"deployed={underserved['deployed']})")
+
+    # Build an orchestrator prompt that selects N issues with the reserved slot
     template = load_prompt_template("orchestrator")
     metrics = read_json(METRICS_FILE)
+    ranking_summary = "\n".join(
+        f"  {i+1}. {r['slug']}: prs={r['prs_merged']}, deployed={r['deployed']}"
+        for i, r in enumerate(ranked[:10])
+    )
     prompt = (
         f"{template}\n\n"
-        f"## Special Instructions\n"
-        f"Select the TOP {num_workers} highest-priority unblocked issues "
-        f"(not just 1). Write them ALL to `.ralph/status.json` as a "
-        f"`selected_issues` array. Each entry needs: number, title, product.\n\n"
+        f"## Special Instructions — Equal-Attention Constitutional Rule\n"
+        f"Select EXACTLY {num_workers} issues for parallel work, written as a "
+        f"`selected_issues` array in `.ralph/status.json`.\n\n"
+        f"### Reserved slot (NON-NEGOTIABLE)\n"
+        f"Slot 1 of {num_workers} is RESERVED for the most-underserved product: "
+        f"**{underserved_slug or '(none)'}**. Pick the highest-priority unblocked "
+        f"issue belonging to {underserved_slug} for this slot. If no open issue "
+        f"exists for {underserved_slug}, you MUST first CREATE one (e.g., "
+        f"'[{underserved_slug}] First production deploy' or the next logical "
+        f"step toward shipping it) and then select it. Do NOT skip the reserved "
+        f"slot. Lifting the laggard is the point.\n\n"
+        f"### Remaining {max(0, num_workers - 1)} slots\n"
+        f"Pick highest-priority unblocked issues from any product, weighted toward "
+        f"revenue-generating work. NEVER pick issues that delete features, "
+        f"regress functionality, or simplify leading products to 'even things "
+        f"out' — leveling is achieved by addition, never subtraction.\n\n"
+        f"### Underservice ranking (most underserved first)\n{ranking_summary}\n\n"
+        f"Each entry in selected_issues needs: number, title, product, reason. "
+        f"The reason for slot 1 must explicitly mention the equal-attention rule.\n\n"
         f"## Metrics\n"
         f"- Total PRs merged: {metrics.get('total_prs_merged', 0)}\n"
         f"- Total issues created: {metrics.get('total_issues_created', 0)}\n"
     )
 
-    success, _ = run_claude(prompt, max_turns=15, timeout=600)
+    success, _ = run_claude(prompt, max_turns=15, timeout=600,
+                            phase_hint="orchestrate")
 
     if not success:
         log_phase("orchestrate", "Orchestration failed")
