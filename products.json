@@ -14,8 +14,8 @@
       "stack": "next.js",
       "deploy": "vercel",
       "db": "supabase",
-      "version": "0.0.0",
-      "status": "planning"
+      "version": "0.2.0",
+      "status": "scaffold_complete"
     },
     {
       "id": 2,
@@ -29,8 +29,8 @@
       "stack": "next.js",
       "deploy": "vercel",
       "db": "supabase",
-      "version": "0.0.0",
-      "status": "planning"
+      "version": "0.1.0",
+      "status": "scaffold_complete"
     },
     {
       "id": 3,
@@ -44,8 +44,8 @@
       "stack": "next.js",
       "deploy": "vercel",
       "db": "supabase",
-      "version": "0.0.0",
-      "status": "planning"
+      "version": "0.9.0",
+      "status": "feature_development"
     },
     {
       "id": 4,
@@ -59,8 +59,8 @@
       "stack": "next.js",
       "deploy": "vercel",
       "db": "supabase",
-      "version": "0.0.0",
-      "status": "planning"
+      "version": "0.1.0",
+      "status": "scaffold_complete"
     },
     {
       "id": 5,
@@ -74,8 +74,8 @@
       "stack": "next.js",
       "deploy": "vercel",
       "db": "supabase",
-      "version": "0.0.0",
-      "status": "planning"
+      "version": "0.1.0",
+      "status": "scaffold_complete"
     },
     {
       "id": 6,
@@ -89,8 +89,8 @@
       "stack": "next.js",
       "deploy": "vercel",
       "db": "supabase",
-      "version": "0.0.0",
-      "status": "planning"
+      "version": "0.6.0",
+      "status": "feature_development"
     },
     {
       "id": 7,
@@ -104,8 +104,8 @@
       "stack": "next.js",
       "deploy": "vercel",
       "db": "supabase",
-      "version": "0.0.0",
-      "status": "planning"
+      "version": "0.1.0",
+      "status": "scaffold_complete"
     },
     {
       "id": 8,
@@ -119,8 +119,8 @@
       "stack": "next.js",
       "deploy": "vercel",
       "db": "supabase",
-      "version": "0.0.0",
-      "status": "planning"
+      "version": "0.1.0",
+      "status": "scaffold_complete"
     },
     {
       "id": 9,
@@ -134,8 +134,8 @@
       "stack": "next.js",
       "deploy": "vercel",
       "db": "supabase",
-      "version": "0.0.0",
-      "status": "planning"
+      "version": "0.1.0",
+      "status": "scaffold_complete"
     },
     {
       "id": 10,
@@ -149,8 +149,8 @@
       "stack": "next.js",
       "deploy": "vercel",
       "db": "supabase",
-      "version": "0.0.0",
-      "status": "planning"
+      "version": "0.1.0",
+      "status": "scaffold_complete"
     },
     {
       "id": 11,
@@ -164,8 +164,8 @@
       "stack": "next.js",
       "deploy": "vercel",
       "db": "supabase",
-      "version": "0.0.0",
-      "status": "planning"
+      "version": "0.1.0",
+      "status": "scaffold_complete"
     },
     {
       "id": 12,
@@ -179,8 +179,8 @@
       "stack": "next.js",
       "deploy": "vercel",
       "db": "supabase",
-      "version": "0.0.0",
-      "status": "planning"
+      "version": "0.1.0",
+      "status": "scaffold_complete"
     },
     {
       "id": 13,
@@ -194,8 +194,8 @@
       "stack": "next.js",
       "deploy": "vercel",
       "db": "supabase",
-      "version": "0.0.0",
-      "status": "planning"
+      "version": "0.1.0",
+      "status": "scaffold_complete"
     },
     {
       "id": 14,
@@ -209,8 +209,8 @@
       "stack": "next.js",
       "deploy": "vercel",
       "db": "supabase",
-      "version": "0.0.0",
-      "status": "planning"
+      "version": "0.1.0",
+      "status": "scaffold_complete"
     },
     {
       "id": 15,
@@ -224,8 +224,8 @@
       "stack": "next.js",
       "deploy": "vercel",
       "db": "supabase",
-      "version": "0.0.0",
-      "status": "planning"
+      "version": "0.1.0",
+      "status": "scaffold_complete"
     },
     {
       "id": 16,
@@ -239,8 +239,8 @@
       "stack": "next.js",
       "deploy": "vercel",
       "db": "supabase",
-      "version": "0.0.0",
-      "status": "planning"
+      "version": "0.1.0",
+      "status": "scaffold_complete"
     },
     {
       "id": 17,
@@ -254,8 +254,8 @@
       "stack": "next.js",
       "deploy": "vercel",
       "db": "supabase",
-      "version": "0.0.0",
-      "status": "planning"
+      "version": "0.1.0",
+      "status": "scaffold_complete"
     },
     {
       "id": 18,
@@ -269,8 +269,8 @@
       "stack": "next.js",
       "deploy": "vercel",
       "db": "supabase",
-      "version": "0.0.0",
-      "status": "planning"
+      "version": "0.1.0",
+      "status": "scaffold_complete"
     },
     {
       "id": 19,
@@ -284,8 +284,8 @@
       "stack": "next.js",
       "deploy": "vercel",
       "db": "supabase",
-      "version": "0.0.0",
-      "status": "planning"
+      "version": "0.1.0",
+      "status": "scaffold_complete"
     },
     {
       "id": 20,
@@ -299,8 +299,8 @@
       "stack": "next.js",
       "deploy": "vercel",
       "db": "supabase",
-      "version": "0.0.0",
-      "status": "planning"
+      "version": "0.1.0",
+      "status": "scaffold_complete"
     },
     {
       "id": 21,
@@ -314,8 +314,8 @@
       "stack": "next.js",
       "deploy": "vercel",
       "db": "supabase",
-      "version": "0.0.0",
-      "status": "planning"
+      "version": "0.1.0",
+      "status": "scaffold_complete"
     },
     {
       "id": 22,
@@ -329,8 +329,8 @@
       "stack": "next.js",
       "deploy": "vercel",
       "db": "supabase",
-      "version": "0.1.0",
-      "status": "scaffold_complete"
+      "version": "0.8.0",
+      "status": "feature_development"
     }
   ]
 }
