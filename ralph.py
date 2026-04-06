@@ -20,10 +20,12 @@ Usage:
 """
 
 import argparse
+import atexit
 import datetime
 import json
 import os
 import re
+import signal
 import subprocess
 import sys
 import time
@@ -161,8 +163,49 @@ def update_status(**kwargs):
     status = read_json(STATUS_FILE)
     status.update(kwargs)
     status["updated_at"] = now_iso()
+    status["pid"] = os.getpid()
+    status["last_heartbeat"] = now_iso()
     write_json(STATUS_FILE, status)
     return status
+
+
+def is_pid_alive(pid):
+    """Return True if pid is a running process owned by us."""
+    if not pid:
+        return False
+    try:
+        os.kill(int(pid), 0)
+        return True
+    except (OSError, ValueError, TypeError):
+        return False
+
+
+def _mark_halted_on_exit():
+    """atexit hook: if we exit without setting halted=True, set it now with reason."""
+    try:
+        status = read_json(STATUS_FILE)
+        if status.get("pid") != os.getpid():
+            return  # not our status file
+        if status.get("halted"):
+            return  # already cleanly halted
+        status["halted"] = True
+        status["halt_reason"] = status.get("halt_reason") or "process exited unexpectedly (atexit)"
+        status["updated_at"] = now_iso()
+        write_json(STATUS_FILE, status)
+    except Exception:
+        pass
+
+
+def _signal_halt(signum, frame):
+    """Signal handler: mark halted with reason and re-raise so default handler runs."""
+    sig_name = signal.Signals(signum).name if hasattr(signal, "Signals") else str(signum)
+    try:
+        update_status(halted=True, halt_reason=f"received {sig_name}")
+    except Exception:
+        pass
+    # Restore default handler and re-raise
+    signal.signal(signum, signal.SIG_DFL)
+    os.kill(os.getpid(), signum)
 
 
 def update_metrics(**kwargs):
@@ -1536,7 +1579,23 @@ def main():
     if args.status:
         status = read_json(STATUS_FILE)
         metrics = read_json(METRICS_FILE)
-        print(json.dumps({"status": status, "metrics": metrics}, indent=2))
+        # Liveness truth, computed fresh — never trust the file's self-report
+        pid = status.get("pid")
+        alive = is_pid_alive(pid)
+        last_hb = status.get("last_heartbeat") or status.get("updated_at")
+        try:
+            hb_dt = datetime.datetime.fromisoformat(last_hb.replace("Z", "+00:00")) if last_hb else None
+            stale_seconds = (datetime.datetime.now(datetime.timezone.utc) - hb_dt).total_seconds() if hb_dt else None
+        except Exception:
+            stale_seconds = None
+        liveness = {
+            "pid": pid,
+            "pid_alive": alive,
+            "last_heartbeat": last_hb,
+            "stale_seconds": stale_seconds,
+            "verdict": "ALIVE" if (alive and stale_seconds is not None and stale_seconds < 300) else "DEAD",
+        }
+        print(json.dumps({"liveness": liveness, "status": status, "metrics": metrics}, indent=2))
         return
 
     if args.reset:
@@ -1560,6 +1619,19 @@ def main():
 
     # Clamp workers to valid range
     num_workers = max(1, min(args.workers, MAX_WORKERS))
+
+    # Liveness: stamp pid + heartbeat, register cleanup handlers so the
+    # status file can never lie about being alive again.
+    update_status(
+        pid=os.getpid(),
+        started_at=now_iso(),
+        halted=False,
+        halt_reason=None,
+        last_error=None,
+    )
+    atexit.register(_mark_halted_on_exit)
+    signal.signal(signal.SIGTERM, _signal_halt)
+    signal.signal(signal.SIGHUP, _signal_halt)
 
     try:
         main_loop(
